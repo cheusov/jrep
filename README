@@ -1,0 +1,5 @@
+jgrep is a grep-like utility written in Java.
+Features:
+  -- Java regular expressions
+  -- POSIX options
+  -- GNU extensions

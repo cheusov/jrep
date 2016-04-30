@@ -91,16 +91,6 @@ text2.txt:version of the code.  With bug reports, please try to ensure that
 ex=0
 '
 
-$GREP_CMD -V |
-    cmp 'jgrep - #21.1' \
-'jgrep-0.1
-'
-
-$GREP_CMD --version |
-    cmp 'jgrep - #21.2' \
-'jgrep-0.1
-'
-
 $GREP_CMD --line-regexp -n 'This.*|.* a' text1.txt text2.txt |
     cmp 'jgrep -x #20.1' \
 'text1.txt:5:This system is running a development snapshot of a stable branch of the NetBSD
@@ -124,6 +114,22 @@ $GREP_CMD -x --line-number 'This' text1.txt text2.txt |
 { $GREP_CMD 'zzz' notfoundfile.txt; echo ex=$?; } 2>/dev/null |
     cmp 'jgrep "notfoundfile.txt" #23' \
 'ex=2
+'
+
+$GREP_CMD -V |
+    cmp 'jgrep - #24.1' \
+'jgrep-0.1
+'
+
+$GREP_CMD --version |
+    cmp 'jgrep - #24.2' \
+'jgrep-0.1
+'
+
+$GREP_CMD --line-buffered OpenBSD text2.txt |
+    cmp 'jgrep #25' \
+'OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
+Welcome to OpenBSD: The proactively secure Unix-like operating system.
 '
 
 $GREP_CMD version text1.txt text2.txt |

@@ -44,6 +44,7 @@ public class Jgrep {
     private static boolean opt_c = false;
     private static boolean opt_n = false;
     private static boolean opt_x = false;
+    private static boolean opt_line_buffered = false;
     private static int opt_m = 2000000000;
     private static boolean prefixWithFilename = false;
 
@@ -75,6 +76,12 @@ public class Jgrep {
         public void remove() {
             str = null;
         }
+    }
+
+    private static void println(String line){
+        System.out.println(line);
+        if (opt_line_buffered)
+            System.out.flush();
     }
 
     private static void processFile(InputStream in, String filename) throws IOException {
@@ -117,7 +124,7 @@ public class Jgrep {
                     exitStatus = 0;
                     if (outputFilename) {
                         nextFile = true;
-                        System.out.println(filename);
+                        println(filename);
                         break;
                     } else if (opt_c) {
                         nextLine = true;
@@ -127,10 +134,10 @@ public class Jgrep {
                         break;
                     } else if (inverseMatch) {
                         nextLine = true;
-                        System.out.println(prefix + line);
+                        println(prefix + line);
                         break;
                     } else if (outputMatched) {
-                        System.out.println(prefix + line.substring(m.start(), m.end()));
+                        println(prefix + line.substring(m.start(), m.end()));
                     } else if (colorEscSequence == null) {
                         nextLine = true;
                         break;
@@ -163,7 +170,7 @@ public class Jgrep {
                         sb.append("\033[1;0m");
                         prev = end;
                     }
-                    System.out.println(prefix + sb.toString() + line.substring(prev));
+                    println(prefix + sb.toString() + line.substring(prev));
                 }
             }
 
@@ -172,10 +179,10 @@ public class Jgrep {
         }
 
         if (opt_L && matchCount == 0)
-            System.out.println(filename);
+            println(filename);
 
         if (opt_c)
-            System.out.println(prefix1 + matchCount);
+            println(prefix1 + matchCount);
     }
 
     private static String[] handleOptions(String[] args) throws org.apache.commons.cli.ParseException {
@@ -212,6 +219,7 @@ public class Jgrep {
                 "or regular expression are considered to be matching lines.");
         options.addOption(null, "help", false, "Display this help text and exit.");
         options.addOption("V", "version", false, "Display version information and exit.");
+        options.addOption(null, "line-buffered", false, "Display version information and exit.");
 
         CommandLineParser parser = new PosixParser();
         CommandLine cmd = parser.parse (options, args);
@@ -229,6 +237,7 @@ public class Jgrep {
         opt_c = cmd.hasOption("c");
         opt_n = cmd.hasOption("n");
         opt_x = cmd.hasOption("x");
+        opt_line_buffered = cmd.hasOption("line-buffered");
 
         String[] opt_e = cmd.getOptionValues("e");
         if (opt_e != null && opt_e.length != 0) {

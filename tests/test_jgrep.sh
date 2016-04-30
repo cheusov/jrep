@@ -289,8 +289,17 @@ $GREP_CMD --line-buffered OpenBSD text2.txt |
 Welcome to OpenBSD: The proactively secure Unix-like operating system.
 '
 
-{ $GREP_CMD 'OpenBSD' notfoundfile.txt text2.txt; echo ex=$?; } 2>/dev/null |
-    cmp 'jgrep notfoundfile.txt text2.txt #26' \
+{ $GREP_CMD 'OpenBSD' notfoundfile.txt text2.txt; echo ex=$?; } 2>&1 |
+    awk '/FileNotFoundException/ {$0 = "FileNotFoundException"} {print}' |
+    cmp 'jgrep notfoundfile.txt text2.txt #26.1' \
+'FileNotFoundException
+text2.txt:OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
+text2.txt:Welcome to OpenBSD: The proactively secure Unix-like operating system.
+ex=2
+'
+
+{ $GREP_CMD -s 'OpenBSD' notfoundfile.txt text2.txt; echo ex=$?; } 2>&1 |
+    cmp 'jgrep notfoundfile.txt text2.txt #26.2' \
 'text2.txt:OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
 text2.txt:Welcome to OpenBSD: The proactively secure Unix-like operating system.
 ex=2

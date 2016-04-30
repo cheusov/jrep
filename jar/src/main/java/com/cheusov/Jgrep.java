@@ -44,6 +44,7 @@ public class Jgrep {
     private static boolean opt_c = false;
     private static boolean opt_n = false;
     private static boolean opt_x = false;
+    private static boolean opt_s = false;
     private static boolean opt_line_buffered = false;
     private static int opt_m = 2000000000;
     private static boolean prefixWithFilename = false;
@@ -222,7 +223,8 @@ public class Jgrep {
                 "or regular expression are considered to be matching lines.");
         options.addOption(null, "help", false, "Display this help text and exit.");
         options.addOption("V", "version", false, "Display version information and exit.");
-        options.addOption(null, "line-buffered", false, "Display version information and exit.");
+        options.addOption(null, "line-buffered", false, "Flush output on every line.");
+        options.addOption("s", "no-messages", false, "Suppress error messages");
 
         CommandLineParser parser = new PosixParser();
         CommandLine cmd = parser.parse (options, args);
@@ -240,6 +242,7 @@ public class Jgrep {
         opt_c = cmd.hasOption("c");
         opt_n = cmd.hasOption("n");
         opt_x = cmd.hasOption("x");
+        opt_s = cmd.hasOption("s");
         opt_line_buffered = cmd.hasOption("line-buffered");
 
         String[] opt_e = cmd.getOptionValues("e");
@@ -310,7 +313,9 @@ public class Jgrep {
                     in.close();
                 }
                 catch (IOException e){
-                    System.err.println(e.toString());
+                    if (! opt_s)
+                        System.err.println(e.toString());
+                    
                     exitStatus = 2;
                 }
             }

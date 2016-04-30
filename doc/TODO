@@ -1,5 +1,4 @@
 plan 0:
-* -s, --no-messages    suppress error messages
 * tests for multiple -e
 * -H, --with-filename       print the file name for each match
 * --label=LABEL         use LABEL as the standard input file name prefix

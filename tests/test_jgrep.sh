@@ -326,4 +326,21 @@ ex=2
     cmp 'jgrep -regexp --silent #27.3' \
 'ex=0
 '
+cat text1.txt | $GREP_CMD -oH Net... |
+    cmp 'jgrep <stdin> #28.1' \
+'(standard input):NetBSD
+(standard input):NetBSD
+(standard input):NetBSD
+(standard input):NetBSD
+(standard input):NetBSD
+'
+
+cat text1.txt | $GREP_CMD --label=stdin -oH Net... |
+    cmp 'jgrep <stdin> #28.2' \
+'stdin:NetBSD
+stdin:NetBSD
+stdin:NetBSD
+stdin:NetBSD
+stdin:NetBSD
+'
 

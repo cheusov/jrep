@@ -50,6 +50,7 @@ public class Jgrep {
     private static boolean opt_line_buffered = false;
     private static int opt_m = 2000000000;
     private static boolean prefixWithFilename = false;
+    private static String label = "(standard input)";
 
     private static String colorEscSequence;
 
@@ -233,6 +234,7 @@ public class Jgrep {
         options.addOption("q", "quiet", false, "Quiet. Nothing shall be written to the standard output," +
                 " regardless of matching lines. Exit with zero status if an input line is selected.");
         options.addOption(null, "silent", false, "Same as --quiet.");
+        options.addOption(null, "label", true, "Use ARG as the standard input file name prefix.");
 
         CommandLineParser parser = new PosixParser();
         CommandLine cmd = parser.parse (options, args);
@@ -264,6 +266,10 @@ public class Jgrep {
         String optM = cmd.getOptionValue("m");
         if (optM != null)
             opt_m = Integer.valueOf(optM);
+
+        String optLabel = cmd.getOptionValue("label");
+        if (optLabel != null)
+            label = optLabel;
 
         if (cmd.hasOption("help")){
             HelpFormatter formatter = new HelpFormatter();
@@ -314,7 +320,7 @@ public class Jgrep {
 
     private static void grep(String[] args) throws Exception {
         if (args.length == 0) {
-            processFile(System.in, "(standard input)");
+            processFile(System.in, label);
         }else{
             for (String filename : args){
                 try {

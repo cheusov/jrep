@@ -1,7 +1,5 @@
 plan 0:
 * tests for multiple -e
-* --label=LABEL         use LABEL as the standard input file name prefix
-* -q, --quiet, --silent     suppress all normal output
 
 * options for begin/end markers for coloring; tests for coloring
 * -f, --file=FILE      obtain PATTERN from FILE

@@ -366,3 +366,21 @@ $GREP_CMD --word-regexp bug text1.txt text2.txt |
 'text2.txt:Before reporting a bug, please try to reproduce it with the latest
 text2.txt:version of the code.  With bug reports, please try to ensure that
 '
+
+$GREP_CMD -Hwf patterns.txt text1.txt |
+    cmp 'jgrep -Hwf #31.1' \
+'text1.txt:NetBSD 6.1_STABLE (GENERIC) #2: Fri Oct 24 07:00:58 FET 2014
+text1.txt:Welcome to NetBSD!
+text1.txt:This system is running a development snapshot of a stable branch of the NetBSD
+text1.txt:use the web interface at: http://www.NetBSD.org/support/send-pr.html
+text1.txt:Thank you for helping us test and improve this NetBSD branch.
+'
+
+$GREP_CMD -Hw --file patterns.txt text1.txt |
+    cmp 'jgrep -Hwf #31.2' \
+'text1.txt:NetBSD 6.1_STABLE (GENERIC) #2: Fri Oct 24 07:00:58 FET 2014
+text1.txt:Welcome to NetBSD!
+text1.txt:This system is running a development snapshot of a stable branch of the NetBSD
+text1.txt:use the web interface at: http://www.NetBSD.org/support/send-pr.html
+text1.txt:Thank you for helping us test and improve this NetBSD branch.
+'

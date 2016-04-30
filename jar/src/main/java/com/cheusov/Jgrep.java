@@ -23,7 +23,6 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 /**
  * Created by Aleksey Cheusov on 4/24/16.
@@ -195,7 +194,7 @@ public class Jgrep {
             println(prefix1 + matchCount);
     }
 
-    private static String[] handleOptions(String[] args) throws org.apache.commons.cli.ParseException {
+    private static String[] handleOptions(String[] args) throws ParseException, IOException {
         Options options = new Options();
 //        options.addOption("t", false, "display current time");
         options.addOption("e", "regexp", true, "Specify a pattern used during the search of the input: an input line is " +
@@ -237,6 +236,7 @@ public class Jgrep {
         options.addOption(null, "silent", false, "Same as --quiet.");
         options.addOption(null, "label", true, "Use ARG as the standard input file name prefix.");
         options.addOption("w", "word-regexp", false, "Force PATTERN to match only whole words.");
+        options.addOption("f", "file", true, "Obtain PATTERN from FILE.");
 
         CommandLineParser parser = new PosixParser();
         CommandLine cmd = parser.parse (options, args);
@@ -266,9 +266,17 @@ public class Jgrep {
                 regexps.add(regexp);
         }
 
-        String optM = cmd.getOptionValue("m");
-        if (optM != null)
-            opt_m = Integer.valueOf(optM);
+        String optf = cmd.getOptionValue("f");
+        if (optf != null) {
+            Iterator<String> it = IOUtils.lineIterator(new FileInputStream(optf), "UTF-8");
+            while (it.hasNext()) {
+                regexps.add(it.next());
+            }
+        }
+
+        String optm = cmd.getOptionValue("m");
+        if (optm != null)
+            opt_m = Integer.valueOf(optm);
 
         String optLabel = cmd.getOptionValue("label");
         if (optLabel != null)

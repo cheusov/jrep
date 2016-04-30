@@ -121,7 +121,10 @@ public class Jgrep {
                 boolean nextLine = false;
                 while (m.find(pos) ^ inverseMatch) {
                     matched = true;
-                    exitStatus = 0;
+
+                    if (exitStatus == 1)
+                        exitStatus = 0;
+
                     if (outputFilename) {
                         nextFile = true;
                         println(filename);
@@ -301,9 +304,15 @@ public class Jgrep {
             processFile(System.in, "(standard input)");
         }else{
             for (String filename : args){
-                FileInputStream in = new FileInputStream(filename);
-                processFile(in, filename);
-                in.close();
+                try {
+                    FileInputStream in = new FileInputStream(filename);
+                    processFile(in, filename);
+                    in.close();
+                }
+                catch (IOException e){
+                    System.err.println(e.toString());
+                    exitStatus = 2;
+                }
             }
         }
     }

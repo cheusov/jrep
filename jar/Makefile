@@ -2,7 +2,7 @@ FILES =			target/jgrep-0.1-jar-with-dependencies.jar
 FILESDIR =		${JARDIR}
 
 do-all: ${FILES}
-${FILES}:
+${FILES}: src/main/java/com/cheusov/Jgrep.java
 	${PROG.${MAVEN}} package install assembly:single
 
 .include <mkc.mk>

@@ -1,6 +1,5 @@
 plan 0:
 * options for begin/end markers for coloring; tests for coloring
-* -r, --recursive           like --directories=recurse
 *   -B, --before-context=NUM  print NUM lines of leading context
 *   -A, --after-context=NUM   print NUM lines of trailing context
 *   -C, --context=NUM         print NUM lines of output context

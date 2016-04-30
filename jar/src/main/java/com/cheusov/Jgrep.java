@@ -17,6 +17,9 @@ package com.cheusov;
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.filefilter.DirectoryFileFilter;
+import org.apache.commons.io.filefilter.FileFileFilter;
+import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.*;
@@ -45,6 +48,7 @@ public class Jgrep {
     private static boolean opt_n = false;
     private static boolean opt_x = false;
     private static boolean opt_q = false;
+    private static boolean opt_r = false;
     private static boolean opt_s = false;
     private static boolean opt_w = false;
     private static boolean opt_line_buffered = false;
@@ -237,6 +241,7 @@ public class Jgrep {
         options.addOption(null, "label", true, "Use ARG as the standard input file name prefix.");
         options.addOption("w", "word-regexp", false, "Force PATTERN to match only whole words.");
         options.addOption("f", "file", true, "Obtain PATTERN from FILE.");
+        options.addOption("r", "recursive", false, "Recursively search subdirectories listed.");
 
         CommandLineParser parser = new PosixParser();
         CommandLine cmd = parser.parse (options, args);
@@ -255,6 +260,7 @@ public class Jgrep {
         opt_c = cmd.hasOption("c");
         opt_n = cmd.hasOption("n");
         opt_x = cmd.hasOption("x");
+        opt_r = cmd.hasOption("r");
         opt_s = cmd.hasOption("s");
         opt_q = cmd.hasOption("q") || cmd.hasOption("silent");
         opt_w = cmd.hasOption("w");
@@ -329,18 +335,34 @@ public class Jgrep {
         for (int i = 0; i < regexps.size(); ++i)
             patterns.add(Pattern.compile(regexps.get(i), patternFlags));
 
-        prefixWithFilename = (opt_H || (args.length > 1 && ! opt_h));
+        prefixWithFilename = (opt_H || opt_r || (args.length > 1 && ! opt_h));
     }
 
     private static void grep(String[] args) throws Exception {
         if (args.length == 0) {
             processFile(System.in, label);
         }else{
-            for (String filename : args){
+            for (String fileOrDir : args){
                 try {
-                    FileInputStream in = new FileInputStream(filename);
-                    processFile(in, filename);
-                    in.close();
+                    Iterator fileIterator;
+                    if (opt_r) {
+                        fileIterator = FileUtils.iterateFiles(new File(fileOrDir), FileFileFilter.FILE, DirectoryFileFilter.DIRECTORY);
+                    }else{
+                        fileIterator = Arrays.asList(fileOrDir).iterator();
+                    }
+
+                    while (fileIterator.hasNext()) {
+                        Object fileObj = fileIterator.next();
+                        String filename;
+                        if (fileObj instanceof String)
+                            filename = (String) fileObj;
+                        else
+                            filename = ((File) fileObj).getPath().replaceAll("^^[.]/", "");
+
+                        FileInputStream in = new FileInputStream(filename);
+                        processFile(in, filename);
+                        in.close();
+                    }
                 }
                 catch (IOException e){
                     if (! opt_s)

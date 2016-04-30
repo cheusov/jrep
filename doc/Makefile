@@ -1,0 +1,4 @@
+FILES    =	../README NEWS LICENSE TODO #FAQ NOTES
+FILESDIR =	${DOCDIR}
+
+.include <mkc.mk>

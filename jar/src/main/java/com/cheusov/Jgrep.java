@@ -17,11 +17,13 @@ package com.cheusov;
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * Created by Aleksey Cheusov on 4/24/16.
@@ -90,7 +92,7 @@ public class Jgrep {
             prefix1 = filename + ":";
 
         int matchCount = 0;
-        StringBuilder sb = null;
+        List<Pair<Integer, Integer>> startend = null;
         int lineNumber = 0;
         while (it.hasNext()){
             ++lineNumber;
@@ -102,12 +104,12 @@ public class Jgrep {
             boolean matched = false;
             boolean nextFile = false;
 
+            if (!inverseMatch && !outputFilename && !outputMatched && !opt_L && !opt_c)
+                startend = new ArrayList<Pair<Integer, Integer>>();
+
             int pos = 0;
             for (Pattern pattern : patterns) {
                 Matcher m = pattern.matcher(line);
-
-                if (!inverseMatch && !outputFilename && !outputMatched && !opt_L && !opt_c)
-                    sb = new StringBuilder();
 
                 boolean nextLine = false;
                 while (m.find(pos) ^ inverseMatch) {
@@ -133,10 +135,7 @@ public class Jgrep {
                         nextLine = true;
                         break;
                     } else {
-                        sb.append(line.substring(pos, m.start()));
-                        sb.append("\033[" + colorEscSequence + "m");
-                        sb.append(line.substring(m.start(), m.end()));
-                        sb.append("\033[1;0m");
+                        startend.add(Pair.of(m.start(), m.end()));
                     }
                     pos = m.end();
                 }
@@ -152,8 +151,20 @@ public class Jgrep {
             }
 
             if (matched){
-                if (! inverseMatch && ! outputFilename && ! outputMatched && ! opt_L && ! opt_c)
-                    System.out.println(prefix + sb.toString() + line.substring(pos));
+                if (! inverseMatch && ! outputFilename && ! outputMatched && ! opt_L && ! opt_c) {
+                    StringBuilder sb = new StringBuilder();
+                    int prev = 0;
+                    for (Pair<Integer, Integer> p : startend){
+                        int start = p.getLeft();
+                        int end   = p.getRight();
+                        sb.append(line.substring(prev, start));
+                        sb.append("\033[" + colorEscSequence + "m");
+                        sb.append(line.substring(start, end));
+                        sb.append("\033[1;0m");
+                        prev = end;
+                    }
+                    System.out.println(prefix + sb.toString() + line.substring(prev));
+                }
             }
 
             if (nextFile)
@@ -270,18 +281,13 @@ public class Jgrep {
                 regexps.set(i, "(?m:^(?:" + regexps.get(i) + ")$)");
         }
 
-        for (int i=0; i < regexps.size(); ++i)
+        for (int i = 0; i < regexps.size(); ++i)
             patterns.add(Pattern.compile(regexps.get(i), patternFlags));
 
         prefixWithFilename = args.length > 1 && ! opt_h;
     }
 
-    public static void main(String[] args) throws Exception {
-        args = handleOptions(args);
-        args = handleFreeArgs(args);
-        sanityCheck();
-        init(args);
-
+    private static void grep(String[] args) throws Exception {
         if (args.length == 0) {
             processFile(System.in, "(standard input)");
         }else{
@@ -291,7 +297,21 @@ public class Jgrep {
                 in.close();
             }
         }
+    }
 
+    public static void main(String[] args) {
+        try {
+            args = handleOptions(args);
+            args = handleFreeArgs(args);
+            sanityCheck();
+            init(args);
+            grep(args);
+        }
+        catch (Exception e) {
+//            e.printStackTrace(System.err);
+            System.err.println(e.toString());
+            exitStatus = 2;
+        }
         System.exit(exitStatus);
     }
 }

@@ -84,10 +84,11 @@ text2.txt:version of the code.  With bug reports, please try to ensure that
 text2.txt:known fix for it exists, include that as well.
 '
 
-$GREP_CMD -m1 '( of|that|as|well|NetBSD) ' text1.txt text2.txt |
+{ $GREP_CMD -m1 '( of|that|as|well|NetBSD) ' text1.txt text2.txt; echo ex=$?; } |
     cmp 'jgrep -m #19.2' \
 'text1.txt:NetBSD 6.1_STABLE (GENERIC) #2: Fri Oct 24 07:00:58 FET 2014
 text2.txt:version of the code.  With bug reports, please try to ensure that
+ex=0
 '
 
 $GREP_CMD -V |
@@ -109,6 +110,21 @@ text2.txt:8:enough information to reproduce the problem is enclosed, and if a
 $GREP_CMD -x --line-number 'This' text1.txt text2.txt |
     cmp 'jgrep -x #20.2' \
 ''
+
+{ $GREP_CMD 'zzzzzzzzzz' text1.txt text2.txt; echo ex=$?; } |
+    cmp 'jgrep zzzzzzzzzz #21' \
+'ex=1
+'
+
+{ $GREP_CMD ')' text1.txt text2.txt; echo ex=$?; } 2>/dev/null |
+    cmp 'jgrep ")" #22' \
+'ex=2
+'
+
+{ $GREP_CMD 'zzz' notfoundfile.txt; echo ex=$?; } 2>/dev/null |
+    cmp 'jgrep "notfoundfile.txt" #23' \
+'ex=2
+'
 
 $GREP_CMD version text1.txt text2.txt |
     cmp 'jgrep #2' \
@@ -199,14 +215,22 @@ $GREP_CMD --ignore-case VERSION text1.txt text2.txt |
 text2.txt:version of the code.  With bug reports, please try to ensure that
 '
 
-$GREP_CMD -Li openbsd text1.txt text2.txt |
+{ $GREP_CMD -Li openbsd text1.txt text2.txt; echo ex=$?; } |
     cmp 'jgrep -L #10' \
 'text1.txt
+ex=0
 '
 
 $GREP_CMD -i --files-without-match openbsd text1.txt text2.txt |
     cmp 'jgrep -L #10.1' \
 'text1.txt
+'
+
+{ $GREP_CMD -Li zzzzzzzzzz text1.txt text2.txt; echo ex=$?; } |
+    cmp 'jgrep -L #10.2' \
+'text1.txt
+text2.txt
+ex=1
 '
 
 $GREP_CMD -8i '(?m:^(openbsd|netbsd).*\n\n.*$)' text1.txt text2.txt |

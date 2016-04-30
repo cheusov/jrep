@@ -355,3 +355,14 @@ text2.txt:OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
 text2.txt:Welcome to OpenBSD: The proactively secure Unix-like operating system.
 '
 
+$GREP_CMD -w bug text1.txt text2.txt |
+    cmp 'jgrep -le #30.1' \
+'text2.txt:Before reporting a bug, please try to reproduce it with the latest
+text2.txt:version of the code.  With bug reports, please try to ensure that
+'
+
+$GREP_CMD --word-regexp bug text1.txt text2.txt |
+    cmp 'jgrep -le #30.2' \
+'text2.txt:Before reporting a bug, please try to reproduce it with the latest
+text2.txt:version of the code.  With bug reports, please try to ensure that
+'

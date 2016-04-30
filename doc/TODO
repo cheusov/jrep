@@ -1,7 +1,6 @@
 plan 0:
 * options for begin/end markers for coloring; tests for coloring
 * -f, --file=FILE      obtain PATTERN from FILE
-* -w, --word-regexp    force PATTERN to match only whole words
 * -r, --recursive           like --directories=recurse
 *   -B, --before-context=NUM  print NUM lines of leading context
 *   -A, --after-context=NUM   print NUM lines of trailing context

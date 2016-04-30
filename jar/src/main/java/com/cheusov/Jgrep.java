@@ -47,6 +47,7 @@ public class Jgrep {
     private static boolean opt_x = false;
     private static boolean opt_q = false;
     private static boolean opt_s = false;
+    private static boolean opt_w = false;
     private static boolean opt_line_buffered = false;
     private static int opt_m = 2000000000;
     private static boolean prefixWithFilename = false;
@@ -235,6 +236,7 @@ public class Jgrep {
                 " regardless of matching lines. Exit with zero status if an input line is selected.");
         options.addOption(null, "silent", false, "Same as --quiet.");
         options.addOption(null, "label", true, "Use ARG as the standard input file name prefix.");
+        options.addOption("w", "word-regexp", false, "Force PATTERN to match only whole words.");
 
         CommandLineParser parser = new PosixParser();
         CommandLine cmd = parser.parse (options, args);
@@ -255,6 +257,7 @@ public class Jgrep {
         opt_x = cmd.hasOption("x");
         opt_s = cmd.hasOption("s");
         opt_q = cmd.hasOption("q") || cmd.hasOption("silent");
+        opt_w = cmd.hasOption("w");
         opt_line_buffered = cmd.hasOption("line-buffered");
 
         String[] opt_e = cmd.getOptionValues("e");
@@ -310,6 +313,9 @@ public class Jgrep {
         }else if (opt_x){
             for (int i=0; i < regexps.size(); ++i)
                 regexps.set(i, "(?m:^(?:" + regexps.get(i) + ")$)");
+        }else if (opt_w){
+            for (int i=0; i < regexps.size(); ++i)
+                regexps.set(i, "\\b(?:" + regexps.get(i) + ")\\b");
         }
 
         for (int i = 0; i < regexps.size(); ++i)

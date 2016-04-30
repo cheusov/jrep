@@ -1,6 +1,4 @@
 plan 0:
-* tests for multiple -e
-
 * options for begin/end markers for coloring; tests for coloring
 * -f, --file=FILE      obtain PATTERN from FILE
 * -w, --word-regexp    force PATTERN to match only whole words
@@ -9,7 +7,7 @@ plan 0:
 *   -A, --after-context=NUM   print NUM lines of trailing context
 *   -C, --context=NUM         print NUM lines of output context
 
-plan 2:
+plan 1:
 * coloring for terminal output only
 * -E, --extended-regexp    PATTERN is an extended regular expression (ERE)
 * -G, --basic-regexp       PATTERN is a basic regular expression (BRE)

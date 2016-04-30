@@ -344,3 +344,14 @@ stdin:NetBSD
 stdin:NetBSD
 '
 
+$GREP_CMD -e OpenBSD -e NetBSD text1.txt text2.txt |
+    cmp 'jgrep -le #29' \
+'text1.txt:NetBSD 6.1_STABLE (GENERIC) #2: Fri Oct 24 07:00:58 FET 2014
+text1.txt:Welcome to NetBSD!
+text1.txt:This system is running a development snapshot of a stable branch of the NetBSD
+text1.txt:use the web interface at: http://www.NetBSD.org/support/send-pr.html
+text1.txt:Thank you for helping us test and improve this NetBSD branch.
+text2.txt:OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
+text2.txt:Welcome to OpenBSD: The proactively secure Unix-like operating system.
+'
+

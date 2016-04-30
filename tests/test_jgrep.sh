@@ -9,129 +9,6 @@ $GREP_CMD OpenBSD text2.txt |
 Welcome to OpenBSD: The proactively secure Unix-like operating system.
 '
 
-$GREP_CMD -Fo '(GENERIC)' text1.txt text2.txt |
-    cmp 'jgrep -Fo #14' \
-'text1.txt:(GENERIC)
-text2.txt:(GENERIC)
-'
-
-$GREP_CMD --fixed-strings --only-matching '(GENERIC)' text1.txt text2.txt |
-    cmp 'jgrep -Fo #14.1' \
-'text1.txt:(GENERIC)
-text2.txt:(GENERIC)
-'
-
-$GREP_CMD -c '( of|that|as|well|NetBSD) ' text1.txt text2.txt |
-    cmp 'jgrep -c #15' \
-'text1.txt:4
-text2.txt:2
-'
-
-$GREP_CMD --count '( of|that|as|well|NetBSD) ' text1.txt text2.txt |
-    cmp 'jgrep -c #15.1' \
-'text1.txt:4
-text2.txt:2
-'
-
-$GREP_CMD -hc ' (well|NetBSD) ' text1.txt text2.txt |
-    cmp 'jgrep -hc #16' \
-'1
-0
-'
-
-$GREP_CMD -c --no-filename ' (well|NetBSD) ' text1.txt text2.txt |
-    cmp 'jgrep -hc #16.1' \
-'1
-0
-'
-
-$GREP_CMD -E --line-number  '( of|that|as|well|NetBSD) ' text1.txt text2.txt |
-    cmp 'jgrep -c #17' \
-'text1.txt:1:NetBSD 6.1_STABLE (GENERIC) #2: Fri Oct 24 07:00:58 FET 2014
-text1.txt:5:This system is running a development snapshot of a stable branch of the NetBSD
-text1.txt:10:You are encouraged to test this version as thoroughly as possible.  Should you
-text1.txt:15:Thank you for helping us test and improve this NetBSD branch.
-text2.txt:7:version of the code.  With bug reports, please try to ensure that
-text2.txt:9:known fix for it exists, include that as well.
-'
-
-$GREP_CMD -nh '( of|that|as|well|NetBSD) ' text1.txt text2.txt |
-    cmp 'jgrep -nh #18' \
-'1:NetBSD 6.1_STABLE (GENERIC) #2: Fri Oct 24 07:00:58 FET 2014
-5:This system is running a development snapshot of a stable branch of the NetBSD
-10:You are encouraged to test this version as thoroughly as possible.  Should you
-15:Thank you for helping us test and improve this NetBSD branch.
-7:version of the code.  With bug reports, please try to ensure that
-9:known fix for it exists, include that as well.
-'
-
-$GREP_CMD --max-count=4 '( of|that|as|well|NetBSD) ' text1.txt text2.txt |
-    cmp 'jgrep -m #19' \
-'text1.txt:NetBSD 6.1_STABLE (GENERIC) #2: Fri Oct 24 07:00:58 FET 2014
-text1.txt:This system is running a development snapshot of a stable branch of the NetBSD
-text1.txt:You are encouraged to test this version as thoroughly as possible.  Should you
-text1.txt:Thank you for helping us test and improve this NetBSD branch.
-text2.txt:version of the code.  With bug reports, please try to ensure that
-text2.txt:known fix for it exists, include that as well.
-'
-
-$GREP_CMD -m3 '( of|that|as|well|NetBSD) ' text1.txt text2.txt |
-    cmp 'jgrep -m #19.1' \
-'text1.txt:NetBSD 6.1_STABLE (GENERIC) #2: Fri Oct 24 07:00:58 FET 2014
-text1.txt:This system is running a development snapshot of a stable branch of the NetBSD
-text1.txt:You are encouraged to test this version as thoroughly as possible.  Should you
-text2.txt:version of the code.  With bug reports, please try to ensure that
-text2.txt:known fix for it exists, include that as well.
-'
-
-{ $GREP_CMD -m1 '( of|that|as|well|NetBSD) ' text1.txt text2.txt; echo ex=$?; } |
-    cmp 'jgrep -m #19.2' \
-'text1.txt:NetBSD 6.1_STABLE (GENERIC) #2: Fri Oct 24 07:00:58 FET 2014
-text2.txt:version of the code.  With bug reports, please try to ensure that
-ex=0
-'
-
-$GREP_CMD --line-regexp -n 'This.*|.* a' text1.txt text2.txt |
-    cmp 'jgrep -x #20.1' \
-'text1.txt:5:This system is running a development snapshot of a stable branch of the NetBSD
-text2.txt:8:enough information to reproduce the problem is enclosed, and if a
-'
-
-$GREP_CMD -x --line-number 'This' text1.txt text2.txt |
-    cmp 'jgrep -x #20.2' \
-''
-
-{ $GREP_CMD 'zzzzzzzzzz' text1.txt text2.txt; echo ex=$?; } |
-    cmp 'jgrep zzzzzzzzzz #21' \
-'ex=1
-'
-
-{ $GREP_CMD ')' text1.txt text2.txt; echo ex=$?; } 2>/dev/null |
-    cmp 'jgrep ")" #22' \
-'ex=2
-'
-
-{ $GREP_CMD 'zzz' notfoundfile.txt; echo ex=$?; } 2>/dev/null |
-    cmp 'jgrep "notfoundfile.txt" #23' \
-'ex=2
-'
-
-$GREP_CMD -V |
-    cmp 'jgrep - #24.1' \
-'jgrep-0.1
-'
-
-$GREP_CMD --version |
-    cmp 'jgrep - #24.2' \
-'jgrep-0.1
-'
-
-$GREP_CMD --line-buffered OpenBSD text2.txt |
-    cmp 'jgrep #25' \
-'OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
-Welcome to OpenBSD: The proactively secure Unix-like operating system.
-'
-
 $GREP_CMD version text1.txt text2.txt |
     cmp 'jgrep #2' \
 'text1.txt:You are encouraged to test this version as thoroughly as possible.  Should you
@@ -288,3 +165,127 @@ OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
 
 Welcome to OpenBSD: The proactively secure Unix-like operating system.
 '
+
+$GREP_CMD -Fo '(GENERIC)' text1.txt text2.txt |
+    cmp 'jgrep -Fo #14' \
+'text1.txt:(GENERIC)
+text2.txt:(GENERIC)
+'
+
+$GREP_CMD --fixed-strings --only-matching '(GENERIC)' text1.txt text2.txt |
+    cmp 'jgrep -Fo #14.1' \
+'text1.txt:(GENERIC)
+text2.txt:(GENERIC)
+'
+
+$GREP_CMD -c '( of|that|as|well|NetBSD) ' text1.txt text2.txt |
+    cmp 'jgrep -c #15' \
+'text1.txt:4
+text2.txt:2
+'
+
+$GREP_CMD --count '( of|that|as|well|NetBSD) ' text1.txt text2.txt |
+    cmp 'jgrep -c #15.1' \
+'text1.txt:4
+text2.txt:2
+'
+
+$GREP_CMD -hc ' (well|NetBSD) ' text1.txt text2.txt |
+    cmp 'jgrep -hc #16' \
+'1
+0
+'
+
+$GREP_CMD -c --no-filename ' (well|NetBSD) ' text1.txt text2.txt |
+    cmp 'jgrep -hc #16.1' \
+'1
+0
+'
+
+$GREP_CMD -E --line-number  '( of|that|as|well|NetBSD) ' text1.txt text2.txt |
+    cmp 'jgrep -c #17' \
+'text1.txt:1:NetBSD 6.1_STABLE (GENERIC) #2: Fri Oct 24 07:00:58 FET 2014
+text1.txt:5:This system is running a development snapshot of a stable branch of the NetBSD
+text1.txt:10:You are encouraged to test this version as thoroughly as possible.  Should you
+text1.txt:15:Thank you for helping us test and improve this NetBSD branch.
+text2.txt:7:version of the code.  With bug reports, please try to ensure that
+text2.txt:9:known fix for it exists, include that as well.
+'
+
+$GREP_CMD -nh '( of|that|as|well|NetBSD) ' text1.txt text2.txt |
+    cmp 'jgrep -nh #18' \
+'1:NetBSD 6.1_STABLE (GENERIC) #2: Fri Oct 24 07:00:58 FET 2014
+5:This system is running a development snapshot of a stable branch of the NetBSD
+10:You are encouraged to test this version as thoroughly as possible.  Should you
+15:Thank you for helping us test and improve this NetBSD branch.
+7:version of the code.  With bug reports, please try to ensure that
+9:known fix for it exists, include that as well.
+'
+
+$GREP_CMD --max-count=4 '( of|that|as|well|NetBSD) ' text1.txt text2.txt |
+    cmp 'jgrep -m #19' \
+'text1.txt:NetBSD 6.1_STABLE (GENERIC) #2: Fri Oct 24 07:00:58 FET 2014
+text1.txt:This system is running a development snapshot of a stable branch of the NetBSD
+text1.txt:You are encouraged to test this version as thoroughly as possible.  Should you
+text1.txt:Thank you for helping us test and improve this NetBSD branch.
+text2.txt:version of the code.  With bug reports, please try to ensure that
+text2.txt:known fix for it exists, include that as well.
+'
+
+$GREP_CMD -m3 '( of|that|as|well|NetBSD) ' text1.txt text2.txt |
+    cmp 'jgrep -m #19.1' \
+'text1.txt:NetBSD 6.1_STABLE (GENERIC) #2: Fri Oct 24 07:00:58 FET 2014
+text1.txt:This system is running a development snapshot of a stable branch of the NetBSD
+text1.txt:You are encouraged to test this version as thoroughly as possible.  Should you
+text2.txt:version of the code.  With bug reports, please try to ensure that
+text2.txt:known fix for it exists, include that as well.
+'
+
+{ $GREP_CMD -m1 '( of|that|as|well|NetBSD) ' text1.txt text2.txt; echo ex=$?; } |
+    cmp 'jgrep -m #19.2' \
+'text1.txt:NetBSD 6.1_STABLE (GENERIC) #2: Fri Oct 24 07:00:58 FET 2014
+text2.txt:version of the code.  With bug reports, please try to ensure that
+ex=0
+'
+
+$GREP_CMD --line-regexp -n 'This.*|.* a' text1.txt text2.txt |
+    cmp 'jgrep -x #20.1' \
+'text1.txt:5:This system is running a development snapshot of a stable branch of the NetBSD
+text2.txt:8:enough information to reproduce the problem is enclosed, and if a
+'
+
+$GREP_CMD -x --line-number 'This' text1.txt text2.txt |
+    cmp 'jgrep -x #20.2' \
+''
+
+{ $GREP_CMD 'zzzzzzzzzz' text1.txt text2.txt; echo ex=$?; } |
+    cmp 'jgrep zzzzzzzzzz #21' \
+'ex=1
+'
+
+{ $GREP_CMD ')' text1.txt text2.txt; echo ex=$?; } 2>/dev/null |
+    cmp 'jgrep ")" #22' \
+'ex=2
+'
+
+{ $GREP_CMD 'zzz' notfoundfile.txt; echo ex=$?; } 2>/dev/null |
+    cmp 'jgrep "notfoundfile.txt" #23' \
+'ex=2
+'
+
+$GREP_CMD -V |
+    cmp 'jgrep - #24.1' \
+'jgrep-0.1
+'
+
+$GREP_CMD --version |
+    cmp 'jgrep - #24.2' \
+'jgrep-0.1
+'
+
+$GREP_CMD --line-buffered OpenBSD text2.txt |
+    cmp 'jgrep #25' \
+'OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
+Welcome to OpenBSD: The proactively secure Unix-like operating system.
+'
+

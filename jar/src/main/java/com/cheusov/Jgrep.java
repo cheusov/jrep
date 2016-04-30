@@ -45,6 +45,7 @@ public class Jgrep {
     private static boolean opt_c = false;
     private static boolean opt_n = false;
     private static boolean opt_x = false;
+    private static boolean opt_q = false;
     private static boolean opt_s = false;
     private static boolean opt_line_buffered = false;
     private static int opt_m = 2000000000;
@@ -81,9 +82,11 @@ public class Jgrep {
     }
 
     private static void println(String line){
-        System.out.println(line);
-        if (opt_line_buffered)
-            System.out.flush();
+        if (! opt_q) {
+            System.out.println(line);
+            if (opt_line_buffered)
+                System.out.flush();
+        }
     }
 
     private static void processFile(InputStream in, String filename) throws IOException {
@@ -227,6 +230,9 @@ public class Jgrep {
         options.addOption("V", "version", false, "Display version information and exit.");
         options.addOption(null, "line-buffered", false, "Flush output on every line.");
         options.addOption("s", "no-messages", false, "Suppress error messages");
+        options.addOption("q", "quiet", false, "Quiet. Nothing shall be written to the standard output," +
+                " regardless of matching lines. Exit with zero status if an input line is selected.");
+        options.addOption(null, "silent", false, "Same as --quiet.");
 
         CommandLineParser parser = new PosixParser();
         CommandLine cmd = parser.parse (options, args);
@@ -246,6 +252,7 @@ public class Jgrep {
         opt_n = cmd.hasOption("n");
         opt_x = cmd.hasOption("x");
         opt_s = cmd.hasOption("s");
+        opt_q = cmd.hasOption("q") || cmd.hasOption("silent");
         opt_line_buffered = cmd.hasOption("line-buffered");
 
         String[] opt_e = cmd.getOptionValues("e");

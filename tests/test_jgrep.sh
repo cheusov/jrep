@@ -311,3 +311,19 @@ ex=2
 text2.txt:Welcome to OpenBSD: The proactively secure Unix-like operating system.
 ex=2
 '
+
+{ $GREP_CMD --regexp OpenBSD -q text2.txt; echo ex=$?; } |
+    cmp 'jgrep -regexp -q #27.1' \
+'ex=0
+'
+
+{ $GREP_CMD --regexp OpenBSD --quiet text2.txt; echo ex=$?; } |
+    cmp 'jgrep -regexp --quiet #27.2' \
+'ex=0
+'
+
+{ $GREP_CMD --regexp OpenBSD --silent text2.txt; echo ex=$?; } |
+    cmp 'jgrep -regexp --silent #27.3' \
+'ex=0
+'
+

@@ -40,6 +40,7 @@ public class Jgrep {
     private static boolean wholeContent = false;
     private static boolean opt_L = false;
     private static boolean opt_h = false;
+    private static boolean opt_H = false;
     private static boolean opt_F = false;
     private static boolean opt_c = false;
     private static boolean opt_n = false;
@@ -209,6 +210,7 @@ public class Jgrep {
                 "are written to standard output. Pathnames are listed once per file searched. " +
                 "If the standard input is searched, the string “(standard input)” is written.");
         options.addOption("h", "no-filename", false, "Never print filename headers (i.e. filenames) with output lines.");
+        options.addOption("H", "with-filename", false, "Print the file name for each match.");
         options.addOption("E", "extended-regexp", false, "Ignored.");
         options.addOption("G", "basic-regexp", false, "Ignored.");
         options.addOption("P", "perl-regexp", false, "Ignored.");
@@ -238,6 +240,7 @@ public class Jgrep {
         wholeContent = cmd.hasOption("8");
         opt_L = cmd.hasOption("L");
         opt_h = cmd.hasOption("h");
+        opt_H = cmd.hasOption("H");
         opt_F = cmd.hasOption("F");
         opt_c = cmd.hasOption("c");
         opt_n = cmd.hasOption("n");
@@ -299,7 +302,7 @@ public class Jgrep {
         for (int i = 0; i < regexps.size(); ++i)
             patterns.add(Pattern.compile(regexps.get(i), patternFlags));
 
-        prefixWithFilename = args.length > 1 && ! opt_h;
+        prefixWithFilename = (opt_H || (args.length > 1 && ! opt_h));
     }
 
     private static void grep(String[] args) throws Exception {
@@ -315,7 +318,7 @@ public class Jgrep {
                 catch (IOException e){
                     if (! opt_s)
                         System.err.println(e.toString());
-                    
+
                     exitStatus = 2;
                 }
             }

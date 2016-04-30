@@ -73,10 +73,10 @@ enough information to reproduce the problem is enclosed, and if a
 known fix for it exists, include that as well.
 '
 
-$GREP_CMD --regexp OpenBSD text2.txt |
-    cmp 'jgrep -e #6' \
-'OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
-Welcome to OpenBSD: The proactively secure Unix-like operating system.
+$GREP_CMD --regexp OpenBSD -H text2.txt |
+    cmp 'jgrep -regexp -H #6' \
+'text2.txt:OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
+text2.txt:Welcome to OpenBSD: The proactively secure Unix-like operating system.
 '
 
 $GREP_CMD --files-with-matches -e version text1.txt text2.txt |
@@ -283,10 +283,10 @@ $GREP_CMD --version |
 'jgrep-0.1
 '
 
-$GREP_CMD --line-buffered OpenBSD text2.txt |
-    cmp 'jgrep #25' \
-'OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
-Welcome to OpenBSD: The proactively secure Unix-like operating system.
+$GREP_CMD --line-buffered --with-filename OpenBSD text2.txt |
+    cmp 'jgrep --line-buffered --with-filename #25' \
+'text2.txt:OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
+text2.txt:Welcome to OpenBSD: The proactively secure Unix-like operating system.
 '
 
 { $GREP_CMD 'OpenBSD' notfoundfile.txt text2.txt; echo ex=$?; } 2>&1 |
@@ -305,3 +305,9 @@ text2.txt:Welcome to OpenBSD: The proactively secure Unix-like operating system.
 ex=2
 '
 
+{ $GREP_CMD --no-messages 'OpenBSD' notfoundfile.txt text2.txt; echo ex=$?; } 2>&1 |
+    cmp 'jgrep notfoundfile.txt text2.txt #26.3' \
+'text2.txt:OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
+text2.txt:Welcome to OpenBSD: The proactively secure Unix-like operating system.
+ex=2
+'

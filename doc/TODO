@@ -1,6 +1,5 @@
 plan 0:
 * tests for multiple -e
-* -H, --with-filename       print the file name for each match
 * --label=LABEL         use LABEL as the standard input file name prefix
 * -q, --quiet, --silent     suppress all normal output
 

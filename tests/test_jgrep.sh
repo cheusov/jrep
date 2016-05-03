@@ -1,6 +1,9 @@
 unset JGREP_COLOR
 unset GREP_COLOR
 
+LC_ALL=C
+export LC_ALL
+
 GREP_CMD='jgrep'
 
 $GREP_CMD OpenBSD text2.txt |
@@ -391,4 +394,31 @@ $GREP_CMD -r -e man -e 'in mind' . | $GREP_CMD -v test_ |
 subdir/text3.txt:Introduction to manual pages:  man man
 subdir/text3.txt:FreeBSD directory layout:      man hier
 text1.txt:release quality.  Please bear this in mind and use the system with care.
+'
+
+$GREP_CMD -ri -e NetBSD -e 'NetBSD.*$' -e 'OpenBSD.*$' -e OpenBSD \
+	  -e FreeBSD -e '.*FreeBSD' -e 'Advisories.*security' -e 'welcome to \S+' \
+	  --marker-start '<b>' --marker-end '</b>' . |
+    $GREP_CMD -v test_ | sort |
+    cmp 'jgrep -r --marker-{start,end} #33' \
+'patterns.txt:<b>NetBSD</b>
+patterns.txt:<b>OpenBSD</b>
+subdir/text3.txt:<b>Documents installed with the system are in the /usr/local/share/doc/freebsd</b>/
+subdir/text3.txt:<b>FreeBSD FAQ:           https://www.FreeBSD</b>.org/faq/
+subdir/text3.txt:<b>FreeBSD Forums:        https://forums.FreeBSD</b>.org/
+subdir/text3.txt:<b>FreeBSD Handbook:      https://www.FreeBSD</b>.org/handbook/
+subdir/text3.txt:<b>FreeBSD</b> directory layout:      man hier
+subdir/text3.txt:<b>Questions List: https://lists.FreeBSD.org/mailman/listinfo/freebsd</b>-questions/
+subdir/text3.txt:<b>Release Notes, Errata: https://www.FreeBSD</b>.org/releases/
+subdir/text3.txt:<b>Security Advisories:   https://www.FreeBSD</b><b>.org/security</b>/
+subdir/text3.txt:<b>Show the version of FreeBSD installed:  freebsd</b>-version ; uname -a
+subdir/text3.txt:<b>Welcome to FreeBSD!</b>
+subdir/text3.txt:<b>directory, or can be installed later with:  pkg install en-freebsd</b>-doc
+text1.txt:<b>NetBSD 6.1_STABLE (GENERIC) #2: Fri Oct 24 07:00:58 FET 2014</b>
+text1.txt:<b>Welcome to NetBSD!</b>
+text1.txt:Thank you for helping us test and improve this <b>NetBSD branch.</b>
+text1.txt:This system is running a development snapshot of a stable branch of the <b>NetBSD</b>
+text1.txt:use the web interface at: http://www.<b>NetBSD.org/support/send-pr.html</b>
+text2.txt:<b>OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012</b>
+text2.txt:<b>Welcome to OpenBSD:</b><b> The proactively secure Unix-like operating system.</b>
 '

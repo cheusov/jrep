@@ -19,7 +19,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.FileFileFilter;
-import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.*;
@@ -57,11 +56,18 @@ public class Jgrep {
     private static String label = "(standard input)";
 
     private static String colorEscSequence;
+    private static String colorEscStart;
+    private static String colorEscEnd;
 
     static {
         colorEscSequence = System.getenv("JGREP_COLOR");
         if (colorEscSequence == null)
             colorEscSequence = System.getenv("GREP_COLOR");
+
+        if (colorEscSequence != null) {
+            colorEscStart = ("\033[" + colorEscSequence + "m");
+            colorEscEnd   = "\033[1;0m";
+        }
     }
 
     private static class SingleStringIterator implements Iterator<String> {
@@ -124,8 +130,8 @@ public class Jgrep {
             if (!inverseMatch && !outputFilename && !outputMatched && !opt_L && !opt_c)
                 startend = new ArrayList<Pair<Integer, Integer>>();
 
-            int pos = 0;
             for (Pattern pattern : patterns) {
+                int pos = 0;
                 Matcher m = pattern.matcher(line);
 
                 boolean nextLine = false;
@@ -151,7 +157,7 @@ public class Jgrep {
                         break;
                     } else if (outputMatched) {
                         println(prefix + line.substring(m.start(), m.end()));
-                    } else if (colorEscSequence == null) {
+                    } else if (colorEscStart == null) {
                         nextLine = true;
                         break;
                     } else {
@@ -173,14 +179,31 @@ public class Jgrep {
             if (matched){
                 if (! inverseMatch && ! outputFilename && ! outputMatched && ! opt_L && ! opt_c) {
                     StringBuilder sb = new StringBuilder();
+                    Collections.sort(startend,
+                            new Comparator<Pair<Integer, Integer>>() {
+                                public int compare(Pair<Integer, Integer> a, Pair<Integer, Integer> b) {
+                                    if (a.getLeft() < b.getLeft())
+                                        return -1;
+                                    if (a.getLeft() > b.getLeft())
+                                        return 1;
+                                    return b.getRight() - a.getRight();
+                                }
+                            });
+
                     int prev = 0;
                     for (Pair<Integer, Integer> p : startend){
                         int start = p.getLeft();
                         int end   = p.getRight();
+                        if (end < prev)
+                            continue;
+                        if (start < prev)
+                            start = prev;
                         sb.append(line.substring(prev, start));
-                        sb.append("\033[" + colorEscSequence + "m");
-                        sb.append(line.substring(start, end));
-                        sb.append("\033[1;0m");
+                        if (start + 1 < end) {
+                            sb.append(colorEscStart);
+                            sb.append(line.substring(start, end));
+                            sb.append(colorEscEnd);
+                        }
                         prev = end;
                     }
                     println(prefix + sb.toString() + line.substring(prev));
@@ -242,6 +265,8 @@ public class Jgrep {
         options.addOption("w", "word-regexp", false, "Force PATTERN to match only whole words.");
         options.addOption("f", "file", true, "Obtain PATTERN from FILE.");
         options.addOption("r", "recursive", false, "Recursively search subdirectories listed.");
+        options.addOption(null, "marker-start", true, "Marker for the beginning of matched substring.");
+        options.addOption(null, "marker-end", true, "Marker for the end of matched substring.");
 
         CommandLineParser parser = new PosixParser();
         CommandLine cmd = parser.parse (options, args);
@@ -287,6 +312,13 @@ public class Jgrep {
         String optLabel = cmd.getOptionValue("label");
         if (optLabel != null)
             label = optLabel;
+
+        String optmarkerstart = cmd.getOptionValue("marker-start");
+        if (optmarkerstart != null)
+            colorEscStart = optmarkerstart;
+        String optmarkerend = cmd.getOptionValue("marker-end");
+        if (optmarkerend != null)
+            colorEscEnd = optmarkerend;
 
         if (cmd.hasOption("help")){
             HelpFormatter formatter = new HelpFormatter();

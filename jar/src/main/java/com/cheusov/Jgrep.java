@@ -53,13 +53,18 @@ public class Jgrep {
     private static int opt_m = 2000000000;
     private static boolean prefixWithFilename = false;
     private static String label = "(standard input)";
-    private static OrFileFilter includeFileFilter = new OrFileFilter();
+    private static OrFileFilter orExcludeFileFilter = new OrFileFilter();
+    private static OrFileFilter orIncludeFileFilter = new OrFileFilter();
+    private static AndFileFilter fileFilter = new AndFileFilter();
 
     private static String colorEscSequence;
     private static String colorEscStart;
     private static String colorEscEnd;
 
     static {
+        fileFilter.addFileFilter(orIncludeFileFilter);
+        fileFilter.addFileFilter(new NotFileFilter(orExcludeFileFilter));
+
         colorEscSequence = System.getenv("JGREP_COLOR");
         if (colorEscSequence == null)
             colorEscSequence = System.getenv("GREP_COLOR");
@@ -268,6 +273,7 @@ public class Jgrep {
         options.addOption(null, "marker-start", true, "Marker for the beginning of matched substring.");
         options.addOption(null, "marker-end", true, "Marker for the end of matched substring.");
         options.addOption(null, "include", true, "Search only files that match ARG pattern.");
+        options.addOption(null, "exclude", true, "Skip files matching ARG.");
 
         CommandLineParser parser = new PosixParser();
         CommandLine cmd = parser.parse(options, args);
@@ -298,12 +304,25 @@ public class Jgrep {
                 regexps.add(regexp);
         }
 
-        String[] optinclude = cmd.getOptionValues("include");
-        if (optinclude != null && optinclude.length != 0) {
-            for (String globPattern : optinclude)
-                includeFileFilter.addFileFilter(new WildcardFileFilter(globPattern));
-        }else{
-            includeFileFilter.addFileFilter(TrueFileFilter.TRUE);
+        {
+            String[] optinclude = cmd.getOptionValues("include");
+            if (optinclude != null && optinclude.length != 0) {
+                for (String globPattern : optinclude)
+                    orIncludeFileFilter.addFileFilter(new WildcardFileFilter(globPattern));
+            } else {
+                orIncludeFileFilter.addFileFilter(TrueFileFilter.TRUE);
+            }
+        }
+
+        {
+            String[] optexclude = cmd.getOptionValues("exclude");
+            if (optexclude != null && optexclude.length != 0) {
+                for (String globPattern : optexclude) {
+                    orExcludeFileFilter.addFileFilter(new WildcardFileFilter(globPattern));
+                }
+            } else {
+                orExcludeFileFilter.addFileFilter(FalseFileFilter.FALSE);
+            }
         }
 
         String optf = cmd.getOptionValue("f");
@@ -387,7 +406,7 @@ public class Jgrep {
                 try {
                     Iterator fileIterator;
                     if (opt_r) {
-                        fileIterator = FileUtils.iterateFiles(new File(fileOrDir), includeFileFilter, DirectoryFileFilter.DIRECTORY);
+                        fileIterator = FileUtils.iterateFiles(new File(fileOrDir), fileFilter, DirectoryFileFilter.DIRECTORY);
                     }else{
                         fileIterator = Arrays.asList(fileOrDir).iterator();
                     }

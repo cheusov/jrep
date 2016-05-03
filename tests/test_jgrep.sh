@@ -424,3 +424,16 @@ text1.txt:use the web interface at: http://www.<b>NetBSD.org/support/send-pr.htm
 text2.txt:<b>OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012</b>
 text2.txt:<b>Welcome to OpenBSD:</b><b> The proactively secure Unix-like operating system.</b>
 '
+
+$GREP_CMD -ril -e BSD --exclude '*.txt' . |
+    sort |
+    cmp 'jgrep -r --exclude #34.1' \
+'test_jgrep.sh
+'
+
+$GREP_CMD -ril -e BSD --exclude 'text1*' --exclude 'text2*' --exclude 'text3*' . |
+    sort |
+    cmp 'jgrep -r --exclude #34.2' \
+'patterns.txt
+test_jgrep.sh
+'

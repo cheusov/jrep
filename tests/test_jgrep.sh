@@ -388,7 +388,8 @@ text1.txt:use the web interface at: http://www.NetBSD.org/support/send-pr.html
 text1.txt:Thank you for helping us test and improve this NetBSD branch.
 '
 
-$GREP_CMD -r -e man -e 'in mind' . | $GREP_CMD -v test_ | sort |
+$GREP_CMD --include='*1*' --include='*[2]*' --include='text3.tx?' -r -e man -e 'in mind' . |
+    sort |
     cmp 'jgrep -r #32' \
 'subdir/text3.txt:FreeBSD directory layout:      man hier
 subdir/text3.txt:Introduction to manual pages:  man man
@@ -398,9 +399,10 @@ text1.txt:release quality.  Please bear this in mind and use the system with car
 
 $GREP_CMD -ri -e NetBSD -e 'NetBSD.*$' -e 'OpenBSD.*$' -e OpenBSD \
 	  -e FreeBSD -e '.*FreeBSD' -e 'Advisories.*security' -e 'welcome to \S+' \
-	  --marker-start '<b>' --marker-end '</b>' . |
-    $GREP_CMD -v test_ | sort |
-    cmp 'jgrep -r --marker-{start,end} #33' \
+	  --marker-start '<b>' --marker-end '</b>' \
+	  --include '*.txt' . |
+    sort |
+    cmp 'jgrep -r --include --marker-{start,end} #33' \
 'patterns.txt:<b>NetBSD</b>
 patterns.txt:<b>OpenBSD</b>
 subdir/text3.txt:<b>Documents installed with the system are in the /usr/local/share/doc/freebsd</b>/

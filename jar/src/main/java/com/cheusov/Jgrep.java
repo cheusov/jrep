@@ -17,8 +17,7 @@ package com.cheusov;
 import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.filefilter.DirectoryFileFilter;
-import org.apache.commons.io.filefilter.FileFileFilter;
+import org.apache.commons.io.filefilter.*;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.*;
@@ -54,6 +53,7 @@ public class Jgrep {
     private static int opt_m = 2000000000;
     private static boolean prefixWithFilename = false;
     private static String label = "(standard input)";
+    private static OrFileFilter includeFileFilter = new OrFileFilter();
 
     private static String colorEscSequence;
     private static String colorEscStart;
@@ -267,9 +267,10 @@ public class Jgrep {
         options.addOption("r", "recursive", false, "Recursively search subdirectories listed.");
         options.addOption(null, "marker-start", true, "Marker for the beginning of matched substring.");
         options.addOption(null, "marker-end", true, "Marker for the end of matched substring.");
+        options.addOption(null, "include", true, "Search only files that match ARG pattern.");
 
         CommandLineParser parser = new PosixParser();
-        CommandLine cmd = parser.parse (options, args);
+        CommandLine cmd = parser.parse(options, args);
 
         if(cmd.hasOption("i"))
             patternFlags = Pattern.CASE_INSENSITIVE;
@@ -295,6 +296,14 @@ public class Jgrep {
         if (opt_e != null && opt_e.length != 0) {
             for (String regexp : opt_e)
                 regexps.add(regexp);
+        }
+
+        String[] optinclude = cmd.getOptionValues("include");
+        if (optinclude != null && optinclude.length != 0) {
+            for (String globPattern : optinclude)
+                includeFileFilter.addFileFilter(new WildcardFileFilter(globPattern));
+        }else{
+            includeFileFilter.addFileFilter(TrueFileFilter.TRUE);
         }
 
         String optf = cmd.getOptionValue("f");
@@ -378,7 +387,7 @@ public class Jgrep {
                 try {
                     Iterator fileIterator;
                     if (opt_r) {
-                        fileIterator = FileUtils.iterateFiles(new File(fileOrDir), FileFileFilter.FILE, DirectoryFileFilter.DIRECTORY);
+                        fileIterator = FileUtils.iterateFiles(new File(fileOrDir), includeFileFilter, DirectoryFileFilter.DIRECTORY);
                     }else{
                         fileIterator = Arrays.asList(fileOrDir).iterator();
                     }

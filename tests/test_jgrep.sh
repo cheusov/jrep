@@ -388,11 +388,11 @@ text1.txt:use the web interface at: http://www.NetBSD.org/support/send-pr.html
 text1.txt:Thank you for helping us test and improve this NetBSD branch.
 '
 
-$GREP_CMD -r -e man -e 'in mind' . | $GREP_CMD -v test_ |
+$GREP_CMD -r -e man -e 'in mind' . | $GREP_CMD -v test_ | sort |
     cmp 'jgrep -r #32' \
-'subdir/text3.txt:Questions List: https://lists.FreeBSD.org/mailman/listinfo/freebsd-questions/
+'subdir/text3.txt:FreeBSD directory layout:      man hier
 subdir/text3.txt:Introduction to manual pages:  man man
-subdir/text3.txt:FreeBSD directory layout:      man hier
+subdir/text3.txt:Questions List: https://lists.FreeBSD.org/mailman/listinfo/freebsd-questions/
 text1.txt:release quality.  Please bear this in mind and use the system with care.
 '
 

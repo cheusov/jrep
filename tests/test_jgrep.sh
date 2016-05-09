@@ -12,6 +12,24 @@ $GREP_CMD OpenBSD text2.txt |
 Welcome to OpenBSD: The proactively secure Unix-like operating system.
 '
 
+$GREP_CMD OpenBSD - < text2.txt |
+    cmp 'jgrep #1.1' \
+'OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
+Welcome to OpenBSD: The proactively secure Unix-like operating system.
+'
+
+$GREP_CMD -H OpenBSD - < text2.txt |
+    cmp 'jgrep #1.2' \
+'(standard input):OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
+(standard input):Welcome to OpenBSD: The proactively secure Unix-like operating system.
+'
+
+$GREP_CMD --label=stdin -He OpenBSD - < text2.txt |
+    cmp 'jgrep #1.3' \
+'stdin:OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
+stdin:Welcome to OpenBSD: The proactively secure Unix-like operating system.
+'
+
 $GREP_CMD version text1.txt text2.txt |
     cmp 'jgrep #2' \
 'text1.txt:You are encouraged to test this version as thoroughly as possible.  Should you

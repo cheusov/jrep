@@ -398,38 +398,42 @@ public class Jgrep {
         prefixWithFilename = (opt_H || opt_r || (args.length > 1 && ! opt_h));
     }
 
+    private static final String[] stdinFilenames = {"-"};
+
     private static void grep(String[] args) throws Exception {
-        if (args.length == 0) {
-            processFile(System.in, label);
-        }else{
-            for (String fileOrDir : args){
-                try {
-                    Iterator fileIterator;
-                    if (opt_r) {
-                        fileIterator = FileUtils.iterateFiles(new File(fileOrDir), fileFilter, DirectoryFileFilter.DIRECTORY);
-                    }else{
-                        fileIterator = Arrays.asList(fileOrDir).iterator();
-                    }
+        if (args.length == 0)
+            args = stdinFilenames;
 
-                    while (fileIterator.hasNext()) {
-                        Object fileObj = fileIterator.next();
-                        String filename;
-                        if (fileObj instanceof String)
-                            filename = (String) fileObj;
-                        else
-                            filename = ((File) fileObj).getPath().replaceAll("^^[.]/", "");
+        for (String fileOrDir : args) {
+            try {
+                Iterator fileIterator;
+                if (opt_r) {
+                    fileIterator = FileUtils.iterateFiles(new File(fileOrDir), fileFilter, DirectoryFileFilter.DIRECTORY);
+                } else {
+                    fileIterator = Arrays.asList(fileOrDir).iterator();
+                }
 
+                while (fileIterator.hasNext()) {
+                    Object fileObj = fileIterator.next();
+                    String filename;
+                    if (fileObj instanceof String)
+                        filename = (String) fileObj;
+                    else
+                        filename = ((File) fileObj).getPath().replaceAll("^^[.]/", "");
+
+                    if (filename.equals("-")) {
+                        processFile(System.in, label);
+                    }else {
                         FileInputStream in = new FileInputStream(filename);
                         processFile(in, filename);
                         in.close();
                     }
                 }
-                catch (IOException e){
-                    if (! opt_s)
-                        System.err.println(e.toString());
+            } catch (IOException e) {
+                if (!opt_s)
+                    System.err.println(e.toString());
 
-                    exitStatus = 2;
-                }
+                exitStatus = 2;
             }
         }
     }

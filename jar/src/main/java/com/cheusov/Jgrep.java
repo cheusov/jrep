@@ -71,22 +71,22 @@ public class Jgrep {
 
         if (colorEscSequence != null) {
             colorEscStart = ("\033[" + colorEscSequence + "m");
-            colorEscEnd   = "\033[1;0m";
+            colorEscEnd = "\033[1;0m";
         }
     }
 
     private static class SingleStringIterator implements Iterator<String> {
         String str;
 
-        public SingleStringIterator (String str){
+        public SingleStringIterator(String str) {
             this.str = str;
         }
 
-        public boolean hasNext(){
+        public boolean hasNext() {
             return str != null;
         }
 
-        public String next(){
+        public String next() {
             String ret = str;
             str = null;
             return ret;
@@ -97,8 +97,8 @@ public class Jgrep {
         }
     }
 
-    private static void println(String line){
-        if (! opt_q) {
+    private static void println(String line) {
+        if (!opt_q) {
             System.out.println(line);
             if (opt_line_buffered)
                 System.out.flush();
@@ -111,7 +111,7 @@ public class Jgrep {
         if (wholeContent) {
             String fileContent = FileUtils.readFileToString(new File(filename));
             it = new SingleStringIterator(fileContent);
-        }else {
+        } else {
             it = IOUtils.lineIterator(in, "UTF-8");
         }
 
@@ -122,13 +122,13 @@ public class Jgrep {
         int matchCount = 0;
         List<Pair<Integer, Integer>> startend = null;
         int lineNumber = 0;
-        while (it.hasNext()){
+        while (it.hasNext()) {
             ++lineNumber;
             String prefix = prefix1;
             if (opt_n)
                 prefix = prefix + lineNumber + ":";
 
-            String line = (String)it.next();
+            String line = (String) it.next();
             boolean matched = false;
             boolean nextFile = false;
 
@@ -175,14 +175,14 @@ public class Jgrep {
                     break;
             }
 
-            if (matched){
+            if (matched) {
                 ++matchCount;
                 if (matchCount == opt_m)
                     nextFile = true;
             }
 
-            if (matched){
-                if (! inverseMatch && ! outputFilename && ! outputMatched && ! opt_L && ! opt_c) {
+            if (matched) {
+                if (!inverseMatch && !outputFilename && !outputMatched && !opt_L && !opt_c) {
                     StringBuilder sb = new StringBuilder();
                     Collections.sort(startend,
                             new Comparator<Pair<Integer, Integer>>() {
@@ -196,9 +196,9 @@ public class Jgrep {
                             });
 
                     int prev = 0;
-                    for (Pair<Integer, Integer> p : startend){
+                    for (Pair<Integer, Integer> p : startend) {
                         int start = p.getLeft();
-                        int end   = p.getRight();
+                        int end = p.getRight();
                         if (end < prev)
                             continue;
                         if (start < prev)
@@ -256,7 +256,7 @@ public class Jgrep {
         options.addOption("n", "line-number", false, "Each output line is preceded by its relative line number " +
                 "in the file, starting at line 1. The line number counter is reset for each file processed. " +
                 "This option is ignored if -c, -L, -l, or -q is specified.");
-        options.addOption("m", "max-count", true,  "Stop after ARG matches.");
+        options.addOption("m", "max-count", true, "Stop after ARG matches.");
         options.addOption("x", "line-regexp", false, "Only input lines selected against an entire fixed string " +
                 "or regular expression are considered to be matching lines.");
         options.addOption(null, "help", false, "Display this help text and exit.");
@@ -278,7 +278,7 @@ public class Jgrep {
         CommandLineParser parser = new PosixParser();
         CommandLine cmd = parser.parse(options, args);
 
-        if(cmd.hasOption("i"))
+        if (cmd.hasOption("i"))
             patternFlags = Pattern.CASE_INSENSITIVE;
 
         inverseMatch = cmd.hasOption("v");
@@ -348,13 +348,13 @@ public class Jgrep {
         if (optmarkerend != null)
             colorEscEnd = optmarkerend;
 
-        if (cmd.hasOption("help")){
+        if (cmd.hasOption("help")) {
             HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp( "jgrep", options );
+            formatter.printHelp("jgrep", options);
             System.exit(0);
         }
 
-        if (cmd.hasOption("V")){
+        if (cmd.hasOption("V")) {
             System.out.println("jgrep-" + System.getenv("JGREP_VERSION"));
             System.exit(0);
         }
@@ -362,16 +362,15 @@ public class Jgrep {
         return cmd.getArgs();
     }
 
-    private static void sanityCheck()
-    {
-        if (regexps.isEmpty()){
+    private static void sanityCheck() {
+        if (regexps.isEmpty()) {
             System.err.println("pattern should be specified");
             System.exit(2);
         }
     }
 
     private static String[] handleFreeArgs(String[] args) {
-        if (! regexps.isEmpty())
+        if (!regexps.isEmpty())
             return args;
 
         if (args.length > 0)
@@ -380,22 +379,22 @@ public class Jgrep {
         return Arrays.copyOfRange(args, 1, args.length);
     }
 
-    private static void init(String[] args){
-        if (opt_F){
-            for (int i=0; i < regexps.size(); ++i)
+    private static void init(String[] args) {
+        if (opt_F) {
+            for (int i = 0; i < regexps.size(); ++i)
                 regexps.set(i, "\\Q" + regexps.get(i) + "\\E");
-        }else if (opt_x){
-            for (int i=0; i < regexps.size(); ++i)
+        } else if (opt_x) {
+            for (int i = 0; i < regexps.size(); ++i)
                 regexps.set(i, "(?m:^(?:" + regexps.get(i) + ")$)");
-        }else if (opt_w){
-            for (int i=0; i < regexps.size(); ++i)
+        } else if (opt_w) {
+            for (int i = 0; i < regexps.size(); ++i)
                 regexps.set(i, "\\b(?:" + regexps.get(i) + ")\\b");
         }
 
         for (int i = 0; i < regexps.size(); ++i)
             patterns.add(Pattern.compile(regexps.get(i), patternFlags));
 
-        prefixWithFilename = (opt_H || opt_r || (args.length > 1 && ! opt_h));
+        prefixWithFilename = (opt_H || opt_r || (args.length > 1 && !opt_h));
     }
 
     private static final String[] stdinFilenames = {"-"};
@@ -445,8 +444,7 @@ public class Jgrep {
             sanityCheck();
             init(args);
             grep(args);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
 //            e.printStackTrace(System.err);
             System.err.println(e.toString());
             exitStatus = 2;

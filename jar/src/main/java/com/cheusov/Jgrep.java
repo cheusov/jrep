@@ -185,7 +185,7 @@ public class Jgrep {
 //        LineIterator it = FileUtils.lineIterator(new File(filename), "UTF-8");
         Iterator<String> it;
         if (wholeContent) {
-            String fileContent = FileUtils.readFileToString(new File(filename));
+            String fileContent = IOUtils.toString(in, "UTF-8");
             it = new SingleStringIterator(fileContent);
         } else {
             it = IOUtils.lineIterator(in, "UTF-8");

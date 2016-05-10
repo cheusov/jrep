@@ -168,11 +168,21 @@ known fix for it exists, include that as well.
 '
 
 $GREP_CMD -8io '(?m:^(openbsd|netbsd).*\n\n.*$)' text1.txt text2.txt |
-    cmp 'jgrep -8io #12' \
+    cmp 'jgrep -8io #12.1' \
 'text1.txt:NetBSD 6.1_STABLE (GENERIC) #2: Fri Oct 24 07:00:58 FET 2014
 
 Welcome to NetBSD!
 text2.txt:OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
+
+Welcome to OpenBSD: The proactively secure Unix-like operating system.
+'
+
+cat text1.txt text2.txt | $GREP_CMD -8io '(?m:^(openbsd|netbsd).*\n\n.*$)' |
+    cmp 'jgrep -8io #12.2' \
+'NetBSD 6.1_STABLE (GENERIC) #2: Fri Oct 24 07:00:58 FET 2014
+
+Welcome to NetBSD!
+OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
 
 Welcome to OpenBSD: The proactively secure Unix-like operating system.
 '

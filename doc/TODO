@@ -1,5 +1,6 @@
 plan 0:
-*   -B, --before-context=NUM  print NUM lines of leading context
+*   -8 fix -8 and stdin
+*   -O <fmt>                  formatted output of matched string
 *   -C, --context=NUM         print NUM lines of output context
 *       --color[=WHEN],
 *       --colour[=WHEN]       use markers to highlight the matching strings;

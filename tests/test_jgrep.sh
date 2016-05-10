@@ -457,7 +457,7 @@ test_jgrep.sh
 '
 
 $GREP_CMD -A4 'utility|interface' text?.txt |
-    cmp 'jgrep -A #35' \
+    cmp 'jgrep -A/-B/-C #35.1' \
 'text1.txt:send-pr(1) utility (requires a working MTA).  If yours is not properly set up,
 text1.txt:use the web interface at: http://www.NetBSD.org/support/send-pr.html
 text1.txt-
@@ -469,3 +469,68 @@ text2.txt-enough information to reproduce the problem is enclosed, and if a
 text2.txt-known fix for it exists, include that as well.
 '
 
+$GREP_CMD -nB3 'utility|interface' text?.txt |
+    cmp 'jgrep -A/-B/-C #35.2' \
+'text1.txt-9-
+text1.txt-10-You are encouraged to test this version as thoroughly as possible.  Should you
+text1.txt-11-encounter any problem, please report it back to the development team using the
+text1.txt:12:send-pr(1) utility (requires a working MTA).  If yours is not properly set up,
+text1.txt:13:use the web interface at: http://www.NetBSD.org/support/send-pr.html
+text2.txt-2-
+text2.txt-3-Welcome to OpenBSD: The proactively secure Unix-like operating system.
+text2.txt-4-
+text2.txt:5:Please use the sendbug(1) utility to report bugs in the system.
+'
+
+$GREP_CMD -n -B3 -A1 'utility|interface' text?.txt |
+    cmp 'jgrep -A/-B/-C #35.3' \
+'text1.txt-9-
+text1.txt-10-You are encouraged to test this version as thoroughly as possible.  Should you
+text1.txt-11-encounter any problem, please report it back to the development team using the
+text1.txt:12:send-pr(1) utility (requires a working MTA).  If yours is not properly set up,
+text1.txt:13:use the web interface at: http://www.NetBSD.org/support/send-pr.html
+text1.txt-14-
+text2.txt-2-
+text2.txt-3-Welcome to OpenBSD: The proactively secure Unix-like operating system.
+text2.txt-4-
+text2.txt:5:Please use the sendbug(1) utility to report bugs in the system.
+text2.txt-6-Before reporting a bug, please try to reproduce it with the latest
+'
+
+$GREP_CMD -n -B3 -A3 'utility|interface|Unix' text?.txt |
+    cmp 'jgrep -A/-B/-C #35.4' \
+'text1.txt-9-
+text1.txt-10-You are encouraged to test this version as thoroughly as possible.  Should you
+text1.txt-11-encounter any problem, please report it back to the development team using the
+text1.txt:12:send-pr(1) utility (requires a working MTA).  If yours is not properly set up,
+text1.txt:13:use the web interface at: http://www.NetBSD.org/support/send-pr.html
+text1.txt-14-
+text1.txt-15-Thank you for helping us test and improve this NetBSD branch.
+text2.txt-1-OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
+text2.txt-2-
+text2.txt:3:Welcome to OpenBSD: The proactively secure Unix-like operating system.
+text2.txt-4-
+text2.txt:5:Please use the sendbug(1) utility to report bugs in the system.
+text2.txt-6-Before reporting a bug, please try to reproduce it with the latest
+text2.txt-7-version of the code.  With bug reports, please try to ensure that
+text2.txt-8-enough information to reproduce the problem is enclosed, and if a
+'
+
+$GREP_CMD -B3 -A3 'utility|interface|Unix' text?.txt |
+    cmp 'jgrep -A/-B/-C #35.5' \
+'text1.txt-
+text1.txt-You are encouraged to test this version as thoroughly as possible.  Should you
+text1.txt-encounter any problem, please report it back to the development team using the
+text1.txt:send-pr(1) utility (requires a working MTA).  If yours is not properly set up,
+text1.txt:use the web interface at: http://www.NetBSD.org/support/send-pr.html
+text1.txt-
+text1.txt-Thank you for helping us test and improve this NetBSD branch.
+text2.txt-OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
+text2.txt-
+text2.txt:Welcome to OpenBSD: The proactively secure Unix-like operating system.
+text2.txt-
+text2.txt:Please use the sendbug(1) utility to report bugs in the system.
+text2.txt-Before reporting a bug, please try to reproduce it with the latest
+text2.txt-version of the code.  With bug reports, please try to ensure that
+text2.txt-enough information to reproduce the problem is enclosed, and if a
+'

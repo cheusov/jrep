@@ -107,6 +107,17 @@ public class Jgrep {
         }
     }
 
+    private static void printlnWithPrefix(String filename, String line, int lineNumber, char separator) {
+        String prefix1 = "";
+        if (prefixWithFilename)
+            prefix1 = filename + separator;
+        String prefix = prefix1;
+        if (opt_n)
+            prefix = prefix + lineNumber + separator;
+
+        println(prefix + line);
+    }
+
     private static String getLineToPrint(String line, List<Pair<Integer, Integer>> startend) {
         StringBuilder sb = new StringBuilder();
         Collections.sort(startend,
@@ -150,21 +161,20 @@ public class Jgrep {
             it = IOUtils.lineIterator(in, "UTF-8");
         }
 
-        String prefix1 = "";
-        if (prefixWithFilename)
-            prefix1 = filename + ":";
-
         int matchCount = 0;
         List<Pair<Integer, Integer>> startend = null;
         int lineNumber = 0;
         int lastMatchedLineNumber = 0;
+        Map<Integer, String> lines = new HashMap<Integer, String>();
         while (it.hasNext()) {
             ++lineNumber;
-            String prefix = prefix1;
-            if (opt_n)
-                prefix = prefix + lineNumber + ":";
 
             String line = (String) it.next();
+            if (opt_B > 0) {
+                lines.put(lineNumber, line);
+                lines.remove(lineNumber - opt_B - 1);
+            }
+
             boolean matched = false;
             boolean nextFile = false;
 
@@ -198,7 +208,7 @@ public class Jgrep {
                         lineToPrint = line;
                         break;
                     } else if (outputMatched) {
-                        println(prefix + line.substring(m.start(), m.end()));
+                        printlnWithPrefix(filename, line.substring(m.start(), m.end()), lineNumber, ':');
                     } else if (colorEscStart == null) {
                         nextLine = true;
                         break;
@@ -222,10 +232,21 @@ public class Jgrep {
             }
 
             if (lineToPrint != null) {
-                println(prefix + lineToPrint);
+                for (int prevLineNumber = lineNumber - opt_B; prevLineNumber < lineNumber; ++prevLineNumber) {
+                    String prevLine = lines.get(prevLineNumber);
+                    if (prevLine != null) {
+                        lines.remove(prevLineNumber);
+                        printlnWithPrefix(filename, prevLine, prevLineNumber, '-');
+                    }
+                }
+
                 lastMatchedLineNumber = lineNumber;
+
+                lines.remove(lineNumber);
+                printlnWithPrefix(filename, lineToPrint, lineNumber, ':');
             } else if (lastMatchedLineNumber > 0 && lastMatchedLineNumber + opt_A >= lineNumber) {
-                println(prefix.replaceAll(":", "-") + line);
+                lines.remove(lineNumber);
+                printlnWithPrefix(filename, line, lineNumber, '-');
             }
 
             if (nextFile)
@@ -236,7 +257,7 @@ public class Jgrep {
             println(filename);
 
         if (opt_c)
-            println(prefix1 + matchCount);
+            printlnWithPrefix(filename, "" + matchCount, lineNumber, ':');
     }
 
     private static String[] handleOptions(String[] args) throws ParseException, IOException {
@@ -288,6 +309,7 @@ public class Jgrep {
         options.addOption(null, "include", true, "Search only files that match ARG pattern.");
         options.addOption(null, "exclude", true, "Skip files matching ARG.");
         options.addOption("A", "after-context", true, "Print ARG lines of trailing context.");
+        options.addOption("B", "before-context", true, "Print ARG lines of leading context.");
 
         CommandLineParser parser = new PosixParser();
         CommandLine cmd = parser.parse(options, args);
@@ -365,6 +387,10 @@ public class Jgrep {
         String optA = cmd.getOptionValue("A");
         if (optA != null)
             opt_A = Integer.valueOf(optA);
+
+        String optB = cmd.getOptionValue("B");
+        if (optB != null)
+            opt_B = Integer.valueOf(optB);
 
         if (cmd.hasOption("help")) {
             HelpFormatter formatter = new HelpFormatter();

@@ -497,7 +497,7 @@ text2.txt:5:Please use the sendbug(1) utility to report bugs in the system.
 text2.txt-6-Before reporting a bug, please try to reproduce it with the latest
 '
 
-$GREP_CMD -n -B3 -A3 'utility|interface|Unix' text?.txt |
+$GREP_CMD -n -C 3 'utility|interface|Unix' text?.txt |
     cmp 'jgrep -A/-B/-C #35.4' \
 'text1.txt-9-
 text1.txt-10-You are encouraged to test this version as thoroughly as possible.  Should you
@@ -516,7 +516,7 @@ text2.txt-7-version of the code.  With bug reports, please try to ensure that
 text2.txt-8-enough information to reproduce the problem is enclosed, and if a
 '
 
-$GREP_CMD -B3 -A3 'utility|interface|Unix' text?.txt |
+$GREP_CMD -C3 'utility|interface|Unix' text?.txt |
     cmp 'jgrep -A/-B/-C #35.5' \
 'text1.txt-
 text1.txt-You are encouraged to test this version as thoroughly as possible.  Should you

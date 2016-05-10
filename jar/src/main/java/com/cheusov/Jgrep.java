@@ -310,6 +310,7 @@ public class Jgrep {
         options.addOption(null, "exclude", true, "Skip files matching ARG.");
         options.addOption("A", "after-context", true, "Print ARG lines of trailing context.");
         options.addOption("B", "before-context", true, "Print ARG lines of leading context.");
+        options.addOption("C", "context", true, "Print ARG lines of output context.");
 
         CommandLineParser parser = new PosixParser();
         CommandLine cmd = parser.parse(options, args);
@@ -391,6 +392,10 @@ public class Jgrep {
         String optB = cmd.getOptionValue("B");
         if (optB != null)
             opt_B = Integer.valueOf(optB);
+
+        String optC = cmd.getOptionValue("C");
+        if (optC != null)
+            opt_A = opt_B = Integer.valueOf(optC);
 
         if (cmd.hasOption("help")) {
             HelpFormatter formatter = new HelpFormatter();

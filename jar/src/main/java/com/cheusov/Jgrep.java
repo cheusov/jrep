@@ -105,6 +105,39 @@ public class Jgrep {
         }
     }
 
+    private static String getLineoPrint(String line, List<Pair<Integer, Integer>> startend) {
+        StringBuilder sb = new StringBuilder();
+        Collections.sort(startend,
+                new Comparator<Pair<Integer, Integer>>() {
+                    public int compare(Pair<Integer, Integer> a, Pair<Integer, Integer> b) {
+                        if (a.getLeft() < b.getLeft())
+                            return -1;
+                        if (a.getLeft() > b.getLeft())
+                            return 1;
+                        return b.getRight() - a.getRight();
+                    }
+                });
+
+        int prev = 0;
+        for (Pair<Integer, Integer> p : startend) {
+            int start = p.getLeft();
+            int end = p.getRight();
+            if (end < prev)
+                continue;
+            if (start < prev)
+                start = prev;
+            sb.append(line.substring(prev, start));
+            if (start + 1 < end) {
+                sb.append(colorEscStart);
+                sb.append(line.substring(start, end));
+                sb.append(colorEscEnd);
+            }
+            prev = end;
+        }
+
+        return (sb.toString() + line.substring(prev));
+    }
+
     private static void processFile(InputStream in, String filename) throws IOException {
 //        LineIterator it = FileUtils.lineIterator(new File(filename), "UTF-8");
         Iterator<String> it;
@@ -135,6 +168,7 @@ public class Jgrep {
             if (!inverseMatch && !outputFilename && !outputMatched && !opt_L && !opt_c)
                 startend = new ArrayList<Pair<Integer, Integer>>();
 
+            String lineToPrint = null;
             for (Pattern pattern : patterns) {
                 int pos = 0;
                 Matcher m = pattern.matcher(line);
@@ -158,7 +192,7 @@ public class Jgrep {
                         break;
                     } else if (inverseMatch) {
                         nextLine = true;
-                        println(prefix + line);
+                        lineToPrint = line;
                         break;
                     } else if (outputMatched) {
                         println(prefix + line.substring(m.start(), m.end()));
@@ -179,41 +213,13 @@ public class Jgrep {
                 ++matchCount;
                 if (matchCount == opt_m)
                     nextFile = true;
+
+                if (!inverseMatch && !outputFilename && !outputMatched && !opt_L && !opt_c)
+                    lineToPrint = getLineoPrint(line, startend);
             }
 
-            if (matched) {
-                if (!inverseMatch && !outputFilename && !outputMatched && !opt_L && !opt_c) {
-                    StringBuilder sb = new StringBuilder();
-                    Collections.sort(startend,
-                            new Comparator<Pair<Integer, Integer>>() {
-                                public int compare(Pair<Integer, Integer> a, Pair<Integer, Integer> b) {
-                                    if (a.getLeft() < b.getLeft())
-                                        return -1;
-                                    if (a.getLeft() > b.getLeft())
-                                        return 1;
-                                    return b.getRight() - a.getRight();
-                                }
-                            });
-
-                    int prev = 0;
-                    for (Pair<Integer, Integer> p : startend) {
-                        int start = p.getLeft();
-                        int end = p.getRight();
-                        if (end < prev)
-                            continue;
-                        if (start < prev)
-                            start = prev;
-                        sb.append(line.substring(prev, start));
-                        if (start + 1 < end) {
-                            sb.append(colorEscStart);
-                            sb.append(line.substring(start, end));
-                            sb.append(colorEscEnd);
-                        }
-                        prev = end;
-                    }
-                    println(prefix + sb.toString() + line.substring(prev));
-                }
-            }
+            if (lineToPrint != null)
+                println(prefix + lineToPrint);
 
             if (nextFile)
                 break;
@@ -422,7 +428,7 @@ public class Jgrep {
 
                     if (filename.equals("-")) {
                         processFile(System.in, label);
-                    }else {
+                    } else {
                         FileInputStream in = new FileInputStream(filename);
                         processFile(in, filename);
                         in.close();

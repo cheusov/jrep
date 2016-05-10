@@ -52,6 +52,8 @@ public class Jgrep {
     private static boolean opt_line_buffered = false;
     private static int opt_m = 2000000000;
     private static boolean prefixWithFilename = false;
+    private static int opt_B = 0;
+    private static int opt_A = 0;
     private static String label = "(standard input)";
     private static OrFileFilter orExcludeFileFilter = new OrFileFilter();
     private static OrFileFilter orIncludeFileFilter = new OrFileFilter();
@@ -105,7 +107,7 @@ public class Jgrep {
         }
     }
 
-    private static String getLineoPrint(String line, List<Pair<Integer, Integer>> startend) {
+    private static String getLineToPrint(String line, List<Pair<Integer, Integer>> startend) {
         StringBuilder sb = new StringBuilder();
         Collections.sort(startend,
                 new Comparator<Pair<Integer, Integer>>() {
@@ -155,6 +157,7 @@ public class Jgrep {
         int matchCount = 0;
         List<Pair<Integer, Integer>> startend = null;
         int lineNumber = 0;
+        int lastMatchedLineNumber = 0;
         while (it.hasNext()) {
             ++lineNumber;
             String prefix = prefix1;
@@ -215,11 +218,15 @@ public class Jgrep {
                     nextFile = true;
 
                 if (!inverseMatch && !outputFilename && !outputMatched && !opt_L && !opt_c)
-                    lineToPrint = getLineoPrint(line, startend);
+                    lineToPrint = getLineToPrint(line, startend);
             }
 
-            if (lineToPrint != null)
+            if (lineToPrint != null) {
                 println(prefix + lineToPrint);
+                lastMatchedLineNumber = lineNumber;
+            } else if (lastMatchedLineNumber > 0 && lastMatchedLineNumber + opt_A >= lineNumber) {
+                println(prefix.replaceAll(":", "-") + line);
+            }
 
             if (nextFile)
                 break;
@@ -280,6 +287,7 @@ public class Jgrep {
         options.addOption(null, "marker-end", true, "Marker for the end of matched substring.");
         options.addOption(null, "include", true, "Search only files that match ARG pattern.");
         options.addOption(null, "exclude", true, "Skip files matching ARG.");
+        options.addOption("A", "after-context", true, "Print ARG lines of trailing context.");
 
         CommandLineParser parser = new PosixParser();
         CommandLine cmd = parser.parse(options, args);
@@ -353,6 +361,10 @@ public class Jgrep {
         String optmarkerend = cmd.getOptionValue("marker-end");
         if (optmarkerend != null)
             colorEscEnd = optmarkerend;
+
+        String optA = cmd.getOptionValue("A");
+        if (optA != null)
+            opt_A = Integer.valueOf(optA);
 
         if (cmd.hasOption("help")) {
             HelpFormatter formatter = new HelpFormatter();

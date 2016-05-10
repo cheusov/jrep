@@ -455,3 +455,17 @@ $GREP_CMD -ril -e BSD --exclude 'text1*' --exclude 'text2*' --exclude 'text3*' .
 'patterns.txt
 test_jgrep.sh
 '
+
+$GREP_CMD -A4 'utility|interface' text?.txt |
+    cmp 'jgrep -A #35' \
+'text1.txt:send-pr(1) utility (requires a working MTA).  If yours is not properly set up,
+text1.txt:use the web interface at: http://www.NetBSD.org/support/send-pr.html
+text1.txt-
+text1.txt-Thank you for helping us test and improve this NetBSD branch.
+text2.txt:Please use the sendbug(1) utility to report bugs in the system.
+text2.txt-Before reporting a bug, please try to reproduce it with the latest
+text2.txt-version of the code.  With bug reports, please try to ensure that
+text2.txt-enough information to reproduce the problem is enclosed, and if a
+text2.txt-known fix for it exists, include that as well.
+'
+

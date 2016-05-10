@@ -534,3 +534,33 @@ text2.txt-Before reporting a bug, please try to reproduce it with the latest
 text2.txt-version of the code.  With bug reports, please try to ensure that
 text2.txt-enough information to reproduce the problem is enclosed, and if a
 '
+
+$GREP_CMD -hO 'schema: \1
+domain: \2
+path: \3
+filename: \4
+extension: \5' '(http)://([^/]+)([^ ]*/([^ /]+)[.]([^ .]+))' text?.txt |
+    cmp 'jgrep -O #36.1' \
+'schema: http
+domain: www.NetBSD.org
+path: /support/send-pr.html
+filename: send-pr
+extension: html
+'
+
+{
+    $GREP_CMD -hO 'lalala: \' '(http)://([^/]+)([^ ]*/([^ /]+)[.]([^ .]+))' text?.txt 2>&1;
+    echo ex=$?
+} | cmp 'jgrep -O #36.2' \
+'java.lang.IllegalArgumentException: Unexpected `\` in -O argument: `lalala: \`
+ex=2
+'
+
+{
+    $GREP_CMD -hO 'foo \n bar' '(http)://([^/]+)([^ ]*/([^ /]+)[.]([^ .]+))' text?.txt 2>&1;
+    echo ex=$?
+} | cmp 'jgrep -O #36.3' \
+'java.lang.IllegalArgumentException: Illegal `\n` in -O argument: `foo \n bar`
+ex=2
+'
+

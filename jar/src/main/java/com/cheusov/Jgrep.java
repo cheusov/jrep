@@ -22,6 +22,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,7 +37,7 @@ public class Jgrep {
 
     private static boolean inverseMatch = false;
     private static boolean outputFilename = false;
-    private static boolean outputMatched = false;
+    private static boolean opt_o = false;
     private static boolean wholeContent = false;
     private static boolean opt_L = false;
     private static boolean opt_h = false;
@@ -54,6 +55,7 @@ public class Jgrep {
     private static boolean prefixWithFilename = false;
     private static int opt_B = 0;
     private static int opt_A = 0;
+    private static String opt_O = null;
     private static String label = "(standard input)";
     private static OrFileFilter orExcludeFileFilter = new OrFileFilter();
     private static OrFileFilter orIncludeFileFilter = new OrFileFilter();
@@ -151,6 +153,34 @@ public class Jgrep {
         return (sb.toString() + line.substring(prev));
     }
 
+    private static String getOutputString(String line, MatchResult match){
+        if (opt_O == null)
+            return line.substring(match.start(), match.end());
+
+        StringBuilder b = new StringBuilder();
+        int len = opt_O.length();
+        for (int i = 0; i < len; ++i){
+            char c = opt_O.charAt(i);
+            if (c != '\\') {
+                b.append(c);
+            } else {
+                if (i + 1 == len)
+                    throw new IllegalArgumentException("Unexpected `\\` in -O argument: `" + opt_O + "`");
+                char nc = opt_O.charAt(i + 1);
+                if (nc == '\\')
+                    b.append('\\');
+                else if (nc >= '0' && nc <= '9')
+                    b.append(match.group(nc - '0'));
+                else
+                    throw new IllegalArgumentException("Illegal `\\" + nc + "` in -O argument: `" + opt_O + "`");
+
+                ++i;
+            }
+        }
+
+        return b.toString();
+    }
+
     private static void processFile(InputStream in, String filename) throws IOException {
 //        LineIterator it = FileUtils.lineIterator(new File(filename), "UTF-8");
         Iterator<String> it;
@@ -178,7 +208,7 @@ public class Jgrep {
             boolean matched = false;
             boolean nextFile = false;
 
-            if (!inverseMatch && !outputFilename && !outputMatched && !opt_L && !opt_c)
+            if (!inverseMatch && !outputFilename && !opt_o && !opt_L && !opt_c)
                 startend = new ArrayList<Pair<Integer, Integer>>();
 
             String lineToPrint = null;
@@ -207,8 +237,8 @@ public class Jgrep {
                         nextLine = true;
                         lineToPrint = line;
                         break;
-                    } else if (outputMatched) {
-                        printlnWithPrefix(filename, line.substring(m.start(), m.end()), lineNumber, ':');
+                    } else if (opt_o) {
+                        printlnWithPrefix(filename, getOutputString(line, m), lineNumber, ':');
                     } else if (colorEscStart == null) {
                         nextLine = true;
                         break;
@@ -227,7 +257,7 @@ public class Jgrep {
                 if (matchCount == opt_m)
                     nextFile = true;
 
-                if (!inverseMatch && !outputFilename && !outputMatched && !opt_L && !opt_c)
+                if (!inverseMatch && !outputFilename && !opt_o && !opt_L && !opt_c)
                     lineToPrint = getLineToPrint(line, startend);
             }
 
@@ -311,6 +341,8 @@ public class Jgrep {
         options.addOption("A", "after-context", true, "Print ARG lines of trailing context.");
         options.addOption("B", "before-context", true, "Print ARG lines of leading context.");
         options.addOption("C", "context", true, "Print ARG lines of output context.");
+        options.addOption("O", "output-format", true, "Same as -o but ARG specifies the output format." +
+                " \\N means group number N, \\\\ means \\. All other characters are output as is.");
 
         CommandLineParser parser = new PosixParser();
         CommandLine cmd = parser.parse(options, args);
@@ -320,7 +352,8 @@ public class Jgrep {
 
         inverseMatch = cmd.hasOption("v");
         outputFilename = cmd.hasOption("l");
-        outputMatched = cmd.hasOption("o");
+        opt_O = cmd.getOptionValue("O");
+        opt_o = cmd.hasOption("o") || (opt_O != null);
         wholeContent = cmd.hasOption("8");
         opt_L = cmd.hasOption("L");
         opt_h = cmd.hasOption("h");

@@ -1,6 +1,5 @@
 plan 0:
 *   -8 fix -8 and stdin
-*   -O <fmt>                  formatted output of matched string
 *       --color[=WHEN],
 *       --colour[=WHEN]       use markers to highlight the matching strings;
 *                             WHEN is 'always', 'never', or 'auto'

@@ -574,3 +574,9 @@ ex=2
 ex=2
 '
 
+$GREP_CMD -rh -e snapshot --include '*.txt' . |
+    sort |
+    cmp 'jgrep -rh #37' \
+'This system is running a development snapshot of a stable branch of the NetBSD
+snapshot may contain bugs or other unresolved issues and is not yet considered
+'

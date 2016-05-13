@@ -476,7 +476,7 @@ public class Jgrep {
         for (int i = 0; i < regexps.size(); ++i)
             patterns.add(Pattern.compile(regexps.get(i), patternFlags));
 
-        prefixWithFilename = (opt_H || opt_r || (args.length > 1 && !opt_h));
+        prefixWithFilename = (opt_H || opt_r || args.length > 1) && !opt_h;
     }
 
     private static final String[] stdinFilenames = {"-"};

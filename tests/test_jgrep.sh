@@ -623,3 +623,59 @@ snapshot may contain bugs or other unresolved issues and is not yet considered
 ex=2
 '
 
+echo appapp | $GREP_CMD '(app)\1' |
+    cmp 'jgrep --re-engine java #39.1' \
+'appapp
+'
+
+echo appapp | $GREP_CMD --re-engine java '(app)\1' |
+    cmp 'jgrep --re-engine java #39.2' \
+'appapp
+'
+
+{ echo appapp | $GREP_CMD --re-engine re2j '(app)\1' 2>&1; echo ex=$?; } |
+    cmp 'jgrep --re-engine java #39.3' \
+'com.google.re2j.PatternSyntaxException: error parsing regexp: invalid escape sequence: `\1`
+ex=2
+'
+
+{ echo appapp | $GREP_CMD -2 '(app)\1' 2>&1; echo ex=$?; } |
+    cmp 'jgrep --re-engine java #39.4' \
+'com.google.re2j.PatternSyntaxException: error parsing regexp: invalid escape sequence: `\1`
+ex=2
+'
+
+{ echo appapp | $GREP_CMD --re-engine xxx '(app)\1' 2>&1; echo ex=$?; } |
+    cmp 'jgrep --re-engine java #39.5' \
+'java.lang.IllegalArgumentException: Illegal argument `xxx` for option --re-engine
+ex=2
+'
+
+$GREP_CMD -r2i -e NetBSD -e 'NetBSD.*$' -e 'OpenBSD.*$' -e OpenBSD \
+	  -e FreeBSD -e '.*FreeBSD' -e 'Advisories.*security' -e 'welcome to \S+' \
+	  --marker-start '<b>' --marker-end '</b>' \
+	  --include '*.txt' . |
+    sort |
+    cmp 'jgrep -r --include --marker-{start,end} -2 #39.6' \
+'patterns.txt:<b>NetBSD</b>
+patterns.txt:<b>OpenBSD</b>
+subdir/text3.txt:<b>Documents installed with the system are in the /usr/local/share/doc/freebsd</b>/
+subdir/text3.txt:<b>FreeBSD FAQ:           https://www.FreeBSD</b>.org/faq/
+subdir/text3.txt:<b>FreeBSD Forums:        https://forums.FreeBSD</b>.org/
+subdir/text3.txt:<b>FreeBSD Handbook:      https://www.FreeBSD</b>.org/handbook/
+subdir/text3.txt:<b>FreeBSD</b> directory layout:      man hier
+subdir/text3.txt:<b>Questions List: https://lists.FreeBSD.org/mailman/listinfo/freebsd</b>-questions/
+subdir/text3.txt:<b>Release Notes, Errata: https://www.FreeBSD</b>.org/releases/
+subdir/text3.txt:<b>Security Advisories:   https://www.FreeBSD</b><b>.org/security</b>/
+subdir/text3.txt:<b>Show the version of FreeBSD installed:  freebsd</b>-version ; uname -a
+subdir/text3.txt:<b>Welcome to FreeBSD!</b>
+subdir/text3.txt:<b>directory, or can be installed later with:  pkg install en-freebsd</b>-doc
+text1.txt:<b>NetBSD 6.1_STABLE (GENERIC) #2: Fri Oct 24 07:00:58 FET 2014</b>
+text1.txt:<b>Welcome to NetBSD!</b>
+text1.txt:Thank you for helping us test and improve this <b>NetBSD branch.</b>
+text1.txt:This system is running a development snapshot of a stable branch of the <b>NetBSD</b>
+text1.txt:use the web interface at: http://www.<b>NetBSD.org/support/send-pr.html</b>
+text2.txt:<b>OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012</b>
+text2.txt:<b>Welcome to OpenBSD:</b><b> The proactively secure Unix-like operating system.</b>
+'
+

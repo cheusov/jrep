@@ -22,9 +22,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.*;
 import java.util.*;
-import java.util.regex.MatchResult;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by Aleksey Cheusov on 4/24/16.
@@ -49,8 +46,7 @@ public class Jgrep {
     private static Options options;
 
     private static List<String> regexps = new ArrayList<String>();
-    private static ArrayList<Pattern> patterns = new ArrayList<Pattern>();
-    private static int patternFlags;
+    private static ArrayList<JgrepPattern> patterns = new ArrayList<JgrepPattern>();
     private static int exitStatus = 1;
 
     private static boolean inverseMatch = false;
@@ -58,6 +54,7 @@ public class Jgrep {
     private static boolean opt_o = false;
     private static boolean wholeContent = false;
     private static boolean opt_L = false;
+    private static boolean opt_i = false;
     private static boolean opt_h = false;
     private static boolean opt_H = false;
     private static boolean opt_F = false;
@@ -74,6 +71,8 @@ public class Jgrep {
     private static int opt_B = 0;
     private static int opt_A = 0;
     private static String opt_O = null;
+    private static JgrepPattern.RE_ENGINE_TYPE opt_re_engine = JgrepPattern.RE_ENGINE_TYPE.JAVA;
+
     private static String label = "(standard input)";
     private static OrFileFilter orExcludeFileFilter = new OrFileFilter();
     private static OrFileFilter orIncludeFileFilter = new OrFileFilter();
@@ -150,7 +149,7 @@ public class Jgrep {
         return (sb.toString() + line.substring(prev));
     }
 
-    private static String getOutputString(String line, MatchResult match){
+    private static String getOutputString(String line, JgrepMatcher match){
         if (opt_O == null)
             return line.substring(match.start(), match.end());
 
@@ -209,9 +208,9 @@ public class Jgrep {
                 startend = new ArrayList<Pair<Integer, Integer>>();
 
             String lineToPrint = null;
-            for (Pattern pattern : patterns) {
+            for (JgrepPattern pattern : patterns) {
                 int pos = 0;
-                Matcher m = pattern.matcher(line);
+                JgrepMatcher m = pattern.matcher(line);
 
                 boolean nextLine = false;
                 while (m.find(pos) ^ inverseMatch) {
@@ -297,6 +296,12 @@ public class Jgrep {
         options.addOption("F", "fixed-strings", false, "Interpret pattern as a set of fixed strings.");
         options.addOption("G", "basic-regexp", false, "Ignored.");
         options.addOption("P", "perl-regexp", false, "Ignored.");
+        options.addOption("2", false, "Same as '--re-engine re2j'.");
+
+        opt = new Option(null, "re-engine", true, "Specify a RE engine. ENGINE is either " +
+                "'java' (java.util.regex) or 're2j' (com.google.re2j). The default is 'java;.");
+        opt.setArgName("ENGINE");
+        options.addOption(opt);
 
         opt = new Option("e", "regexp", true, "Specify a pattern used during the search of the input: an input line is " +
                 "selected if it matches any of the specified patterns." +
@@ -419,8 +424,6 @@ public class Jgrep {
         CommandLineParser parser = new PosixParser();
         CommandLine cmd = parser.parse(options, args);
 
-        if (cmd.hasOption("i"))
-            patternFlags = Pattern.CASE_INSENSITIVE;
 
         inverseMatch = cmd.hasOption("v");
         outputFilename = cmd.hasOption("l");
@@ -428,6 +431,7 @@ public class Jgrep {
         opt_o = cmd.hasOption("o") || (opt_O != null);
         wholeContent = cmd.hasOption("8");
         opt_L = cmd.hasOption("L");
+        opt_i = cmd.hasOption("i");
         opt_h = cmd.hasOption("h");
         opt_H = cmd.hasOption("H");
         opt_F = cmd.hasOption("F");
@@ -513,6 +517,19 @@ public class Jgrep {
             throw new IllegalArgumentException("Illegal argument `" + optColor + "` for option --color");
         }
 
+        String optReEngine = cmd.getOptionValue("re-engine");
+        if (optReEngine == null) {
+        } else if (optReEngine.equals("java")) {
+            opt_re_engine = JgrepPattern.RE_ENGINE_TYPE.JAVA;
+        } else if (optReEngine.equals("re2j")) {
+            opt_re_engine = JgrepPattern.RE_ENGINE_TYPE.RE2J;
+        } else {
+            throw new IllegalArgumentException("Illegal argument `" + optReEngine + "` for option --re-engine");
+        }
+
+        if (cmd.hasOption("2"))
+            opt_re_engine = JgrepPattern.RE_ENGINE_TYPE.RE2J;
+
         if (cmd.hasOption("help")) {
             printHelp(options);
             System.exit(0);
@@ -587,8 +604,13 @@ public class Jgrep {
                 regexps.set(i, "\\b(?:" + regexps.get(i) + ")\\b");
         }
 
+        if (opt_i) {
+            for (int i = 0; i < regexps.size(); ++i)
+                regexps.set(i, "(?i:" + regexps.get(i) + ")");
+        }
+
         for (int i = 0; i < regexps.size(); ++i)
-            patterns.add(Pattern.compile(regexps.get(i), patternFlags));
+            patterns.add(JgrepPattern.compile(opt_re_engine, regexps.get(i)));
 
         prefixWithFilename = (opt_H || opt_r || args.length > 1) && !opt_h;
     }

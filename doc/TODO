@@ -1,14 +1,15 @@
 plan 0:
-*   support for re2
+* tests for -F + -x + -w
 *   man page
 *       --exclude-from=FILE   skip files matching any file pattern from FILE
 *       --exclude-dir=PATTERN  directories that match PATTERN will be skipped.
 *   encode strings according to locale
 *   -n and colorizing like grep(1) does
-*   reusable object Jgrep, no static messages
+*   reusable object Jgrep. I/O streams etc.
 *   coloring for terminal output only
 
 The following GNU grep options are not implemented (yet?):
+* --color=auto
 * -E, --extended-regexp     PATTERN is an extended regular expression (ERE)
 * -G, --basic-regexp        PATTERN is a basic regular expression (BRE)
 * -P, --perl-regexp         PATTERN is a Perl regular expression

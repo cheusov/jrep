@@ -299,12 +299,12 @@ public class Jgrep {
         options.addOption("2", false, "Same as '--re-engine re2j'.");
 
         opt = new Option(null, "re-engine", true, "Specify a RE engine. ENGINE is either " +
-                "'java' (java.util.regex) or 're2j' (com.google.re2j). The default is 'java;.");
+                "'java' (java.util.regex) or 're2j' (com.google.re2j). The default is 'java'.");
         opt.setArgName("ENGINE");
         options.addOption(opt);
 
         opt = new Option("e", "regexp", true, "Specify a pattern used during the search of the input: an input line is " +
-                "selected if it matches any of the specified patterns." +
+                "selected if it matches any of the specified patterns. " +
                 "This option is most useful when multiple -e options are used to specify multiple patterns, " +
                 "or when a pattern begins with a dash (‘-’).");
         opt.setArgName("PATTERN");

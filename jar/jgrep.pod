@@ -1,0 +1,263 @@
+=head1 NAME
+
+jgrep - grep-like utility written in Java
+
+=head1 SYNOPSIS
+
+B<jgrep> I<[OPTIONS]> B<PATTERN> I<[FILES...]>
+
+=head1 DESCRIPTION
+
+B<jgrep> searches for I<PATTERN> in each I<FILE> or standard
+input. I<PATTERN> is, by default, a Java regular expression
+(java.lang.regex).
+
+When FILE is -, read standard input.  With no FILE, read . if a
+command-line -r is given, - otherwise.  If fewer than two FILEs are given,
+assume -h. Exit status is 0 if any line is selected, 1 otherwise; if any
+error occurs and -q is not given, the exit status is 2.
+
+=head1 OPTIONS
+
+=head2 Regexp selection and interpretation
+
+=over 6
+
+=item B<-E>,B<--extended-regexp>
+
+Ignored.
+
+=item B<-F>,B<--fixed-strings>
+
+Interpret pattern as a set of fixed strings.
+
+=item B<-G>,B<--basic-regexp>
+
+Ignored.
+
+=item B<-P>,B<--perl-regexp>
+
+Ignored.
+
+=item B<-2>
+
+Same as '--re-engine re2j'.
+
+=item B<--re-engine> I<ENGINE>
+
+Specify a RE engine. ENGINE is either 'java'
+(java.util.regex) or 're2j' (com.google.re2j).
+The default is 'java'.
+
+=item B<-e>,B<--regexp> I<PATTERN>
+
+Specify a pattern used during the search of
+the input: an input line is selected if it
+matches any of the specified patterns. This
+option is most useful when multiple -e options
+are used to specify multiple patterns, or when
+a pattern begins with a dash ('-').
+
+=item B<-f>,B<--file> I<FILE>
+
+Obtain PATTERN from FILE.
+
+=item B<-i>,B<--ignore-case>
+
+Perform case insensitive matching. By default,
+B<jgrep> is case sensitive.
+
+=item B<-w>,B<--word-regexp>
+
+Force PATTERN to match only whole words.
+
+=item B<-x>,B<--line-regexp>
+
+Only input lines selected against an entire
+fixed string or regular expression are
+considered to be matching lines.
+
+=back
+
+=head2 Miscellaneous:
+
+=over
+
+=item B<-s>,B<--no-messages>
+
+Suppress error messages
+
+=item B<-v>,B<--invert-match>
+
+Selected lines are those not matching any of
+the specified patterns.
+
+=item B<-V>,B<--version>
+
+Display version information and exit.
+
+=item B<--help>
+
+Display this help text and exit.
+
+=back
+
+=head2 Output control:
+
+=over
+
+=item B<-m>,B<--max-count> I<NUM>
+
+Stop after NUM matches.
+
+=item B<-n>,B<--line-number>
+
+Each output line is preceded by its relative
+line number in the file, starting at line 1.
+The line number counter is reset for each file
+processed. This option is ignored if -c, -L,
+-l, or -q is specified.
+
+
+=item B<--line-buffered>
+
+Flush output on every line.
+
+=item B<-H>,B<--with-filename>
+
+Print the file name for each match.
+
+=item B<-h>,B<--no-filename>
+
+Never print filename headers (i.e. filenames)
+with output lines.
+
+=item B<--label> I<LABEL>
+
+Use LABEL as the standard input file name prefix.
+
+=item B<-o>,B<--only-matching>
+
+Print each match, but only the match, not the entire line.
+
+=item B<-O>,B<--output-format> I<FORMAT>
+
+Same as -o but FORMAT specifies the output
+format. \N means group number N, \\ means \.
+All other characters are output as is.
+
+=item B<--marker-start> I<MARKER>
+
+Marker for the beginning of matched substring.
+
+=item B<--marker-end> I<MARKER>
+
+Marker for the end of matched substring.
+
+=item B<-q>,B<--quiet>
+
+Quiet. Nothing shall be written to the
+standard output, regardless of matching lines.
+Exit with zero status if an input line is selected.
+
+=item B<--silent>
+
+Same as B<--quiet>.
+
+=item B<-8>
+
+Match the whole file content at once.
+
+=item B<-r>,B<--recursive>
+
+Recursively search subdirectories listed.
+
+=item B<--include> I<FILE_PATTERN>
+
+Search only files that match FILE_PATTERN pattern.
+
+=item B<--exclude> I<FILE_PATTERN>
+
+Skip files matching FILE_PATTERN.
+
+=item B<-L>,B<--files-without-match>
+
+Only the names of files not containing
+selected lines are written to standard output.
+Pathnames are listed once per file searched.
+If the standard input is searched, the string
+"(standard input)" is written.
+
+=item B<-l>,B<--files-with-matches>
+
+Only the names of files containing selected
+lines are written to standard output. grep
+will only search a file until a match has been
+found, making searches potentially less
+expensive. Pathnames are listed once per file
+searched. If the standard input is searched,
+the string "(standard input)" is written.
+
+=item B<-c>,B<--count>
+
+Only a count of selected lines is written to
+standard output.
+
+=back
+
+=head2 Context control:
+
+=over
+
+=item B<-B>,B<--before-context> I<NUM>
+
+Print NUM lines of leading context.
+
+=item B<-A>,B<--after-context> I<NUM>
+
+Print NUM lines of trailing context.
+
+=item B<-C>,B<--context> I<NUM>
+
+Print NUM lines of output context.
+
+=item B<--color> I<WHEN>
+
+Use markers to highlight the matching strings;
+WHEN is 'always' or 'never'.
+
+=item B<--colour> I<WHEN>
+
+Same as B<--color>.
+
+=back
+
+=head1 ENVIRONMENT VARIABLES
+
+=over 6
+
+=item I<JGREP_COLOR>
+
+This variable specifies the color used to highlight matched
+(non-empty) text.  It can only specify the color used to highlight the
+matching non-empty text in any matching line (a selected line when the
+-v command-line option is omitted, or a context line when -v is
+specified).
+
+=item I<JGREP_JAVA>
+
+Path to java. By default 'java'.
+
+=item I<JGREP_JAVA_OPTS>
+
+Options passed to java(1).
+
+=back
+
+=head1 HOME
+
+L<https://github.com/cheusov/jgrep>
+
+=head1 SEE ALSO
+
+L<grep(1)>

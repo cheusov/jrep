@@ -157,18 +157,20 @@ public class Jgrep {
         int len = opt_O.length();
         for (int i = 0; i < len; ++i){
             char c = opt_O.charAt(i);
-            if (c != '\\') {
+            if (c != '$') {
                 b.append(c);
             } else {
                 if (i + 1 == len)
-                    throw new IllegalArgumentException("Unexpected `\\` in -O argument: `" + opt_O + "`");
+                    throw new IllegalArgumentException("Unexpected `$` in -O argument: `" + opt_O + "`");
                 char nc = opt_O.charAt(i + 1);
-                if (nc == '\\')
-                    b.append('\\');
+                if (nc == '$')
+                    b.append('$');
+//                else if (nc == '\n')
+//                    ;
                 else if (nc >= '0' && nc <= '9')
-                    b.append(match.group(nc - '0'));
+                    b.append(match.group(nc - '0').replaceAll("\n", " "));
                 else
-                    throw new IllegalArgumentException("Illegal `\\" + nc + "` in -O argument: `" + opt_O + "`");
+                    throw new IllegalArgumentException("Illegal `$" + nc + "` in -O argument: `" + opt_O + "`");
 
                 ++i;
             }
@@ -352,7 +354,7 @@ public class Jgrep {
         options.addOption("o", "only-matching", false, "Print each match, but only the match, not the entire line.");
 
         opt = new Option("O", "output-format", true, "Same as -o but FORMAT specifies the output format." +
-                " \\N means group number N, \\\\ means \\. All other characters are output as is.");
+                " $N means group number N, $$ means $$. All other characters are output as is.");
         opt.setArgName("FORMAT");
         options.addOption(opt);
 

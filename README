@@ -1,10 +1,10 @@
-jgrep is a grep-like utility written in Java.
+jgrep is a command-line grep-like utility written in Java.
 Features:
   -- Java regular expressions
      (https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html)
   -- Support for RE2J
      (https://github.com/google/re2)
-  -- POSIX options
+  -- POSIX options (excluding -E and -G)
      (http://pubs.opengroup.org/onlinepubs/009604499/utilities/grep.html)
   -- most GNU grep(1) options
      (https://www.gnu.org/software/grep/)
@@ -14,6 +14,7 @@ Features:
 Documentation:
 
   -- https://github.com/cheusov/jgrep/blob/master/jar/jgrep.pod
+       or
   -- man page after installation
 
 Installation instruction:

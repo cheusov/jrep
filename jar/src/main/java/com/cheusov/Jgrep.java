@@ -596,10 +596,12 @@ public class Jgrep {
         if (opt_F) {
             for (int i = 0; i < regexps.size(); ++i)
                 regexps.set(i, "\\Q" + regexps.get(i) + "\\E");
-        } else if (opt_x) {
+        }
+        if (opt_x) {
             for (int i = 0; i < regexps.size(); ++i)
                 regexps.set(i, "(?m:^(?:" + regexps.get(i) + ")$)");
-        } else if (opt_w) {
+        }
+        if (opt_w) {
             for (int i = 0; i < regexps.size(); ++i)
                 regexps.set(i, "\\b(?:" + regexps.get(i) + ")\\b");
         }

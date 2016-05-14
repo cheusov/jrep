@@ -679,3 +679,13 @@ text2.txt:<b>OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012</b>
 text2.txt:<b>Welcome to OpenBSD:</b><b> The proactively secure Unix-like operating system.</b>
 '
 
+$GREP_CMD -Fx 'apple' text3.txt |
+    cmp 'jgrep -Fx #40.1' \
+'apple
+'
+
+$GREP_CMD -Fw 'apple' text3.txt |
+    cmp 'jgrep -Fw #40.2' \
+'the apple
+apple
+'

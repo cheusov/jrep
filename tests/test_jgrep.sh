@@ -430,7 +430,7 @@ $GREP_CMD -ri -e NetBSD -e 'NetBSD.*$' -e 'OpenBSD.*$' -e OpenBSD \
 	  --marker-start '<b>' --marker-end '</b>' \
 	  --include '*.txt' . |
     sort |
-    cmp 'jgrep -r --include --marker-{start,end} #33' \
+    cmp 'jgrep -r --include --marker-{start,end} #33.1' \
 'patterns.txt:<b>NetBSD</b>
 patterns.txt:<b>OpenBSD</b>
 subdir/text3.txt:<b>Documents installed with the system are in the /usr/local/share/doc/freebsd</b>/
@@ -451,6 +451,42 @@ text1.txt:This system is running a development snapshot of a stable branch of th
 text1.txt:use the web interface at: http://www.<b>NetBSD.org/support/send-pr.html</b>
 text2.txt:<b>OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012</b>
 text2.txt:<b>Welcome to OpenBSD:</b><b> The proactively secure Unix-like operating system.</b>
+'
+
+$GREP_CMD -ri -e OpenBSD \
+	  --marker-start '<b>' --marker-end '</b>' --include '*.txt' . |
+    sort |
+    cmp 'jgrep -r --include --marker-{start,end} #33.2' \
+'patterns.txt:<b>OpenBSD</b>
+text2.txt:<b>OpenBSD</b> 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
+text2.txt:Welcome to <b>OpenBSD</b>: The proactively secure Unix-like operating system.
+'
+
+$GREP_CMD -ri -e OpenBSD \
+	  --marker-start '<b>' --marker-end '</b>' \
+	  --color always --include '*.txt' . | sort |
+    cmp 'jgrep -r --include --marker-{start,end} #33.3' \
+'patterns.txt:<b>OpenBSD</b>
+text2.txt:<b>OpenBSD</b> 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
+text2.txt:Welcome to <b>OpenBSD</b>: The proactively secure Unix-like operating system.
+'
+
+$GREP_CMD -ri -e OpenBSD \
+	  --marker-start '<b>' --marker-end '</b>' \
+	  --colour always --include '*.txt' . | sort |
+    cmp 'jgrep -r --include --marker-{start,end} #33.4' \
+'patterns.txt:<b>OpenBSD</b>
+text2.txt:<b>OpenBSD</b> 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
+text2.txt:Welcome to <b>OpenBSD</b>: The proactively secure Unix-like operating system.
+'
+
+$GREP_CMD -ri -e OpenBSD \
+	  --marker-start '<b>' --marker-end '</b>' \
+	  --colour=never --include '*.txt' . | sort |
+    cmp 'jgrep -r --include --marker-{start,end} #33.5' \
+'patterns.txt:OpenBSD
+text2.txt:OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
+text2.txt:Welcome to OpenBSD: The proactively secure Unix-like operating system.
 '
 
 $GREP_CMD -ril -e BSD --exclude '*.txt' . |
@@ -580,3 +616,10 @@ $GREP_CMD -rh -e snapshot --include '*.txt' . |
 'This system is running a development snapshot of a stable branch of the NetBSD
 snapshot may contain bugs or other unresolved issues and is not yet considered
 '
+
+{ $GREP_CMD --colour zzz regexp text2.txt 2>&1; echo ex=$?; } |
+    cmp 'jgrep --color zzz #38' \
+'java.lang.IllegalArgumentException: Illegal argument `zzz` for option --color
+ex=2
+'
+

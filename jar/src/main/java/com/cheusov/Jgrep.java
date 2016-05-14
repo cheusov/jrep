@@ -79,7 +79,6 @@ public class Jgrep {
     private static OrFileFilter orIncludeFileFilter = new OrFileFilter();
     private static AndFileFilter fileFilter = new AndFileFilter();
 
-    private static String colorEscSequence;
     private static String colorEscStart;
     private static String colorEscEnd;
 
@@ -87,7 +86,7 @@ public class Jgrep {
         fileFilter.addFileFilter(orIncludeFileFilter);
         fileFilter.addFileFilter(new NotFileFilter(orExcludeFileFilter));
 
-        colorEscSequence = System.getenv("JGREP_COLOR");
+        String colorEscSequence = System.getenv("JGREP_COLOR");
         if (colorEscSequence == null)
             colorEscSequence = System.getenv("GREP_COLOR");
 
@@ -490,6 +489,15 @@ public class Jgrep {
         opt.setArgName("NUM");
         options.addOption(opt);
 
+        opt = new Option(null, "color", true, "Use markers to highlight the matching strings; " +
+                "WHEN is 'always' or 'never'.");
+        opt.setArgName("WHEN");
+        options.addOption(opt);
+
+        opt = new Option(null, "colour", true, "Same as --color.");
+        opt.setArgName("WHEN");
+        options.addOption(opt);
+
         ///////////////////////////////////
         options = new Options();
 
@@ -584,6 +592,17 @@ public class Jgrep {
         String optC = cmd.getOptionValue("C");
         if (optC != null)
             opt_A = opt_B = Integer.valueOf(optC);
+
+        String optColor = cmd.getOptionValue("color");
+        if (optColor == null)
+            optColor = cmd.getOptionValue("colour");
+        if (optColor == null) {
+        } else if (optColor.equals("always")) {
+        } else if (optColor.equals("never")) {
+            colorEscStart = null;
+        } else {
+            throw new IllegalArgumentException("Illegal argument `" + optColor + "` for option --color");
+        }
 
         if (cmd.hasOption("help")) {
             printHelp(options);

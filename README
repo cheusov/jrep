@@ -1,5 +1,37 @@
 jgrep is a grep-like utility written in Java.
 Features:
   -- Java regular expressions
+     (https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html)
+  -- Support for RE2J
+     (https://github.com/google/re2)
   -- POSIX options
-  -- GNU extensions
+     (http://pubs.opengroup.org/onlinepubs/009604499/utilities/grep.html)
+  -- most GNU grep(1) options
+     (https://www.gnu.org/software/grep/)
+  -- Extensions over GNU grep(1):
+     options -O and -8
+
+Documentation:
+
+  -- https://github.com/cheusov/jgrep/blob/master/jar/jgrep.pod
+  -- man page after installation
+
+Installation instruction:
+
+  1) install mk-configure (https://github.com/cheusov/mk-configure), for example,
+     on Debian/Linux one can run
+
+     # apt-get install mk-configure
+
+  2) install JDK-7, for example, on Debian/Linux one can run
+
+     # apt-get install openjdk-7-jdk
+
+  3) install maven, for example, on Debian/Linux one can run
+
+     # apt-get install maven
+
+  4)
+     # mkcmake all
+     # mkcmake test
+     # mkcmake install

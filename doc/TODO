@@ -8,27 +8,27 @@ plan 0:
 *       --exclude-dir=PATTERN  directories that match PATTERN will be skipped.
 *   encode strings according to locale
 *   -n and colorizing like grep(1) does
+*   reusable object Jgrep, no static messages
+*   coloring for terminal output only
 
-plan 1:
-* reusable object Jgrep, no static messages
-* coloring for terminal output only
-* -E, --extended-regexp    PATTERN is an extended regular expression (ERE)
-* -G, --basic-regexp       PATTERN is a basic regular expression (BRE)
-* -P, --perl-regexp        PATTERN is a Perl regular expression
-* -z, --null-data      a data line ends in 0 byte, not newline
+The following GNU grep options are not implemented (yet?):
+* -E, --extended-regexp     PATTERN is an extended regular expression (ERE)
+* -G, --basic-regexp        PATTERN is a basic regular expression (BRE)
+* -P, --perl-regexp         PATTERN is a Perl regular expression
+* -z, --null-data           a data line ends in 0 byte, not newline
 * -b, --byte-offset         print the byte offset with output lines
-*       --binary-files=TYPE   assume that binary files are TYPE;
-*                             TYPE is 'binary', 'text', or 'without-match'
-*   -a, --text                equivalent to --binary-files=text
-*   -I                        equivalent to --binary-files=without-match
-*   -d, --directories=ACTION  how to handle directories;
-                              ACTION is 'read', 'recurse', or 'skip'
-*   -D, --devices=ACTION      how to handle devices, FIFOs and sockets;
-                              ACTION is 'read' or 'skip'
-*   -R, --dereference-recursive  likewise, but follow all symlinks
-*   -T, --initial-tab         make tabs line up (if needed)
-*   -Z, --null                print 0 byte after FILE name
-*   -NUM                      same as --context=NUM
-*   -U, --binary              do not strip CR characters at EOL (MSDOS/Windows)
-*   -u, --unix-byte-offsets   report offsets as if CRs were not there
-                              (MSDOS/Windows)
+*     --binary-files=TYPE   assume that binary files are TYPE;
+*                           TYPE is 'binary', 'text', or 'without-match'
+* -a, --text                equivalent to --binary-files=text
+* -I                        equivalent to --binary-files=without-match
+* -d, --directories=ACTION  how to handle directories;
+                            ACTION is 'read', 'recurse', or 'skip'
+* -D, --devices=ACTION      how to handle devices, FIFOs and sockets;
+                            ACTION is 'read' or 'skip'
+* -R, --dereference-recursive  likewise, but follow all symlinks
+* -T, --initial-tab         make tabs line up (if needed)
+* -Z, --null                print 0 byte after FILE name
+* -NUM                      same as --context=NUM
+* -U, --binary              do not strip CR characters at EOL (MSDOS/Windows)
+* -u, --unix-byte-offsets   report offsets as if CRs were not there
+                            (MSDOS/Windows)

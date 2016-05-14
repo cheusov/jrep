@@ -3,8 +3,13 @@ FILESDIR =		${JARDIR}
 
 MAN =			jgrep.1
 
+CLEANFILES =		${MAN}
+
 do-all: ${FILES}
 ${FILES}: src/main/java/com/cheusov/Jgrep.java
 	${PROG.${MAVEN}} package install assembly:single
+
+clean:
+	mvn clean
 
 .include <mkc.mk>

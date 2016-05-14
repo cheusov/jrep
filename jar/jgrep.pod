@@ -232,6 +232,19 @@ Same as B<--color>.
 
 =back
 
+=head1 EXTENSIONS OVER GNU GREP
+
+Options B<-O>, B<-8>, B<--re-engine> and B<-2>
+
+=head1 REGULAR EXPRESSIONS
+
+L<https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html>
+
+=head1 EXIT STATUS
+
+The exit status is 0 if selected lines are found, and 1 if not found.
+If an error occurred the exit status is 2.
+
 =head1 ENVIRONMENT VARIABLES
 
 =over 6
@@ -253,6 +266,10 @@ Path to java. By default 'java'.
 Options passed to java(1).
 
 =back
+
+=head1 COPYRIGHT
+
+Copyright 2016 Aleksey Cheusov <vle@gmx.net>
 
 =head1 HOME
 

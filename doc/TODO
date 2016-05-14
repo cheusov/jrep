@@ -7,7 +7,7 @@ plan 0:
 ========================================
 plan 1:
 * --color=auto
-* -n and colorizing like grep(1) does
+* -n and colorizing like grep(1) does (JGREP_COLORS)
 * reusable object Jgrep. I/O streams etc.
 * encode strings according to locale
 * -z, --null-data           a data line ends in 0 byte, not newline

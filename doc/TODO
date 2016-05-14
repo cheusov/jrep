@@ -1,4 +1,6 @@
 plan 0:
+*   support for re2
+*   man page
 *       --color[=WHEN],
 *       --colour[=WHEN]       use markers to highlight the matching strings;
 *                             WHEN is 'always', 'never', or 'auto'

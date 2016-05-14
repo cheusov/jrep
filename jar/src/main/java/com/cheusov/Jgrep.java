@@ -30,6 +30,24 @@ import java.util.regex.Pattern;
  * Created by Aleksey Cheusov on 4/24/16.
  */
 public class Jgrep {
+
+    public static final String OPTION_GROUP_REGEXP_SELECTION_AND_INTERPRETATION = "Regexp selection and interpretation:";
+    public static final String OPTION_GROUP_MISCELLANEOUS = "Miscellaneous:";
+    public static final String OPTION_GROUP_OUTPUT_CONTROL = "Output control:";
+    public static final String OPTION_GROUP_CONTEXT_CONTROL = "Context control:";
+
+    private static final String USAGE_MESSAGE = "Usage: jgrep [OPTIONS]... PATTERN [FILES...]";
+    private static final String HEADER_MESSAGE = "Search for PATTERN in each FILE or standard input. " +
+            "PATTERN is, by default, a Java regular expression (java.lang.regex).\n" +
+            "Example: jgrep -i 'hello world' menu.h main.c";
+    private static final String FOOTER_MESSAGE = "When FILE is -, read standard input.  With no FILE, read . " +
+            "if a command-line -r is given, - otherwise.  If fewer than two FILEs are given, assume -h. " +
+            "Exit status is 0 if any line is selected, 1 otherwise; if any error occurs and -q is not given, " +
+            "the exit status is 2.\nJgrep home page: <https://github.com/cheusov/jgrep>";
+
+    private static Options[] optionGroups = {null, null, null, null};
+    private static Options options;
+
     private static List<String> regexps = new ArrayList<String>();
     private static ArrayList<Pattern> patterns = new ArrayList<Pattern>();
     private static int patternFlags;
@@ -76,6 +94,77 @@ public class Jgrep {
         if (colorEscSequence != null) {
             colorEscStart = ("\033[" + colorEscSequence + "m");
             colorEscEnd = "\033[1;0m";
+        }
+
+        initOptions();
+    }
+
+    private static class MyOptions extends Options {
+        private List<Option> options = new ArrayList<Option>();
+
+        public Collection getOptions() {
+            return options;
+        }
+
+        public Options addOption(Option opt) {
+            options.add(opt);
+            return super.addOption(opt);
+        }
+    }
+
+    private static class MyHelpFormatter extends HelpFormatter {
+        public void printUsage(PrintWriter pw, int width, String app, Options options) {
+        }
+
+        public void printUsage(PrintWriter pw, int width, String app) {
+        }
+
+        protected StringBuffer renderOptions(StringBuffer sb, int width, Options options, int leftPad, int descPad)
+        {
+            final String lpad = createPadding(leftPad);
+            final String dpad = createPadding(descPad);
+
+            StringBuffer optBuf;
+
+            Collection<Option> optList = options.getOptions();
+
+            int max = 25;
+
+            for (Option option : optList) {
+                optBuf = new StringBuffer(8);
+
+                if (option.getOpt() == null) {
+                    optBuf.append(lpad).append("   " + getLongOptPrefix()).append(option.getLongOpt());
+                } else {
+                    optBuf.append(lpad).append(getOptPrefix()).append(option.getOpt());
+
+                    if (option.hasLongOpt())
+                        optBuf.append(',').append(getLongOptPrefix()).append(option.getLongOpt());
+                }
+
+                if (option.hasArg()) {
+                    if (option.hasArgName())
+                        optBuf.append(" <").append(option.getArgName()).append(">");
+                    else
+                        optBuf.append(' ');
+                }
+
+                if (optBuf.length() < max)
+                    optBuf.append(createPadding(max - optBuf.length()));
+
+                optBuf.append(dpad);
+
+                int nextLineTabStop = max + descPad;
+
+                if (option.getDescription() != null)
+                    optBuf.append(option.getDescription());
+
+                renderWrappedText(sb, width, nextLineTabStop, optBuf.toString());
+
+                sb.append(getNewLine());
+            }
+
+            return sb;
         }
     }
 
@@ -290,60 +379,126 @@ public class Jgrep {
             printlnWithPrefix(filename, "" + matchCount, lineNumber, ':');
     }
 
-    private static String[] handleOptions(String[] args) throws ParseException, IOException {
-        Options options = new Options();
-//        options.addOption("t", false, "display current time");
-        options.addOption("e", "regexp", true, "Specify a pattern used during the search of the input: an input line is " +
+    private static void initOptions() {
+        Option opt;
+
+        ///////////// group 0 /////////////
+        options = optionGroups[0] = new MyOptions();
+
+        options.addOption("E", "extended-regexp", false, "Ignored.");
+        options.addOption("F", "fixed-strings", false, "Interpret pattern as a set of fixed strings.");
+        options.addOption("G", "basic-regexp", false, "Ignored.");
+        options.addOption("P", "perl-regexp", false, "Ignored.");
+
+        opt = new Option("e", "regexp", true, "Specify a pattern used during the search of the input: an input line is " +
                 "selected if it matches any of the specified patterns." +
                 "This option is most useful when multiple -e options are used to specify multiple patterns, " +
                 "or when a pattern begins with a dash (‘-’).");
+        opt.setArgName("PATTERN");
+        options.addOption(opt);
+
+        opt = new Option("f", "file", true, "Obtain PATTERN from FILE.");
+        opt.setArgName("FILE");
+        options.addOption(opt);
+
         options.addOption("i", "ignore-case", false, "Perform case insensitive matching. By default, " +
                 "grep is case sensitive.");
+
+        options.addOption("w", "word-regexp", false, "Force PATTERN to match only whole words.");
+        options.addOption("x", "line-regexp", false, "Only input lines selected against an entire fixed string " +
+                "or regular expression are considered to be matching lines.");
+
+        ///////////// group 1 /////////////
+        options = optionGroups[1] = new MyOptions();
+
+        options.addOption("s", "no-messages", false, "Suppress error messages");
         options.addOption("v", "invert-match", false, "Selected lines are those not matching any of " +
                 "the specified patterns.");
+        options.addOption("V", "version", false, "Display version information and exit.");
+        options.addOption(null, "help", false, "Display this help text and exit.");
+
+        ///////////// group 2 /////////////
+        options = optionGroups[2] = new MyOptions();
+
+        opt = new Option("m", "max-count", true, "Stop after NUM matches.");
+        opt.setArgName("NUM");
+        options.addOption(opt);
+
+        options.addOption("n", "line-number", false, "Each output line is preceded by its relative line number " +
+                "in the file, starting at line 1. The line number counter is reset for each file processed. " +
+                "This option is ignored if -c, -L, -l, or -q is specified.");
+
+        options.addOption(null, "line-buffered", false, "Flush output on every line.");
+        options.addOption("H", "with-filename", false, "Print the file name for each match.");
+        options.addOption("h", "no-filename", false, "Never print filename headers (i.e. filenames) with output lines.");
+
+        opt = new Option(null, "label", true, "Use LABEL as the standard input file name prefix.");
+        opt.setArgName("LABEL");
+        options.addOption(opt);
+
+        options.addOption("o", "only-matching", false, "Print each match, but only the match, not the entire line.");
+
+        opt = new Option("O", "output-format", true, "Same as -o but FORMAT specifies the output format." +
+                " \\N means group number N, \\\\ means \\. All other characters are output as is.");
+        opt.setArgName("FORMAT");
+        options.addOption(opt);
+
+        opt = new Option(null, "marker-start", true, "Marker for the beginning of matched substring.");
+        opt.setArgName("MARKER");
+        options.addOption(opt);
+
+        opt = new Option(null, "marker-end", true, "Marker for the end of matched substring.");
+        opt.setArgName("MARKER");
+        options.addOption(opt);
+
+        options.addOption("q", "quiet", false, "Quiet. Nothing shall be written to the standard output," +
+                " regardless of matching lines. Exit with zero status if an input line is selected.");
+        options.addOption(null, "silent", false, "Same as --quiet.");
+
+        options.addOption("8", false, "Match the whole file content at once.");
+        options.addOption("r", "recursive", false, "Recursively search subdirectories listed.");
+
+        opt = new Option(null, "include", true, "Search only files that match FILE_PATTERN pattern.");
+        opt.setArgName("FILE_PATTERN");
+        options.addOption(opt);
+
+        opt = new Option(null, "exclude", true, "Skip files matching FILE_PATTERN.");
+        opt.setArgName("FILE_PATTERN");
+        options.addOption(opt);
+
+        options.addOption("L", "files-without-match", false, "Only the names of files not containing selected lines " +
+                "are written to standard output. Pathnames are listed once per file searched. " +
+                "If the standard input is searched, the string “(standard input)” is written.");
         options.addOption("l", "files-with-matches", false, "Only the names of files containing selected lines " +
                 "are written to standard output. grep will only search a file until a match has been found, " +
                 "making searches potentially less expensive. Pathnames are listed once per file searched. " +
                 "If the standard input is searched, the string “(standard input)” is written.");
-        options.addOption("o", "only-matching", false, "Print each match, but only the match, not the entire line.");
-        options.addOption("L", "files-without-match", false, "Only the names of files not containing selected lines " +
-                "are written to standard output. Pathnames are listed once per file searched. " +
-                "If the standard input is searched, the string “(standard input)” is written.");
-        options.addOption("h", "no-filename", false, "Never print filename headers (i.e. filenames) with output lines.");
-        options.addOption("H", "with-filename", false, "Print the file name for each match.");
-        options.addOption("E", "extended-regexp", false, "Ignored.");
-        options.addOption("G", "basic-regexp", false, "Ignored.");
-        options.addOption("P", "perl-regexp", false, "Ignored.");
-        options.addOption("8", false, "Match the whole file content at once.");
-        options.addOption("F", "fixed-strings", false, "Interpret pattern as a set of fixed strings.");
         options.addOption("c", "count", false, "Only a count of selected lines is written to standard output.");
-        options.addOption("n", "line-number", false, "Each output line is preceded by its relative line number " +
-                "in the file, starting at line 1. The line number counter is reset for each file processed. " +
-                "This option is ignored if -c, -L, -l, or -q is specified.");
-        options.addOption("m", "max-count", true, "Stop after ARG matches.");
-        options.addOption("x", "line-regexp", false, "Only input lines selected against an entire fixed string " +
-                "or regular expression are considered to be matching lines.");
-        options.addOption(null, "help", false, "Display this help text and exit.");
-        options.addOption("V", "version", false, "Display version information and exit.");
-        options.addOption(null, "line-buffered", false, "Flush output on every line.");
-        options.addOption("s", "no-messages", false, "Suppress error messages");
-        options.addOption("q", "quiet", false, "Quiet. Nothing shall be written to the standard output," +
-                " regardless of matching lines. Exit with zero status if an input line is selected.");
-        options.addOption(null, "silent", false, "Same as --quiet.");
-        options.addOption(null, "label", true, "Use ARG as the standard input file name prefix.");
-        options.addOption("w", "word-regexp", false, "Force PATTERN to match only whole words.");
-        options.addOption("f", "file", true, "Obtain PATTERN from FILE.");
-        options.addOption("r", "recursive", false, "Recursively search subdirectories listed.");
-        options.addOption(null, "marker-start", true, "Marker for the beginning of matched substring.");
-        options.addOption(null, "marker-end", true, "Marker for the end of matched substring.");
-        options.addOption(null, "include", true, "Search only files that match ARG pattern.");
-        options.addOption(null, "exclude", true, "Skip files matching ARG.");
-        options.addOption("A", "after-context", true, "Print ARG lines of trailing context.");
-        options.addOption("B", "before-context", true, "Print ARG lines of leading context.");
-        options.addOption("C", "context", true, "Print ARG lines of output context.");
-        options.addOption("O", "output-format", true, "Same as -o but ARG specifies the output format." +
-                " \\N means group number N, \\\\ means \\. All other characters are output as is.");
 
+        ///////////// group 3 /////////////
+        options = optionGroups[3] = new MyOptions();
+
+        opt = new Option("B", "before-context", true, "Print NUM lines of leading context.");
+        opt.setArgName("NUM");
+        options.addOption(opt);
+
+        opt = new Option("A", "after-context", true, "Print NUM lines of trailing context.");
+        opt.setArgName("NUM");
+        options.addOption(opt);
+
+        opt = new Option("C", "context", true, "Print NUM lines of output context.");
+        opt.setArgName("NUM");
+        options.addOption(opt);
+
+        ///////////////////////////////////
+        options = new Options();
+
+        for (int i = 0 ; i < optionGroups.length; ++i)
+            for (Object obj : optionGroups[i].getOptions())
+                options.addOption((Option) obj);
+    }
+
+    private static String[] handleOptions(String[] args) throws ParseException, IOException {
         CommandLineParser parser = new PosixParser();
         CommandLine cmd = parser.parse(options, args);
 
@@ -431,8 +586,7 @@ public class Jgrep {
             opt_A = opt_B = Integer.valueOf(optC);
 
         if (cmd.hasOption("help")) {
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("jgrep", options);
+            printHelp(options);
             System.exit(0);
         }
 
@@ -442,6 +596,38 @@ public class Jgrep {
         }
 
         return cmd.getArgs();
+    }
+
+    private static void printHelp(Options options) {
+        MyHelpFormatter formatter = new MyHelpFormatter();
+        formatter.setLeftPadding(2);
+
+        PrintWriter pw = new PrintWriter(System.out);
+
+        final int width = formatter.getWidth();
+        final int lpad = formatter.getLeftPadding();
+        final int dpad = formatter.getDescPadding();
+//        formatter.printHelp(USAGE_MESSAGE, options);
+        formatter.printWrapped(pw, width, USAGE_MESSAGE);
+        formatter.printWrapped(pw, width, HEADER_MESSAGE);
+        formatter.printWrapped(pw, width, "");
+
+        formatter.printWrapped(pw, width, OPTION_GROUP_REGEXP_SELECTION_AND_INTERPRETATION);
+        formatter.printHelp(pw, width, " ", null, optionGroups[0], lpad, dpad, null);
+
+        formatter.printWrapped(pw, width, OPTION_GROUP_MISCELLANEOUS);
+        formatter.printHelp(pw, width, " ", null, optionGroups[1], lpad, dpad, null);
+
+        formatter.printWrapped(pw, width, OPTION_GROUP_OUTPUT_CONTROL);
+        formatter.printHelp(pw, width, " ", null, optionGroups[2], lpad, dpad, null);
+
+        formatter.printWrapped(pw, width, OPTION_GROUP_CONTEXT_CONTROL);
+        formatter.printHelp(pw, width, " ", null, optionGroups[3], lpad, dpad, null);
+
+        formatter.printWrapped(pw, formatter.getWidth(), FOOTER_MESSAGE);
+
+        pw.flush();
+//        formatter.printHelp(USAGE_MESSAGE, HEADER_MESSAGE, options, FOOTER_MESSAGE, false);
     }
 
     private static void sanityCheck() {

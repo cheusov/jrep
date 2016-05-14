@@ -98,97 +98,6 @@ public class Jgrep {
         initOptions();
     }
 
-    private static class MyOptions extends Options {
-        private List<Option> options = new ArrayList<Option>();
-
-        public Collection getOptions() {
-            return options;
-        }
-
-        public Options addOption(Option opt) {
-            options.add(opt);
-            return super.addOption(opt);
-        }
-    }
-
-    private static class MyHelpFormatter extends HelpFormatter {
-        public void printUsage(PrintWriter pw, int width, String app, Options options) {
-        }
-
-        public void printUsage(PrintWriter pw, int width, String app) {
-        }
-
-        protected StringBuffer renderOptions(StringBuffer sb, int width, Options options, int leftPad, int descPad)
-        {
-            final String lpad = createPadding(leftPad);
-            final String dpad = createPadding(descPad);
-
-            StringBuffer optBuf;
-
-            Collection<Option> optList = options.getOptions();
-
-            int max = 25;
-
-            for (Option option : optList) {
-                optBuf = new StringBuffer(8);
-
-                if (option.getOpt() == null) {
-                    optBuf.append(lpad).append("   " + getLongOptPrefix()).append(option.getLongOpt());
-                } else {
-                    optBuf.append(lpad).append(getOptPrefix()).append(option.getOpt());
-
-                    if (option.hasLongOpt())
-                        optBuf.append(',').append(getLongOptPrefix()).append(option.getLongOpt());
-                }
-
-                if (option.hasArg()) {
-                    if (option.hasArgName())
-                        optBuf.append(" <").append(option.getArgName()).append(">");
-                    else
-                        optBuf.append(' ');
-                }
-
-                if (optBuf.length() < max)
-                    optBuf.append(createPadding(max - optBuf.length()));
-
-                optBuf.append(dpad);
-
-                int nextLineTabStop = max + descPad;
-
-                if (option.getDescription() != null)
-                    optBuf.append(option.getDescription());
-
-                renderWrappedText(sb, width, nextLineTabStop, optBuf.toString());
-
-                sb.append(getNewLine());
-            }
-
-            return sb;
-        }
-    }
-
-    private static class SingleStringIterator implements Iterator<String> {
-        String str;
-
-        public SingleStringIterator(String str) {
-            this.str = str;
-        }
-
-        public boolean hasNext() {
-            return str != null;
-        }
-
-        public String next() {
-            String ret = str;
-            str = null;
-            return ret;
-        }
-
-        public void remove() {
-            str = null;
-        }
-    }
-
     private static void println(String line) {
         if (!opt_q) {
             System.out.println(line);
@@ -382,7 +291,7 @@ public class Jgrep {
         Option opt;
 
         ///////////// group 0 /////////////
-        options = optionGroups[0] = new MyOptions();
+        options = optionGroups[0] = new JgrepOptions();
 
         options.addOption("E", "extended-regexp", false, "Ignored.");
         options.addOption("F", "fixed-strings", false, "Interpret pattern as a set of fixed strings.");
@@ -408,7 +317,7 @@ public class Jgrep {
                 "or regular expression are considered to be matching lines.");
 
         ///////////// group 1 /////////////
-        options = optionGroups[1] = new MyOptions();
+        options = optionGroups[1] = new JgrepOptions();
 
         options.addOption("s", "no-messages", false, "Suppress error messages");
         options.addOption("v", "invert-match", false, "Selected lines are those not matching any of " +
@@ -417,7 +326,7 @@ public class Jgrep {
         options.addOption(null, "help", false, "Display this help text and exit.");
 
         ///////////// group 2 /////////////
-        options = optionGroups[2] = new MyOptions();
+        options = optionGroups[2] = new JgrepOptions();
 
         opt = new Option("m", "max-count", true, "Stop after NUM matches.");
         opt.setArgName("NUM");
@@ -475,7 +384,7 @@ public class Jgrep {
         options.addOption("c", "count", false, "Only a count of selected lines is written to standard output.");
 
         ///////////// group 3 /////////////
-        options = optionGroups[3] = new MyOptions();
+        options = optionGroups[3] = new JgrepOptions();
 
         opt = new Option("B", "before-context", true, "Print NUM lines of leading context.");
         opt.setArgName("NUM");
@@ -618,7 +527,7 @@ public class Jgrep {
     }
 
     private static void printHelp(Options options) {
-        MyHelpFormatter formatter = new MyHelpFormatter();
+        JgrepHelpFormatter formatter = new JgrepHelpFormatter();
         formatter.setLeftPadding(2);
 
         PrintWriter pw = new PrintWriter(System.out);

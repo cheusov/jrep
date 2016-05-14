@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 unset JGREP_COLOR
 unset GREP_COLOR
 
@@ -688,4 +690,9 @@ $GREP_CMD -Fw 'apple' text3.txt |
     cmp 'jgrep -Fw #40.2' \
 'the apple
 apple
+'
+
+( unset LC_ALL; $GREP_CMD -Fw 'яблоко' text3.txt; ) |
+    cmp 'jgrep -Fw #40.3' \
+'яблоко
 '

@@ -2,3 +2,4 @@ the apple
 apples
 apple
 application
+яблоко

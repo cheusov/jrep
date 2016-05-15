@@ -696,3 +696,35 @@ apple
     cmp 'jgrep -Fw #40.3' \
 'яблоко
 '
+
+$GREP_CMD -8h -O '============ match ============
+${1}' '(?ms:(^Welcome.*?$\n.+?[.]))' text?.txt |
+    cmp 'jgrep -O #41.1' \
+'============ match ============
+Welcome to NetBSD!
+
+This system is running a development snapshot of a stable branch of the NetBSD
+operating system, which will eventually lead to a new formal release.
+============ match ============
+Welcome to OpenBSD: The proactively secure Unix-like operating system.
+
+Please use the sendbug(1) utility to report bugs in the system.
+'
+
+$GREP_CMD -8h -O '============ match ============
+${1n}' '(?ms:(^Welcome.*?$\n.+?[.]))' text?.txt |
+    cmp 'jgrep -O #41.2' \
+'============ match ============
+Welcome to NetBSD!\n\nThis system is running a development snapshot of a stable branch of the NetBSD\noperating system, which will eventually lead to a new formal release.
+============ match ============
+Welcome to OpenBSD: The proactively secure Unix-like operating system.\n\nPlease use the sendbug(1) utility to report bugs in the system.
+'
+
+$GREP_CMD -8h -O '============ match ============
+${1Ns}' '(?ms:(^Welcome.*?$\n.+?[.]))' text?.txt |
+    cmp 'jgrep -O #41.3' \
+'============ match ============
+Welcome to NetBSD! This system is running a development snapshot of a stable branch of the NetBSD operating system, which will eventually lead to a new formal release.
+============ match ============
+Welcome to OpenBSD: The proactively secure Unix-like operating system. Please use the sendbug(1) utility to report bugs in the system.
+'

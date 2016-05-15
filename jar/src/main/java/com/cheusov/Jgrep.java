@@ -149,6 +149,30 @@ public class Jgrep {
         return (sb.toString() + line.substring(prev));
     }
 
+    private static StringBuilder[] extractCurlyBraces(String text, int pos){
+        StringBuilder[] ret = {null, null};
+
+        StringBuilder sbLetters = ret[0] = new StringBuilder();
+        StringBuilder sbDigits  = ret[1] = new StringBuilder();
+
+        int length = text.length();
+        for (; pos < length; ++pos) {
+            char c = text.charAt(pos);
+            if (c == '}')
+                break;
+
+            if (c >= '0' && c <= '9') {
+                sbDigits.append(c);
+            } else if (c == 't' || c == 'n' || c == 'N' || c == 's') {
+                sbLetters.append(c);
+            } else {
+                throw new IllegalArgumentException("Unexpected `" + c + " in -O argument at position " + pos);
+            }
+        }
+
+        return ret;
+    }
+
     private static String getOutputString(String line, JgrepMatcher match){
         if (opt_O == null)
             return line.substring(match.start(), match.end());
@@ -165,10 +189,36 @@ public class Jgrep {
                 char nc = opt_O.charAt(i + 1);
                 if (nc == '$')
                     b.append('$');
-//                else if (nc == '\n')
-//                    ;
-                else if (nc >= '0' && nc <= '9')
-                    b.append(match.group(nc - '0').replaceAll("\n", " "));
+                else if (nc == '{') {
+                    StringBuilder[] ld;
+                    i += 1;
+                    ld = extractCurlyBraces(opt_O, i + 1);
+                    StringBuilder l = ld[0];
+                    StringBuilder d = ld[1];
+                    int sumlen = d.length() + l.length();
+                    i += sumlen; // +1 due to '}'
+                    int groupNum = Integer.valueOf(d.toString());
+                    String group = match.group(groupNum);
+                    for (int j = 0; j < l.length(); ++j){
+                        char lc = l.charAt(j);
+                        switch (lc) {
+                            case 'n':
+                                group = group.replaceAll("\\\\", "\\\\").replaceAll("\n", "\\\\n");
+                                break;
+                            case 'N':
+                                group = group.replaceAll("\n", " ");
+                                break;
+                            case 's':
+                                group = group.replaceAll("\\s+", " ");
+                                break;
+                            case 't':
+                                group = group.trim();
+                                break;
+                        }
+                    }
+                    b.append(group);
+                } else if (nc >= '0' && nc <= '9')
+                    b.append(match.group(nc - '0'));
                 else
                     throw new IllegalArgumentException("Illegal `$" + nc + "` in -O argument: `" + opt_O + "`");
 
@@ -353,8 +403,7 @@ public class Jgrep {
 
         options.addOption("o", "only-matching", false, "Print each match, but only the match, not the entire line.");
 
-        opt = new Option("O", "output-format", true, "Same as -o but FORMAT specifies the output format." +
-                " $N means group number N, $$ means $$. All other characters are output as is.");
+        opt = new Option("O", "output-format", true, "Same as -o but FORMAT specifies the output format.");
         opt.setArgName("FORMAT");
         options.addOption(opt);
 

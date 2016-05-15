@@ -144,6 +144,13 @@ Print each match, but only the match, not the entire line.
 
 Same as -o but FORMAT specifies the output
 format. $N means group number N, $$ means $.
+The number N can be surrounded by curly braces, this allows to use
+a group number more than 9. Inside curly braces the following special
+characters can be used: 'I<n>' for replacing LF (line feed) and backslash characters
+with '\n' and '\\' sequences respectively,
+'I<N>' for replacing LF with space,
+'I<s>' for replacing a sequence of spaces with a single one
+and 'I<t>' for trimming leading and trailing spaces from the group.
 All other characters are output as is.
 
 =item B<--marker-start> I<MARKER>

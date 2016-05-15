@@ -28,7 +28,6 @@ The following GNU grep options are not implemented and probably won't be:
 * -I                        equivalent to --binary-files=without-match
 * -D, --devices=ACTION      how to handle devices, FIFOs and sockets;
                             ACTION is 'read' or 'skip'
-* -R, --dereference-recursive  likewise, but follow all symlinks
 * -NUM                      same as --context=NUM
 * -U, --binary              do not strip CR characters at EOL (MSDOS/Windows)
 * -u, --unix-byte-offsets   report offsets as if CRs were not there

@@ -8,6 +8,8 @@ export LC_ALL
 
 GREP_CMD='jgrep'
 
+ln -f -s text1.txt text1_copy.txt
+
 $GREP_CMD OpenBSD text2.txt |
     cmp 'jgrep #1' \
 'OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
@@ -418,7 +420,7 @@ text1.txt:use the web interface at: http://www.NetBSD.org/support/send-pr.html
 text1.txt:Thank you for helping us test and improve this NetBSD branch.
 '
 
-$GREP_CMD --include='*1*' --include='*[2]*' --include='text3.tx?' -r -e man -e 'in mind' . |
+$GREP_CMD --include='*1*' --include='*[2]*' --include='text3.tx?' --recursive -e man -e 'in mind' . |
     sort |
     cmp 'jgrep -r #32' \
 'subdir/text3.txt:FreeBSD directory layout:      man hier
@@ -728,3 +730,19 @@ Welcome to NetBSD! This system is running a development snapshot of a stable bra
 ============ match ============
 Welcome to OpenBSD: The proactively secure Unix-like operating system. Please use the sendbug(1) utility to report bugs in the system.
 '
+
+$GREP_CMD This --include '*.txt' -r . | sort |
+    cmp 'jgrep -r/-R #42.1' \
+'text1.txt:This system is running a development snapshot of a stable branch of the NetBSD
+text1.txt:operating system, which will eventually lead to a new formal release.  This
+'
+
+$GREP_CMD This --include '*.txt' -R . | sort |
+    cmp 'jgrep -r/-R #42.2' \
+'text1.txt:This system is running a development snapshot of a stable branch of the NetBSD
+text1.txt:operating system, which will eventually lead to a new formal release.  This
+text1_copy.txt:This system is running a development snapshot of a stable branch of the NetBSD
+text1_copy.txt:operating system, which will eventually lead to a new formal release.  This
+'
+
+rm text1_copy.txt

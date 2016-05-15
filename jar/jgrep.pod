@@ -179,6 +179,10 @@ Match the whole file content at once.
 
 Recursively search subdirectories listed.
 
+=item B<-R>,B<--dereference-recursive>
+
+Same as B<-r> but follow all symbolic links.
+
 =item B<--include> I<FILE_PATTERN>
 
 Search only files that match FILE_PATTERN pattern.

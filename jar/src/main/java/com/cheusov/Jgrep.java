@@ -62,7 +62,7 @@ public class Jgrep {
     private static boolean opt_n = false;
     private static boolean opt_x = false;
     private static boolean opt_q = false;
-    private static boolean opt_r = false;
+    private static boolean opt_rR = false;
     private static boolean opt_s = false;
     private static boolean opt_w = false;
     private static boolean opt_line_buffered = false;
@@ -95,6 +95,17 @@ public class Jgrep {
         }
 
         initOptions();
+    }
+
+    private static class SymLinkFileFilter extends AbstractFileFilter {
+        @Override
+        public boolean accept(File file) {
+            try {
+                return FileUtils.isSymlink(file);
+            } catch (IOException e) {
+                return false;
+            }
+        }
     }
 
     private static void println(String line) {
@@ -421,6 +432,7 @@ public class Jgrep {
 
         options.addOption("8", false, "Match the whole file content at once.");
         options.addOption("r", "recursive", false, "Recursively search subdirectories listed.");
+        options.addOption("R", "dereference-recursive", false, "Likewise, but follow all symlinks.");
 
         opt = new Option(null, "include", true, "Search only files that match FILE_PATTERN pattern.");
         opt.setArgName("FILE_PATTERN");
@@ -489,7 +501,12 @@ public class Jgrep {
         opt_c = cmd.hasOption("c");
         opt_n = cmd.hasOption("n");
         opt_x = cmd.hasOption("x");
-        opt_r = cmd.hasOption("r");
+
+        boolean optR = cmd.hasOption("R");
+        opt_rR = optR || cmd.hasOption("r");
+        if (!optR)
+            orExcludeFileFilter.addFileFilter(new SymLinkFileFilter());
+
         opt_s = cmd.hasOption("s");
         opt_q = cmd.hasOption("q") || cmd.hasOption("silent");
         opt_w = cmd.hasOption("w");
@@ -665,7 +682,7 @@ public class Jgrep {
         for (int i = 0; i < regexps.size(); ++i)
             patterns.add(JgrepPattern.compile(opt_re_engine, regexps.get(i)));
 
-        prefixWithFilename = (opt_H || opt_r || args.length > 1) && !opt_h;
+        prefixWithFilename = (opt_H || opt_rR || args.length > 1) && !opt_h;
     }
 
     private static final String[] stdinFilenames = {"-"};
@@ -677,7 +694,7 @@ public class Jgrep {
         for (String fileOrDir : args) {
             try {
                 Iterator fileIterator;
-                if (opt_r) {
+                if (opt_rR) {
                     fileIterator = FileUtils.iterateFiles(new File(fileOrDir), fileFilter, DirectoryFileFilter.DIRECTORY);
                 } else {
                     fileIterator = Arrays.asList(fileOrDir).iterator();

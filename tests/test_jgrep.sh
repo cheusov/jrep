@@ -716,6 +716,19 @@ if test -n "$utf8_locale"; then
 '
 fi
 
+cp1251_locale=`locale -a | grep -iE '1251' -m 1 || true`
+if test -n "$cp1251_locale"; then
+    (
+	unset LC_ALL || true
+	LC_CTYPE="$cp1251_locale"
+	export LC_CTYPE
+	$GREP_CMD -c '\p{IsAlphabetic}+' text5.txt
+    ) |
+    cmp 'jgrep -c and non-standard locale #40.4' \
+'2
+'
+fi
+
 $GREP_CMD -8h -O '============ match ============
 ${1}' '(?ms:(^Welcome.*?$\n.+?[.]))' text?.txt |
     cmp 'jgrep -O #41.1' \

@@ -83,6 +83,8 @@ public class Jgrep {
 
     private static boolean isStdoutTTY = false;
 
+    private static String encoding = System.getProperty("file.encoding");
+
     static {
         fileFilter.addFileFilter(orIncludeFileFilter);
         fileFilter.addFileFilter(new NotFileFilter(orExcludeFileFilter));
@@ -256,13 +258,12 @@ public class Jgrep {
     }
 
     private static void processFile(InputStream in, String filename) throws IOException {
-//        LineIterator it = FileUtils.lineIterator(new File(filename), "UTF-8");
         Iterator<String> it;
         if (wholeContent) {
-            String fileContent = IOUtils.toString(in, "UTF-8");
+            String fileContent = IOUtils.toString(in, encoding);
             it = Arrays.asList(fileContent).iterator();
         } else {
-            it = IOUtils.lineIterator(in, "UTF-8");
+            it = IOUtils.lineIterator(in, encoding);
         }
 
         int matchCount = 0;
@@ -559,7 +560,7 @@ public class Jgrep {
         {
             String optexcludefrom = cmd.getOptionValue("exclude-from");
             if (optexcludefrom != null) {
-                Iterator<String> it = IOUtils.lineIterator(new FileInputStream(optexcludefrom), "UTF-8");
+                Iterator<String> it = IOUtils.lineIterator(new FileInputStream(optexcludefrom), encoding);
                 while (it.hasNext()) {
                     orExcludeFileFilter.addFileFilter(new WildcardFileFilter(it.next()));
                 }
@@ -568,7 +569,7 @@ public class Jgrep {
 
         String optf = cmd.getOptionValue("f");
         if (optf != null) {
-            Iterator<String> it = IOUtils.lineIterator(new FileInputStream(optf), "UTF-8");
+            Iterator<String> it = IOUtils.lineIterator(new FileInputStream(optf), encoding);
             while (it.hasNext()) {
                 regexps.add(it.next());
             }

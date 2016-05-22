@@ -87,6 +87,8 @@ public class Jgrep {
         fileFilter.addFileFilter(orIncludeFileFilter);
         fileFilter.addFileFilter(new NotFileFilter(orExcludeFileFilter));
 
+        orExcludeFileFilter.addFileFilter(FalseFileFilter.FALSE);
+
         isStdoutTTY = Utils.isStdoutTTY();
 
         String colorEscSequence = System.getenv("JGREP_COLOR");
@@ -213,7 +215,11 @@ public class Jgrep {
                     int sumlen = d.length() + l.length();
                     i += sumlen; // +1 due to '}'
                     int groupNum = Integer.valueOf(d.toString());
+
                     String group = match.group(groupNum);
+                    if (group == null)
+                        group = "";
+
                     for (int j = 0; j < l.length(); ++j){
                         char lc = l.charAt(j);
                         switch (lc) {
@@ -232,10 +238,15 @@ public class Jgrep {
                         }
                     }
                     b.append(group);
-                } else if (nc >= '0' && nc <= '9')
-                    b.append(match.group(nc - '0'));
-                else
+                } else if (nc >= '0' && nc <= '9') {
+                    String group = match.group(nc - '0');
+                    if (group == null)
+                        group = "";
+
+                    b.append(group);
+                } else {
                     throw new IllegalArgumentException("Illegal `$" + nc + "` in -O argument: `" + opt_O + "`");
+                }
 
                 ++i;
             }
@@ -446,6 +457,11 @@ public class Jgrep {
         opt.setArgName("FILE_PATTERN");
         options.addOption(opt);
 
+        opt = new Option(null, "exclude-from", true, "Skip files whose base name matches any of" +
+                " the file-name globs read from FILE (using wildcard matching as described under --exclude).");
+        opt.setArgName("FILE");
+        options.addOption(opt);
+
         options.addOption("L", "files-without-match", false, "Only the names of files not containing selected lines " +
                 "are written to standard output. Pathnames are listed once per file searched. " +
                 "If the standard input is searched, the string “(standard input)” is written.");
@@ -490,7 +506,6 @@ public class Jgrep {
     private static String[] handleOptions(String[] args) throws ParseException, IOException {
         CommandLineParser parser = new PosixParser();
         CommandLine cmd = parser.parse(options, args);
-
 
         inverseMatch = cmd.hasOption("v");
         outputFilename = cmd.hasOption("l");
@@ -538,8 +553,16 @@ public class Jgrep {
                 for (String globPattern : optexclude) {
                     orExcludeFileFilter.addFileFilter(new WildcardFileFilter(globPattern));
                 }
-            } else {
-                orExcludeFileFilter.addFileFilter(FalseFileFilter.FALSE);
+            }
+        }
+
+        {
+            String optexcludefrom = cmd.getOptionValue("exclude-from");
+            if (optexcludefrom != null) {
+                Iterator<String> it = IOUtils.lineIterator(new FileInputStream(optexcludefrom), "UTF-8");
+                while (it.hasNext()) {
+                    orExcludeFileFilter.addFileFilter(new WildcardFileFilter(it.next()));
+                }
             }
         }
 

@@ -18,8 +18,6 @@ JNI_CLASS =		../jar/src/main/java/com/cheusov/Utils.java
 
 .include <mkc.configure.mk>
 
-.info MKCHECKS=${MKCHECKS}
-
 .if empty(JAVA_HOME) && ${MKCHECKS:U} == yes
 .	error "No JAVA_HOME found, JNI building will fail.  Please set JAVA_HOME when using JNI."
 .endif

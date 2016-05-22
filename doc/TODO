@@ -1,13 +1,11 @@
 ========================================
 plan 0:
-* null
-* -v + -C + coloring
-*       --exclude-from=FILE   skip files matching any file pattern from FILE
 *       --exclude-dir=PATTERN  directories that match PATTERN will be skipped.
 * -n and colorizing like grep(1) does (JGREP_COLORS)
 
 ========================================
 plan 1:
+* -v + -C + coloring
 * reusable object Jgrep. I/O streams etc.
 * encode strings according to locale
 * -z, --null-data           a data line ends in 0 byte, not newline

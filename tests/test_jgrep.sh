@@ -754,4 +754,37 @@ text1_copy.txt:This system is running a development snapshot of a stable branch 
 text1_copy.txt:operating system, which will eventually lead to a new formal release.  This
 '
 
+$GREP_CMD -r --exclude-from=excl_patterns 'BSD' . | sort |
+    cmp 'jgrep --exclude-from #43' \
+'subdir/text3.txt:FreeBSD FAQ:           https://www.FreeBSD.org/faq/
+subdir/text3.txt:FreeBSD Forums:        https://forums.FreeBSD.org/
+subdir/text3.txt:FreeBSD Handbook:      https://www.FreeBSD.org/handbook/
+subdir/text3.txt:FreeBSD directory layout:      man hier
+subdir/text3.txt:Questions List: https://lists.FreeBSD.org/mailman/listinfo/freebsd-questions/
+subdir/text3.txt:Release Notes, Errata: https://www.FreeBSD.org/releases/
+subdir/text3.txt:Security Advisories:   https://www.FreeBSD.org/security/
+subdir/text3.txt:Show the version of FreeBSD installed:  freebsd-version ; uname -a
+subdir/text3.txt:Welcome to FreeBSD!
+text2.txt:OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
+text2.txt:Welcome to OpenBSD: The proactively secure Unix-like operating system.
+'
+
+$GREP_CMD -O '`${1}` `${2}`' '(BSD)|(zzzz)' text1.txt |
+    cmp 'jgrep -O #44.1' \
+'`BSD` ``
+`BSD` ``
+`BSD` ``
+`BSD` ``
+`BSD` ``
+'
+
+$GREP_CMD -O '`$1` `$2`' '(BSD)|(zzzz)' text1.txt |
+    cmp 'jgrep -O #44.2' \
+'`BSD` ``
+`BSD` ``
+`BSD` ``
+`BSD` ``
+`BSD` ``
+'
+
 rm text1_copy.txt

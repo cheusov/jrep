@@ -1,4 +1,2 @@
-MAVEN ?=		mvn
-MKC_REQUIRE_PROGS +=	${MAVEN}
 JARDIR ?=		${LIBDIR}/jgrep
 VERSION =		0.2

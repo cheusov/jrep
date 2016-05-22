@@ -235,7 +235,8 @@ Print NUM lines of output context.
 =item B<--color> I<WHEN>
 
 Use markers to highlight the matching strings;
-WHEN is 'always' or 'never'.
+WHEN is 'always', 'never' or 'auto'.
+The default is 'auto'.
 
 =item B<--colour> I<WHEN>
 

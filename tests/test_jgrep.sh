@@ -432,9 +432,9 @@ text1.txt:release quality.  Please bear this in mind and use the system with car
 $GREP_CMD -ri -e NetBSD -e 'NetBSD.*$' -e 'OpenBSD.*$' -e OpenBSD \
 	  -e FreeBSD -e '.*FreeBSD' -e 'Advisories.*security' -e 'welcome to \S+' \
 	  --marker-start '<b>' --marker-end '</b>' \
-	  --include '*.txt' . |
+	  --include '*.txt' --color always . |
     sort |
-    cmp 'jgrep -r --include --marker-{start,end} #33.1' \
+    cmp 'jgrep -r --include --marker-{start,end} --color always #33.1' \
 'patterns.txt:<b>NetBSD</b>
 patterns.txt:<b>OpenBSD</b>
 subdir/text3.txt:<b>Documents installed with the system are in the /usr/local/share/doc/freebsd</b>/
@@ -457,13 +457,22 @@ text2.txt:<b>OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012</b>
 text2.txt:<b>Welcome to OpenBSD:</b><b> The proactively secure Unix-like operating system.</b>
 '
 
-$GREP_CMD -ri -e OpenBSD \
+$GREP_CMD -ri -e OpenBSD --color always \
 	  --marker-start '<b>' --marker-end '</b>' --include '*.txt' . |
     sort |
-    cmp 'jgrep -r --include --marker-{start,end} #33.2' \
+    cmp 'jgrep -r --include --marker-{start,end} #33.2.1' \
 'patterns.txt:<b>OpenBSD</b>
 text2.txt:<b>OpenBSD</b> 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
 text2.txt:Welcome to <b>OpenBSD</b>: The proactively secure Unix-like operating system.
+'
+
+$GREP_CMD -ri -e OpenBSD \
+	  --marker-start '<b>' --marker-end '</b>' --include '*.txt' . |
+    sort |
+    cmp 'jgrep -r --include --marker-{start,end} #33.2.2' \
+'patterns.txt:OpenBSD
+text2.txt:OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
+text2.txt:Welcome to OpenBSD: The proactively secure Unix-like operating system.
 '
 
 $GREP_CMD -ri -e OpenBSD \
@@ -657,7 +666,7 @@ ex=2
 
 $GREP_CMD -r2i -e NetBSD -e 'NetBSD.*$' -e 'OpenBSD.*$' -e OpenBSD \
 	  -e FreeBSD -e '.*FreeBSD' -e 'Advisories.*security' -e 'welcome to \S+' \
-	  --marker-start '<b>' --marker-end '</b>' \
+	  --marker-start '<b>' --marker-end '</b>' --colour=always \
 	  --include '*.txt' . |
     sort |
     cmp 'jgrep -r --include --marker-{start,end} -2 #39.6' \

@@ -17,7 +17,9 @@
 : ${JGREP_JAR:=@jardir@/jgrep-0.1-jar-with-dependencies.jar}
 : ${JGREP_JAVA_OPTS:=}
 : ${JGREP_JAVA:=java}
+: ${JGREP_JNI_DIR:=@libdir@}
 
 export JGREP_VERSION=@version@
 
-${JGREP_JAVA} -cp "$JGREP_JAR" $JGREP_JAVA_OPTS com.cheusov.Jgrep "$@"
+${JGREP_JAVA} -Djava.library.path="$JGREP_JNI_DIR" \
+	      -cp "$JGREP_JAR" $JGREP_JAVA_OPTS com.cheusov.Jgrep "$@"

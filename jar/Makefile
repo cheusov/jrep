@@ -3,6 +3,9 @@ FILESDIR =		${JARDIR}
 
 MAN =			jgrep.1
 
+MAVEN ?=		mvn
+MKC_REQUIRE_PROGS +=	${MAVEN}
+
 CLEANFILES =		${MAN}
 
 do-all: ${FILES}

@@ -1,5 +1,5 @@
 PROJECTNAME =	jgrep
-SUBPRJ =	jar:tests scripts:tests doc
+SUBPRJ =	jgrep_jni:jar jar:tests scripts:tests doc
 
 test : all-tests test-tests
 	@:

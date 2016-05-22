@@ -81,9 +81,13 @@ public class Jgrep {
     private static String colorEscStart;
     private static String colorEscEnd;
 
+    private static boolean isStdoutTTY = false;
+
     static {
         fileFilter.addFileFilter(orIncludeFileFilter);
         fileFilter.addFileFilter(new NotFileFilter(orExcludeFileFilter));
+
+        isStdoutTTY = Utils.isStdoutTTY();
 
         String colorEscSequence = System.getenv("JGREP_COLOR");
         if (colorEscSequence == null)
@@ -467,7 +471,7 @@ public class Jgrep {
         options.addOption(opt);
 
         opt = new Option(null, "color", true, "Use markers to highlight the matching strings; " +
-                "WHEN is 'always' or 'never'.");
+                "WHEN is 'always', 'never' or 'auto' (the default).");
         opt.setArgName("WHEN");
         options.addOption(opt);
 
@@ -577,7 +581,10 @@ public class Jgrep {
         String optColor = cmd.getOptionValue("color");
         if (optColor == null)
             optColor = cmd.getOptionValue("colour");
-        if (optColor == null) {
+
+        if (optColor == null || optColor.equals("auto")) {
+            if (! isStdoutTTY)
+                colorEscStart = null;
         } else if (optColor.equals("always")) {
         } else if (optColor.equals("never")) {
             colorEscStart = null;

@@ -703,10 +703,18 @@ $GREP_CMD -Fw 'apple' text3.txt |
 apple
 '
 
-( unset LC_ALL; $GREP_CMD -Fw 'яблоко' text3.txt; ) |
+utf8_locale=`locale -a | grep -iE 'utf-?8' -m 1 || true`
+if test -n "$utf8_locale"; then
+    (
+	unset LC_ALL || true
+	LC_CTYPE="$utf8_locale"
+	export LC_CTYPE
+	$GREP_CMD -Fw 'яблоко' text3.txt
+    ) |
     cmp 'jgrep -Fw #40.3' \
 'яблоко
 '
+fi
 
 $GREP_CMD -8h -O '============ match ============
 ${1}' '(?ms:(^Welcome.*?$\n.+?[.]))' text?.txt |

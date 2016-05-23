@@ -9,7 +9,7 @@ Features:
   -- most GNU grep(1) options
      (https://www.gnu.org/software/grep/)
   -- Extensions over GNU grep(1):
-     options -O and -8
+     options -O, -2 and -8
 
 Documentation:
 
@@ -17,22 +17,25 @@ Documentation:
        or
   -- man page after installation
 
-Installation instruction:
+Installation instruction (Example -- Debian Linux distribution):
 
-  1) install mk-configure (https://github.com/cheusov/mk-configure), for example,
-     on Debian/Linux one can run
+  1) install mk-configure (https://github.com/cheusov/mk-configure)
 
      # apt-get install mk-configure
 
-  2) install JDK-7, for example, on Debian/Linux one can run
+  2) install JDK-7 or later
 
      # apt-get install openjdk-7-jdk
 
-  3) install maven, for example, on Debian/Linux one can run
+  3) install maven
 
      # apt-get install maven
 
-  4)
+  4) Set JAVA_HOME environment variable
+
+     # export JAVA_HOME=/usr/lib/jvm/default-java
+     
+  5)
      # mkcmake all
      # mkcmake test
      # mkcmake install

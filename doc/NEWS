@@ -1,4 +1,20 @@
 ======================================================================
+Version 0.3, by Aleksey Cheusov, Mon, 23 May 2016 06:41:54 +0300
+
+  Additions:
+    - Option -O: support for curly braces and special characters
+      inside.
+    - Option -R.
+    - Support for --color=auto, which now the default.
+    - Support for UNIX locale (LC_CTYPE variable / "file.encoding"
+      Java property).
+
+  POD and man page were moved from jar/ to scripts/ subdirectory.
+
+  Fix: -O no longer outputs "null" if the specified group is not
+  found.
+
+======================================================================
 Version 0.2, by Aleksey Cheusov, Sat, 14 May 2016 22:01:48 +0300
 
   First publicly available release

@@ -261,7 +261,7 @@ If an error occurred the exit status is 2.
 
 =over 6
 
-=item I<JGREP_COLOR>
+=item I<JGREP_COLOR> and I<GREP_COLOR>
 
 This variable specifies the color used to highlight matched
 (non-empty) text.  It can only specify the color used to highlight the
@@ -276,6 +276,10 @@ Path to java. By default 'java'.
 =item I<JGREP_JAVA_OPTS>
 
 Options passed to java(1).
+
+=item I<JGREP_JNI_DIR>
+
+Directory with jgrep_jni library.
 
 =back
 

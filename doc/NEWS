@@ -1,5 +1,5 @@
 ======================================================================
-Version 0.3, by Aleksey Cheusov, Mon, 23 May 2016 06:41:54 +0300
+Version 0.3.0, by Aleksey Cheusov, Mon, 23 May 2016 06:41:54 +0300
 
   Additions:
     - Option -O: support for curly braces and special characters

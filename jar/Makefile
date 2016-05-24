@@ -5,8 +5,10 @@ MAVEN ?=		mvn
 MAVEN_OPTS ?=		
 MKC_REQUIRE_PROGS +=	${MAVEN}
 
-do-all: ${FILES}
-${FILES}: src/main/java/com/cheusov/Jgrep.java
+JAVA_SRCS =		JgrepHelpFormatter.java Jgrep.java JgrepMatcher.java \
+	JgrepOptions.java JgrepPattern.java Utils.java
+
+${FILES}: ${JAVA_SRCS:S|^|src/main/java/com/cheusov/|}
 	${PROG.${MAVEN}} ${MAVEN_OPTS} package install assembly:single
 
 clean:

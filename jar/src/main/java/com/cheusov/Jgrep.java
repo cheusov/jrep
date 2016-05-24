@@ -742,9 +742,11 @@ public class Jgrep {
                     if (filename.equals("-")) {
                         processFile(System.in, label);
                     } else {
-                        FileInputStream in = new FileInputStream(filename);
-                        processFile(in, filename);
-                        in.close();
+                        if (fileFilter.accept(new File(filename))) {
+                            FileInputStream in = new FileInputStream(filename);
+                            processFile(in, filename);
+                            in.close();
+                        }
                     }
                 }
             } catch (IOException e) {

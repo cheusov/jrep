@@ -116,6 +116,19 @@ public class Jgrep {
         }
     }
 
+    private static class PathFileFilter extends AbstractFileFilter {
+        private String path;
+
+        public PathFileFilter(String path) {
+            this.path = path;
+        }
+
+        @Override
+        public boolean accept(File file) {
+            return path.equals(file.getPath());
+        }
+    }
+
     private static void println(String line) {
         if (!opt_q) {
             System.out.println(line);
@@ -552,7 +565,10 @@ public class Jgrep {
             String[] optexclude = cmd.getOptionValues("exclude");
             if (optexclude != null && optexclude.length != 0) {
                 for (String globPattern : optexclude) {
-                    orExcludeFileFilter.addFileFilter(new WildcardFileFilter(globPattern));
+                    if (globPattern.startsWith(".") || globPattern.startsWith("/"))
+                        orExcludeFileFilter.addFileFilter(new PathFileFilter(globPattern));
+                    else
+                        orExcludeFileFilter.addFileFilter(new WildcardFileFilter(globPattern));
                 }
             }
         }
@@ -562,7 +578,12 @@ public class Jgrep {
             if (optexcludefrom != null) {
                 Iterator<String> it = IOUtils.lineIterator(new FileInputStream(optexcludefrom), encoding);
                 while (it.hasNext()) {
-                    orExcludeFileFilter.addFileFilter(new WildcardFileFilter(it.next()));
+                    String globPattern = it.next();
+
+                    if (globPattern.startsWith(".") || globPattern.startsWith("/"))
+                        orExcludeFileFilter.addFileFilter(new PathFileFilter(globPattern));
+                    else
+                        orExcludeFileFilter.addFileFilter(new WildcardFileFilter(globPattern));
                 }
             }
         }

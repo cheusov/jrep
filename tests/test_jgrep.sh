@@ -640,7 +640,7 @@ ex=2
 
 $GREP_CMD -rh -e snapshot --include '*.txt' . |
     sort |
-    cmp 'jgrep -rh #37' \
+    cmp 'jgrep -rh #37.1' \
 'This system is running a development snapshot of a stable branch of the NetBSD
 snapshot may contain bugs or other unresolved issues and is not yet considered
 '
@@ -839,3 +839,17 @@ $GREP_CMD -O '`$1` `$2`' '(BSD)|(zzzz)' text1.txt |
 '
 
 rm text1_copy.txt
+
+echo `pwd`/text1.txt > excl_pattern2
+$GREP_CMD -l --exclude-from=excl_pattern2 'BSD' `pwd`/*.txt | sed 's,.*/,,' |
+    cmp 'jgrep -O #45.1' \
+'patterns.txt
+text2.txt
+'
+rm excl_pattern2
+
+$GREP_CMD -l --exclude=`pwd`/text1.txt 'BSD' `pwd`/*.txt | sed 's,.*/,,' |
+    cmp 'jgrep -O #45.2' \
+'patterns.txt
+text2.txt
+'

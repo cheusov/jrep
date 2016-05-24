@@ -422,7 +422,16 @@ text1.txt:Thank you for helping us test and improve this NetBSD branch.
 
 $GREP_CMD --include='*1*' --include='*[2]*' --include='text3.tx?' --recursive -e man -e 'in mind' . |
     sort |
-    cmp 'jgrep -r #32' \
+    cmp 'jgrep -r #32.1' \
+'subdir/text3.txt:FreeBSD directory layout:      man hier
+subdir/text3.txt:Introduction to manual pages:  man man
+subdir/text3.txt:Questions List: https://lists.FreeBSD.org/mailman/listinfo/freebsd-questions/
+text1.txt:release quality.  Please bear this in mind and use the system with care.
+'
+
+$GREP_CMD --include='*1*' --include='*[2]*' --include 'text3.tx?' -e man -e 'in mind' text?.txt subdir/* |
+    sort |
+    cmp 'jgrep #32.2' \
 'subdir/text3.txt:FreeBSD directory layout:      man hier
 subdir/text3.txt:Introduction to manual pages:  man man
 subdir/text3.txt:Questions List: https://lists.FreeBSD.org/mailman/listinfo/freebsd-questions/
@@ -513,6 +522,12 @@ $GREP_CMD -ril -e BSD --exclude 'text1*' --exclude 'text2*' --exclude 'text3*' .
     cmp 'jgrep -r --exclude #34.2' \
 'patterns.txt
 test_jgrep.sh
+'
+
+$GREP_CMD -il -e BSD --exclude '*.txt' *.txt *.sh |
+    sort |
+    cmp 'jgrep -r --exclude #34.3' \
+'test_jgrep.sh
 '
 
 $GREP_CMD -A4 'utility|interface' text?.txt |
@@ -776,7 +791,22 @@ text1_copy.txt:operating system, which will eventually lead to a new formal rele
 '
 
 $GREP_CMD -r --exclude-from=excl_patterns 'BSD' . | sort |
-    cmp 'jgrep --exclude-from #43' \
+    cmp 'jgrep --exclude-from #43.1' \
+'subdir/text3.txt:FreeBSD FAQ:           https://www.FreeBSD.org/faq/
+subdir/text3.txt:FreeBSD Forums:        https://forums.FreeBSD.org/
+subdir/text3.txt:FreeBSD Handbook:      https://www.FreeBSD.org/handbook/
+subdir/text3.txt:FreeBSD directory layout:      man hier
+subdir/text3.txt:Questions List: https://lists.FreeBSD.org/mailman/listinfo/freebsd-questions/
+subdir/text3.txt:Release Notes, Errata: https://www.FreeBSD.org/releases/
+subdir/text3.txt:Security Advisories:   https://www.FreeBSD.org/security/
+subdir/text3.txt:Show the version of FreeBSD installed:  freebsd-version ; uname -a
+subdir/text3.txt:Welcome to FreeBSD!
+text2.txt:OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
+text2.txt:Welcome to OpenBSD: The proactively secure Unix-like operating system.
+'
+
+$GREP_CMD --exclude-from=excl_patterns 'BSD' *.txt *.sh subdir/* | sort |
+    cmp 'jgrep --exclude-from #43.2' \
 'subdir/text3.txt:FreeBSD FAQ:           https://www.FreeBSD.org/faq/
 subdir/text3.txt:FreeBSD Forums:        https://forums.FreeBSD.org/
 subdir/text3.txt:FreeBSD Handbook:      https://www.FreeBSD.org/handbook/

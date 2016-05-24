@@ -1,5 +1,7 @@
 ========================================
 plan 0:
+* --exclude-from=FILE --- wildcards on full paths
+* --include-from=FILE
 *       --exclude-dir=PATTERN  directories that match PATTERN will be skipped.
 * -n and colorizing like grep(1) does (JGREP_COLORS)
 

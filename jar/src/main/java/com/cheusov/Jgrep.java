@@ -91,7 +91,7 @@ public class Jgrep {
 
         orExcludeFileFilter.addFileFilter(FalseFileFilter.FALSE);
 
-        isStdoutTTY = Utils.isStdoutTTY();
+        isStdoutTTY = Utils.isStdoutTTY_Any();
 
         String colorEscSequence = System.getenv("JGREP_COLOR");
         if (colorEscSequence == null)

@@ -1,4 +1,17 @@
 ======================================================================
+Version 0.4.0, by Aleksey Cheusov, Wed, 25 May 2016 00:59:17 +0300
+
+  Support for Windows was added (No JNI => No colors)
+
+  jar/Makefile: MAVEN_OPTS variable was added
+
+  Fix:
+    - Options --include, --exclude and --exclude-from work correct
+      without -R/-r option.
+    - Options --exclude and --exclude-from work like in grep(1) if
+      paths is given
+
+======================================================================
 Version 0.3.0, by Aleksey Cheusov, Mon, 23 May 2016 06:41:54 +0300
 
   Additions:

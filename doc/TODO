@@ -9,8 +9,6 @@ plan 1:
 * -v + -C + coloring
 * reusable object Jgrep. I/O streams etc.
 * -z, --null-data           a data line ends in 0 byte, not newline
-* -d, --directories=ACTION  how to handle directories;
-                            ACTION is 'read', 'recurse', or 'skip'
 * -T, --initial-tab         make tabs line up (if needed)
 * -Z, --null                print 0 byte after FILE name
 

@@ -33,6 +33,12 @@ public class Jgrep {
     public static final String OPTION_GROUP_OUTPUT_CONTROL = "Output control:";
     public static final String OPTION_GROUP_CONTEXT_CONTROL = "Context control:";
 
+    private static enum Directories {
+        RECURSE,
+        SKIP,
+        READ
+    }
+
     private static final String USAGE_MESSAGE = "Usage: jgrep [OPTIONS]... PATTERN [FILES...]";
     private static final String HEADER_MESSAGE = "Search for PATTERN in each FILE or standard input. " +
             "PATTERN is, by default, a Java regular expression (java.lang.regex).\n" +
@@ -62,7 +68,6 @@ public class Jgrep {
     private static boolean opt_n = false;
     private static boolean opt_x = false;
     private static boolean opt_q = false;
-    private static boolean opt_rR = false;
     private static boolean opt_s = false;
     private static boolean opt_w = false;
     private static boolean opt_line_buffered = false;
@@ -72,6 +77,8 @@ public class Jgrep {
     private static int opt_A = 0;
     private static String opt_O = null;
     private static JgrepPattern.RE_ENGINE_TYPE opt_re_engine = JgrepPattern.RE_ENGINE_TYPE.JAVA;
+
+    private static Directories opt_directories = Directories.READ;
 
     private static String label = "(standard input)";
     private static OrFileFilter orExcludeFileFilter = new OrFileFilter();
@@ -460,7 +467,13 @@ public class Jgrep {
         options.addOption(null, "silent", false, "Same as --quiet.");
 
         options.addOption("8", false, "Match the whole file content at once.");
-        options.addOption("r", "recursive", false, "Recursively search subdirectories listed.");
+
+        opt = new Option(null, "directories", true, "How to handle directories; " +
+                "ACTION is 'read', 'recurse', or 'skip'.");
+        opt.setArgName("ACTION");
+        options.addOption(opt);
+
+        options.addOption("r", "recursive", false, "Like --directories=recurse.");
         options.addOption("R", "dereference-recursive", false, "Likewise, but follow all symlinks.");
 
         opt = new Option(null, "include", true, "Search only files that match FILE_PATTERN pattern.");
@@ -536,7 +549,7 @@ public class Jgrep {
         opt_x = cmd.hasOption("x");
 
         boolean optR = cmd.hasOption("R");
-        opt_rR = optR || cmd.hasOption("r");
+        opt_directories = (optR || cmd.hasOption("r") ? Directories.RECURSE : Directories.READ);
         if (!optR)
             orExcludeFileFilter.addFileFilter(new SymLinkFileFilter());
 
@@ -637,14 +650,28 @@ public class Jgrep {
             throw new IllegalArgumentException("Illegal argument `" + optColor + "` for option --color");
         }
 
-        String optReEngine = cmd.getOptionValue("re-engine");
-        if (optReEngine == null) {
-        } else if (optReEngine.equals("java")) {
-            opt_re_engine = JgrepPattern.RE_ENGINE_TYPE.JAVA;
-        } else if (optReEngine.equals("re2j")) {
-            opt_re_engine = JgrepPattern.RE_ENGINE_TYPE.RE2J;
+        {
+            String optReEngine = cmd.getOptionValue("re-engine");
+            if (optReEngine == null) {
+            } else if (optReEngine.equals("java")) {
+                opt_re_engine = JgrepPattern.RE_ENGINE_TYPE.JAVA;
+            } else if (optReEngine.equals("re2j")) {
+                opt_re_engine = JgrepPattern.RE_ENGINE_TYPE.RE2J;
+            } else {
+                throw new IllegalArgumentException("Illegal argument `" + optReEngine + "` for option --re-engine");
+            }
+        }
+
+        String optdirectories = cmd.getOptionValue("directories");
+        if (optdirectories == null) {
+        } else if (optdirectories.equals("skip")) {
+            opt_directories = Directories.SKIP;
+        } else if (optdirectories.equals("read")) {
+            opt_directories = Directories.READ;
+        } else if (optdirectories.equals("recurse")) {
+            opt_directories = Directories.RECURSE;
         } else {
-            throw new IllegalArgumentException("Illegal argument `" + optReEngine + "` for option --re-engine");
+            throw new IllegalArgumentException("Illegal argument `" + optdirectories + "` for option --directories");
         }
 
         if (cmd.hasOption("2"))
@@ -734,7 +761,7 @@ public class Jgrep {
         for (int i = 0; i < regexps.size(); ++i)
             patterns.add(JgrepPattern.compile(opt_re_engine, regexps.get(i)));
 
-        prefixWithFilename = (opt_H || opt_rR || args.length > 1) && !opt_h;
+        prefixWithFilename = (opt_H || opt_directories == Directories.RECURSE || args.length > 1) && !opt_h;
     }
 
     private static final String[] stdinFilenames = {"-"};
@@ -746,8 +773,16 @@ public class Jgrep {
         for (String fileOrDir : args) {
             try {
                 Iterator fileIterator;
-                if (opt_rR) {
-                    fileIterator = FileUtils.iterateFiles(new File(fileOrDir), fileFilter, DirectoryFileFilter.DIRECTORY);
+                File file = new File(fileOrDir);
+                boolean isDir = false;
+                if (opt_directories != Directories.READ)
+                    isDir = file.isDirectory();
+
+                if (isDir && opt_directories == Directories.SKIP)
+                    continue;
+
+                if (isDir && opt_directories == Directories.RECURSE) {
+                    fileIterator = FileUtils.iterateFiles(file, fileFilter, DirectoryFileFilter.DIRECTORY);
                 } else {
                     fileIterator = Arrays.asList(fileOrDir).iterator();
                 }

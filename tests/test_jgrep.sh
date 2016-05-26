@@ -475,7 +475,7 @@ text2.txt:<b>OpenBSD</b> 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
 text2.txt:Welcome to <b>OpenBSD</b>: The proactively secure Unix-like operating system.
 '
 
-$GREP_CMD -ri -e OpenBSD \
+$GREP_CMD --directories recurse -i -e OpenBSD \
 	  --marker-start '<b>' --marker-end '</b>' --include '*.txt' . |
     sort |
     cmp 'jgrep -r --include --marker-{start,end} #33.2.2' \
@@ -484,7 +484,7 @@ text2.txt:OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
 text2.txt:Welcome to OpenBSD: The proactively secure Unix-like operating system.
 '
 
-$GREP_CMD -ri -e OpenBSD \
+$GREP_CMD --directories=recurse -i -e OpenBSD \
 	  --marker-start '<b>' --marker-end '</b>' \
 	  --color always --include '*.txt' . | sort |
     cmp 'jgrep -r --include --marker-{start,end} #33.3' \
@@ -852,4 +852,28 @@ $GREP_CMD -l --exclude=`pwd`/text1.txt 'BSD' `pwd`/*.txt | sed 's,.*/,,' |
     cmp 'jgrep -O #45.2' \
 'patterns.txt
 text2.txt
+'
+
+$GREP_CMD --directories=recurse -l --exclude=`pwd`/text1.txt 'BSD' `pwd`/*.txt | sed 's,.*/,,' |
+    cmp 'jgrep --directories #46.1' \
+'patterns.txt
+text2.txt
+'
+
+$GREP_CMD --directories=skip -l --exclude=`pwd`/text1.txt 'BSD' `pwd` |
+    cmp 'jgrep --directories #46.2' \
+''
+
+{ echo appapp | $GREP_CMD --directories xxx '(app)\1' 2>&1; echo ex=$?; } |
+    cmp 'jgrep --directories xxx #46.3' \
+'java.lang.IllegalArgumentException: Illegal argument `xxx` for option --directories
+ex=2
+'
+
+{ $GREP_CMD -l --exclude=`pwd`/text1.txt 'BSD' `pwd` 2>&1;
+  echo ex=$?; } |
+    sed -e 's,/.*/,/path/to/jgrep/,' |
+    cmp 'jgrep --directories #46.4' \
+'java.io.FileNotFoundException: /path/to/jgrep/tests (Is a directory)
+ex=2
 '

@@ -286,6 +286,11 @@ Options passed to java(1).
 
 Directory with jgrep_jni library.
 
+=item I<JGREP_NO_JNI>
+
+If set, I<jgrep_jni> library is not loaded.
+This implies I<--color=always>.
+
 =back
 
 =head1 COPYRIGHT

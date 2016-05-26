@@ -310,12 +310,12 @@ $GREP_CMD -x --line-number 'This' text1.txt text2.txt |
 
 $GREP_CMD -V |
     cmp 'jgrep - #24.1' \
-'jgrep-0.4.0
+'jgrep-0.5.0
 '
 
 $GREP_CMD --version |
     cmp 'jgrep - #24.2' \
-'jgrep-0.4.0
+'jgrep-0.5.0
 '
 
 $GREP_CMD --line-buffered --with-filename OpenBSD text2.txt |

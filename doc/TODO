@@ -1,5 +1,6 @@
 ========================================
 plan 0:
+* multiple -m<N> -- use the latest one, same for -C, -A, -B etc.
 * --include-from=FILE
 * --exclude-dir=PATTERN  directories that match PATTERN will be skipped.
 * JGREP_COLORS

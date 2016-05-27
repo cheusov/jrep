@@ -310,12 +310,12 @@ $GREP_CMD -x --line-number 'This' text1.txt text2.txt |
 
 $GREP_CMD -V |
     cmp 'jgrep - #24.1' \
-'jgrep-0.5.0
+'jgrep-0.5.1
 '
 
 $GREP_CMD --version |
     cmp 'jgrep - #24.2' \
-'jgrep-0.5.0
+'jgrep-0.5.1
 '
 
 $GREP_CMD --line-buffered --with-filename OpenBSD text2.txt |
@@ -876,4 +876,11 @@ ex=2
     cmp 'jgrep --directories #46.4' \
 'java.io.FileNotFoundException: /path/to/jgrep/tests (Is a directory)
 ex=2
+'
+
+echo abba | $GREP_CMD -e 'a+' --color always \
+	  --marker-start '<b>' --marker-end '</b>' |
+    sort |
+    cmp 'jgrep --marker-{start,end} #47' \
+'<b>a</b>bb<b>a</b>
 '

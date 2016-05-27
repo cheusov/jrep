@@ -177,7 +177,7 @@ public class Jgrep {
             if (start < prev)
                 start = prev;
             sb.append(line.substring(prev, start));
-            if (start + 1 < end) {
+            if (start < end) {
                 sb.append(colorEscStart);
                 sb.append(line.substring(start, end));
                 sb.append(colorEscEnd);

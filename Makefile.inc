@@ -1,2 +1,3 @@
-JARDIR ?=		${LIBDIR}/jgrep
-VERSION =		0.5.1
+JARDIR ?=	${LIBDIR}/jgrep
+VERSION =	0.5.1
+DOCDIR =	${DATADIR}/jgrep

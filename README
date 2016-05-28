@@ -34,8 +34,12 @@ Installation instruction (Example -- Debian Linux distribution):
   4) Set JAVA_HOME environment variable
 
      # export JAVA_HOME=/usr/lib/jvm/default-java
+
+  5) We also need po2man program which is in perl package
+
+     # apt-get install perl
      
-  5)
+  6)
      # mkcmake all
      # mkcmake test
      # mkcmake install

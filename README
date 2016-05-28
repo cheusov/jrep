@@ -1,4 +1,4 @@
-jgrep is a command-line grep-like utility written in Java.
+jrep is a command-line grep-like utility written in Java.
 Features:
   -- Java regular expressions
      (https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html)
@@ -13,7 +13,7 @@ Features:
 
 Documentation:
 
-  -- https://github.com/cheusov/jgrep/blob/master/scripts/jgrep.pod
+  -- https://github.com/cheusov/jrep/blob/master/scripts/jrep.pod
        or
   -- man page after installation
 

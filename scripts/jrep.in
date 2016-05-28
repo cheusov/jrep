@@ -14,12 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-: ${JGREP_JAR:=@jardir@/jgrep-0.1-jar-with-dependencies.jar}
-: ${JGREP_JAVA_OPTS:=}
-: ${JGREP_JAVA:=java}
-: ${JGREP_JNI_DIR:=@libdir@}
+: ${JREP_JAR:=@jardir@/jrep-0.1-jar-with-dependencies.jar}
+: ${JREP_JAVA_OPTS:=}
+: ${JREP_JAVA:=java}
+: ${JREP_JNI_DIR:=@libdir@}
 
-export JGREP_VERSION=@version@
+export JREP_VERSION=@version@
 
-${JGREP_JAVA} -Djava.library.path="$JGREP_JNI_DIR" \
-	      -cp "$JGREP_JAR" $JGREP_JAVA_OPTS com.cheusov.Jgrep "$@"
+${JREP_JAVA} -Djava.library.path="$JREP_JNI_DIR" \
+	      -cp "$JREP_JAR" $JREP_JAVA_OPTS com.cheusov.Jrep "$@"

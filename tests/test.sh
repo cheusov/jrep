@@ -22,7 +22,7 @@ runtest (){
     "$prog" "$@" 2>&1
 }
 
-tmpdir="$TMPDIR/jgrep.$$"
+tmpdir="$TMPDIR/jrep.$$"
 mkdir -m 0700 "$tmpdir" || exit 60
 
 tmpfn1="$tmpdir/1"
@@ -60,7 +60,7 @@ cmp (){
 
 # real tests
 tests='
-jgrep
+jrep
 '
 
 for t in ${TESTS-$tests}; do

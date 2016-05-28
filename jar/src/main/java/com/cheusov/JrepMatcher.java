@@ -3,20 +3,20 @@ package com.cheusov;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 
-import static com.cheusov.JgrepPattern.RE_ENGINE_TYPE.*;
+import static com.cheusov.JrepPattern.RE_ENGINE_TYPE.*;
 
 /**
  * Created by Aleksey Cheusov on 5/14/16.
  */
-public class JgrepMatcher implements MatchResult {
+public class JrepMatcher implements MatchResult {
     Matcher matcherJava;
     com.google.re2j.Matcher matcherRe2;
 
-    public JgrepMatcher(Matcher matcher){
+    public JrepMatcher(Matcher matcher){
         this.matcherJava = matcher;
     }
 
-    public JgrepMatcher(com.google.re2j.Matcher matcher){
+    public JrepMatcher(com.google.re2j.Matcher matcher){
         this.matcherRe2 = matcher;
     }
 

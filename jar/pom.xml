@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.cheusov</groupId>
-    <artifactId>jgrep</artifactId>
+    <artifactId>jrep</artifactId>
     <version>0.1</version>
 
     <dependencies>

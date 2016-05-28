@@ -1,6 +1,6 @@
-INSCRIPTS =		jgrep
+INSCRIPTS =		jrep
 
-MAN =			jgrep.1
+MAN =			jrep.1
 
 INTEXTS_REPLS +=	jardir ${JARDIR}
 INTEXTS_REPLS +=        version ${VERSION}

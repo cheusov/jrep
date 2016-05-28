@@ -1,6 +1,6 @@
 SRCS =		Utils.c
 
-LIB =		jgrep_jni
+LIB =		jrep_jni
 
 JAVAH ?=		javah
 MKC_REQUIRE_PROGS +=	${JAVAH}

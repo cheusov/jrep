@@ -1,14 +1,14 @@
 =head1 NAME
 
-jgrep - grep-like utility written in Java
+jrep - grep-like utility written in Java
 
 =head1 SYNOPSIS
 
-B<jgrep> I<[OPTIONS]> B<PATTERN> I<[FILES...]>
+B<jrep> I<[OPTIONS]> B<PATTERN> I<[FILES...]>
 
 =head1 DESCRIPTION
 
-B<jgrep> searches for I<PATTERN> in each I<FILE> or standard
+B<jrep> searches for I<PATTERN> in each I<FILE> or standard
 input. I<PATTERN> is, by default, a Java regular expression
 (java.lang.regex).
 
@@ -65,7 +65,7 @@ Obtain PATTERN from FILE.
 =item B<-i>,B<--ignore-case>
 
 Perform case insensitive matching. By default,
-B<jgrep> is case sensitive.
+B<jrep> is case sensitive.
 
 =item B<-w>,B<--word-regexp>
 
@@ -266,7 +266,7 @@ If an error occurred the exit status is 2.
 
 =over 6
 
-=item I<JGREP_COLOR> and I<GREP_COLOR>
+=item I<JREP_COLOR> and I<GREP_COLOR>
 
 This variable specifies the color used to highlight matched
 (non-empty) text.  It can only specify the color used to highlight the
@@ -274,21 +274,21 @@ matching non-empty text in any matching line (a selected line when the
 -v command-line option is omitted, or a context line when -v is
 specified).
 
-=item I<JGREP_JAVA>
+=item I<JREP_JAVA>
 
 Path to java. By default 'java'.
 
-=item I<JGREP_JAVA_OPTS>
+=item I<JREP_JAVA_OPTS>
 
 Options passed to java(1).
 
-=item I<JGREP_JNI_DIR>
+=item I<JREP_JNI_DIR>
 
-Directory with jgrep_jni library.
+Directory with jrep_jni library.
 
-=item I<JGREP_NO_JNI>
+=item I<JREP_NO_JNI>
 
-If set, I<jgrep_jni> library is not loaded.
+If set, I<jrep_jni> library is not loaded.
 This implies I<--color=always>.
 
 =back
@@ -299,7 +299,7 @@ Copyright 2016 Aleksey Cheusov <vle@gmx.net>
 
 =head1 HOME
 
-L<https://github.com/cheusov/jgrep>
+L<https://github.com/cheusov/jrep>
 
 =head1 SEE ALSO
 

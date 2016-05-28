@@ -26,7 +26,7 @@ import java.util.*;
 /**
  * Created by Aleksey Cheusov on 4/24/16.
  */
-public class Jgrep {
+public class Jrep {
 
     public static final String OPTION_GROUP_REGEXP_SELECTION_AND_INTERPRETATION = "Regexp selection and interpretation:";
     public static final String OPTION_GROUP_MISCELLANEOUS = "Miscellaneous:";
@@ -39,20 +39,20 @@ public class Jgrep {
         READ
     }
 
-    private static final String USAGE_MESSAGE = "Usage: jgrep [OPTIONS]... PATTERN [FILES...]";
+    private static final String USAGE_MESSAGE = "Usage: jrep [OPTIONS]... PATTERN [FILES...]";
     private static final String HEADER_MESSAGE = "Search for PATTERN in each FILE or standard input. " +
             "PATTERN is, by default, a Java regular expression (java.lang.regex).\n" +
-            "Example: jgrep -i 'hello world' menu.h main.c";
+            "Example: jrep -i 'hello world' menu.h main.c";
     private static final String FOOTER_MESSAGE = "When FILE is -, read standard input.  With no FILE, read . " +
             "if a command-line -r is given, - otherwise.  If fewer than two FILEs are given, assume -h. " +
             "Exit status is 0 if any line is selected, 1 otherwise; if any error occurs and -q is not given, " +
-            "the exit status is 2.\nJgrep home page: <https://github.com/cheusov/jgrep>";
+            "the exit status is 2.\nJrep home page: <https://github.com/cheusov/jrep>";
 
     private static Options[] optionGroups = {null, null, null, null};
     private static Options options;
 
     private static List<String> regexps = new ArrayList<String>();
-    private static ArrayList<JgrepPattern> patterns = new ArrayList<JgrepPattern>();
+    private static ArrayList<JrepPattern> patterns = new ArrayList<JrepPattern>();
     private static int exitStatus = 1;
 
     private static boolean inverseMatch = false;
@@ -76,7 +76,7 @@ public class Jgrep {
     private static int opt_B = 0;
     private static int opt_A = 0;
     private static String opt_O = null;
-    private static JgrepPattern.RE_ENGINE_TYPE opt_re_engine = JgrepPattern.RE_ENGINE_TYPE.JAVA;
+    private static JrepPattern.RE_ENGINE_TYPE opt_re_engine = JrepPattern.RE_ENGINE_TYPE.JAVA;
 
     private static Directories opt_directories = Directories.READ;
 
@@ -100,7 +100,7 @@ public class Jgrep {
 
         isStdoutTTY = Utils.isStdoutTTY_Any();
 
-        String colorEscSequence = System.getenv("JGREP_COLOR");
+        String colorEscSequence = System.getenv("JREP_COLOR");
         if (colorEscSequence == null)
             colorEscSequence = System.getenv("GREP_COLOR");
 
@@ -212,7 +212,7 @@ public class Jgrep {
         return ret;
     }
 
-    private static String getOutputString(String line, JgrepMatcher match){
+    private static String getOutputString(String line, JrepMatcher match){
         if (opt_O == null)
             return line.substring(match.start(), match.end());
 
@@ -307,9 +307,9 @@ public class Jgrep {
                 startend = new ArrayList<Pair<Integer, Integer>>();
 
             String lineToPrint = null;
-            for (JgrepPattern pattern : patterns) {
+            for (JrepPattern pattern : patterns) {
                 int pos = 0;
-                JgrepMatcher m = pattern.matcher(line);
+                JrepMatcher m = pattern.matcher(line);
 
                 boolean nextLine = false;
                 while (m.find(pos) ^ inverseMatch) {
@@ -389,7 +389,7 @@ public class Jgrep {
         Option opt;
 
         ///////////// group 0 /////////////
-        options = optionGroups[0] = new JgrepOptions();
+        options = optionGroups[0] = new JrepOptions();
 
         options.addOption("E", "extended-regexp", false, "Ignored.");
         options.addOption("F", "fixed-strings", false, "Interpret pattern as a set of fixed strings.");
@@ -405,7 +405,7 @@ public class Jgrep {
         opt = new Option("e", "regexp", true, "Specify a pattern used during the search of the input: an input line is " +
                 "selected if it matches any of the specified patterns. " +
                 "This option is most useful when multiple -e options are used to specify multiple patterns, " +
-                "or when a pattern begins with a dash (‘-’).");
+                "or when a pattern begins with a dash ('-').");
         opt.setArgName("PATTERN");
         options.addOption(opt);
 
@@ -421,7 +421,7 @@ public class Jgrep {
                 "or regular expression are considered to be matching lines.");
 
         ///////////// group 1 /////////////
-        options = optionGroups[1] = new JgrepOptions();
+        options = optionGroups[1] = new JrepOptions();
 
         options.addOption("s", "no-messages", false, "Suppress error messages");
         options.addOption("v", "invert-match", false, "Selected lines are those not matching any of " +
@@ -430,7 +430,7 @@ public class Jgrep {
         options.addOption(null, "help", false, "Display this help text and exit.");
 
         ///////////// group 2 /////////////
-        options = optionGroups[2] = new JgrepOptions();
+        options = optionGroups[2] = new JrepOptions();
 
         opt = new Option("m", "max-count", true, "Stop after NUM matches.");
         opt.setArgName("NUM");
@@ -499,7 +499,7 @@ public class Jgrep {
         options.addOption("c", "count", false, "Only a count of selected lines is written to standard output.");
 
         ///////////// group 3 /////////////
-        options = optionGroups[3] = new JgrepOptions();
+        options = optionGroups[3] = new JrepOptions();
 
         opt = new Option("B", "before-context", true, "Print NUM lines of leading context.");
         opt.setArgName("NUM");
@@ -654,9 +654,9 @@ public class Jgrep {
             String optReEngine = cmd.getOptionValue("re-engine");
             if (optReEngine == null) {
             } else if (optReEngine.equals("java")) {
-                opt_re_engine = JgrepPattern.RE_ENGINE_TYPE.JAVA;
+                opt_re_engine = JrepPattern.RE_ENGINE_TYPE.JAVA;
             } else if (optReEngine.equals("re2j")) {
-                opt_re_engine = JgrepPattern.RE_ENGINE_TYPE.RE2J;
+                opt_re_engine = JrepPattern.RE_ENGINE_TYPE.RE2J;
             } else {
                 throw new IllegalArgumentException("Illegal argument `" + optReEngine + "` for option --re-engine");
             }
@@ -675,7 +675,7 @@ public class Jgrep {
         }
 
         if (cmd.hasOption("2"))
-            opt_re_engine = JgrepPattern.RE_ENGINE_TYPE.RE2J;
+            opt_re_engine = JrepPattern.RE_ENGINE_TYPE.RE2J;
 
         if (cmd.hasOption("help")) {
             printHelp(options);
@@ -683,7 +683,7 @@ public class Jgrep {
         }
 
         if (cmd.hasOption("V")) {
-            System.out.println("jgrep-" + System.getenv("JGREP_VERSION"));
+            System.out.println("jrep-" + System.getenv("JREP_VERSION"));
             System.exit(0);
         }
 
@@ -691,7 +691,7 @@ public class Jgrep {
     }
 
     private static void printHelp(Options options) {
-        JgrepHelpFormatter formatter = new JgrepHelpFormatter();
+        JrepHelpFormatter formatter = new JrepHelpFormatter();
         formatter.setLeftPadding(2);
 
         PrintWriter pw = new PrintWriter(System.out);
@@ -759,7 +759,7 @@ public class Jgrep {
         }
 
         for (int i = 0; i < regexps.size(); ++i)
-            patterns.add(JgrepPattern.compile(opt_re_engine, regexps.get(i)));
+            patterns.add(JrepPattern.compile(opt_re_engine, regexps.get(i)));
 
         prefixWithFilename = (opt_H || opt_directories == Directories.RECURSE || args.length > 1) && !opt_h;
     }

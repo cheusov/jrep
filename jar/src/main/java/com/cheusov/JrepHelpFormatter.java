@@ -10,7 +10,7 @@ import java.util.Collection;
 /**
  * Created by Aleksey Cheusov on 5/14/16.
  */
-class JgrepHelpFormatter extends HelpFormatter {
+class JrepHelpFormatter extends HelpFormatter {
     public void printUsage(PrintWriter pw, int width, String app, Options options) {
     }
 

@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 /**
  * Created by Aleksey Cheusov on 5/14/16.
  */
-public class JgrepPattern {
+public class JrepPattern {
     public static enum RE_ENGINE_TYPE {
         JAVA, RE2J
     }
@@ -14,30 +14,30 @@ public class JgrepPattern {
     Pattern patternJava;
     com.google.re2j.Pattern patternRe2;
 
-    public JgrepPattern(Pattern pattern) {
+    public JrepPattern(Pattern pattern) {
         patternJava = pattern;
     }
 
-    public JgrepPattern(com.google.re2j.Pattern pattern) {
+    public JrepPattern(com.google.re2j.Pattern pattern) {
         patternRe2 = pattern;
     }
 
-    static JgrepPattern compile(RE_ENGINE_TYPE engineType, String regex) {
+    static JrepPattern compile(RE_ENGINE_TYPE engineType, String regex) {
         switch (engineType) {
             case JAVA:
-                return new JgrepPattern(Pattern.compile(regex));
+                return new JrepPattern(Pattern.compile(regex));
             case RE2J:
-                return new JgrepPattern(com.google.re2j.Pattern.compile(regex));
+                return new JrepPattern(com.google.re2j.Pattern.compile(regex));
         }
 
         return null;
     }
 
-    public JgrepMatcher matcher(String text){
+    public JrepMatcher matcher(String text){
         if (patternJava != null)
-            return new JgrepMatcher(patternJava.matcher(text));
+            return new JrepMatcher(patternJava.matcher(text));
         if (patternRe2 != null)
-            return new JgrepMatcher(patternRe2.matcher(text));
+            return new JrepMatcher(patternRe2.matcher(text));
 
         return null;
     }

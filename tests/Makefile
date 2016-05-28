@@ -7,4 +7,6 @@ test:
 	export JREP_JAR JREP_JNI_DIR; \
 	env PATH="${SRCTOP}:$$PATH" ${SH} ./test.sh
 
+CLEANFILES = text1_copy.txt
+
 .include <mkc.mk>

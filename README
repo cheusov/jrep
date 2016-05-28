@@ -43,3 +43,5 @@ Installation instruction (Example -- Debian Linux distribution):
      # mkcmake all
      # mkcmake test
      # mkcmake install
+
+J/RE/P!

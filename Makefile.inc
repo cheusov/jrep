@@ -1,3 +1,3 @@
 JARDIR ?=	${LIBDIR}/jrep
 VERSION =	0.5.2
-DOCDIR =	${DATADIR}/jrep
+DOCDIR ?=	${DATADIR}/jrep

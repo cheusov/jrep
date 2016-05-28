@@ -18,6 +18,7 @@ import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.*;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.*;
@@ -28,10 +29,10 @@ import java.util.*;
  */
 public class Jrep {
 
-    public static final String OPTION_GROUP_REGEXP_SELECTION_AND_INTERPRETATION = "Regexp selection and interpretation:";
-    public static final String OPTION_GROUP_MISCELLANEOUS = "Miscellaneous:";
-    public static final String OPTION_GROUP_OUTPUT_CONTROL = "Output control:";
-    public static final String OPTION_GROUP_CONTEXT_CONTROL = "Context control:";
+    private static final String OPTION_GROUP_REGEXP_SELECTION_AND_INTERPRETATION = "Regexp selection and interpretation:";
+    private static final String OPTION_GROUP_MISCELLANEOUS = "Miscellaneous:";
+    private static final String OPTION_GROUP_OUTPUT_CONTROL = "Output control:";
+    private static final String OPTION_GROUP_CONTEXT_CONTROL = "Context control:";
 
     private static enum Directories {
         RECURSE,
@@ -48,8 +49,8 @@ public class Jrep {
             "Exit status is 0 if any line is selected, 1 otherwise; if any error occurs and -q is not given, " +
             "the exit status is 2.\nJrep home page: <https://github.com/cheusov/jrep>";
 
-    private static Options[] optionGroups = {null, null, null, null};
-    private static Options options;
+    private static JrepOptions[] optionGroups = {null, null, null, null};
+    private static JrepOptions options;
 
     private static List<String> regexps = new ArrayList<String>();
     private static ArrayList<JrepPattern> patterns = new ArrayList<JrepPattern>();
@@ -92,13 +93,19 @@ public class Jrep {
 
     private static String encoding = System.getProperty("file.encoding");
 
+    private static boolean withJNI =
+            (System.getenv("JREP_NO_JNI") == null) && !SystemUtils.IS_OS_WINDOWS;
+
     static {
+        if (withJNI)
+            System.loadLibrary("jrep_jni");
+
         fileFilter.addFileFilter(orIncludeFileFilter);
         fileFilter.addFileFilter(new NotFileFilter(orExcludeFileFilter));
 
         orExcludeFileFilter.addFileFilter(FalseFileFilter.FALSE);
 
-        isStdoutTTY = Utils.isStdoutTTY_Any();
+        isStdoutTTY = isStdoutTTY_Any();
 
         String colorEscSequence = System.getenv("JREP_COLOR");
         if (colorEscSequence == null)
@@ -110,6 +117,13 @@ public class Jrep {
         }
 
         initOptions();
+    }
+
+    public static boolean isStdoutTTY_Any() {
+        if (withJNI)
+            return Utils.isStdoutTTY();
+        else
+            return true;
     }
 
     private static class SymLinkFileFilter extends AbstractFileFilter {
@@ -386,144 +400,84 @@ public class Jrep {
     }
 
     private static void initOptions() {
-        Option opt;
-
         ///////////// group 0 /////////////
         options = optionGroups[0] = new JrepOptions();
 
-        options.addOption("E", "extended-regexp", false, "Ignored.");
-        options.addOption("F", "fixed-strings", false, "Interpret pattern as a set of fixed strings.");
-        options.addOption("G", "basic-regexp", false, "Ignored.");
-        options.addOption("P", "perl-regexp", false, "Ignored.");
-        options.addOption("2", false, "Same as '--re-engine re2j'.");
-
-        opt = new Option(null, "re-engine", true, "Specify a RE engine. ENGINE is either " +
+        options.addOption("E", "extended-regexp", null, "Ignored.");
+        options.addOption("F", "fixed-strings", null, "Interpret pattern as a set of fixed strings.");
+        options.addOption("G", "basic-regexp", null, "Ignored.");
+        options.addOption("P", "perl-regexp", null, "Ignored.");
+        options.addOption("2", null, null, "Same as '--re-engine re2j'.");
+        options.addOption(null, "re-engine", "ENGINE", "Specify a RE engine. ENGINE is either " +
                 "'java' (java.util.regex) or 're2j' (com.google.re2j). The default is 'java'.");
-        opt.setArgName("ENGINE");
-        options.addOption(opt);
-
-        opt = new Option("e", "regexp", true, "Specify a pattern used during the search of the input: an input line is " +
+        options.addOption("e", "regexp", "PATTERN", "Specify a pattern used during the search of the input: an input line is " +
                 "selected if it matches any of the specified patterns. " +
                 "This option is most useful when multiple -e options are used to specify multiple patterns, " +
                 "or when a pattern begins with a dash ('-').");
-        opt.setArgName("PATTERN");
-        options.addOption(opt);
-
-        opt = new Option("f", "file", true, "Obtain PATTERN from FILE.");
-        opt.setArgName("FILE");
-        options.addOption(opt);
-
-        options.addOption("i", "ignore-case", false, "Perform case insensitive matching. By default, " +
+        options.addOption("f", "file", "FILE", "Obtain PATTERN from FILE.");
+        options.addOption("i", "ignore-case", null, "Perform case insensitive matching. By default, " +
                 "grep is case sensitive.");
-
-        options.addOption("w", "word-regexp", false, "Force PATTERN to match only whole words.");
-        options.addOption("x", "line-regexp", false, "Only input lines selected against an entire fixed string " +
+        options.addOption("w", "word-regexp", null, "Force PATTERN to match only whole words.");
+        options.addOption("x", "line-regexp", null, "Only input lines selected against an entire fixed string " +
                 "or regular expression are considered to be matching lines.");
 
         ///////////// group 1 /////////////
         options = optionGroups[1] = new JrepOptions();
 
-        options.addOption("s", "no-messages", false, "Suppress error messages");
-        options.addOption("v", "invert-match", false, "Selected lines are those not matching any of " +
+        options.addOption("s", "no-messages", null, "Suppress error messages");
+        options.addOption("v", "invert-match", null, "Selected lines are those not matching any of " +
                 "the specified patterns.");
-        options.addOption("V", "version", false, "Display version information and exit.");
-        options.addOption(null, "help", false, "Display this help text and exit.");
+        options.addOption("V", "version", null, "Display version information and exit.");
+        options.addOption(null, "help", null, "Display this help text and exit.");
 
         ///////////// group 2 /////////////
         options = optionGroups[2] = new JrepOptions();
 
-        opt = new Option("m", "max-count", true, "Stop after NUM matches.");
-        opt.setArgName("NUM");
-        options.addOption(opt);
-
-        options.addOption("n", "line-number", false, "Each output line is preceded by its relative line number " +
+        options.addOption("m", "max-count", "NUM", "Stop after NUM matches.");
+        options.addOption("n", "line-number", null, "Each output line is preceded by its relative line number " +
                 "in the file, starting at line 1. The line number counter is reset for each file processed. " +
                 "This option is ignored if -c, -L, -l, or -q is specified.");
-
-        options.addOption(null, "line-buffered", false, "Flush output on every line.");
-        options.addOption("H", "with-filename", false, "Print the file name for each match.");
-        options.addOption("h", "no-filename", false, "Never print filename headers (i.e. filenames) with output lines.");
-
-        opt = new Option(null, "label", true, "Use LABEL as the standard input file name prefix.");
-        opt.setArgName("LABEL");
-        options.addOption(opt);
-
-        options.addOption("o", "only-matching", false, "Print each match, but only the match, not the entire line.");
-
-        opt = new Option("O", "output-format", true, "Same as -o but FORMAT specifies the output format.");
-        opt.setArgName("FORMAT");
-        options.addOption(opt);
-
-        opt = new Option(null, "marker-start", true, "Marker for the beginning of matched substring.");
-        opt.setArgName("MARKER");
-        options.addOption(opt);
-
-        opt = new Option(null, "marker-end", true, "Marker for the end of matched substring.");
-        opt.setArgName("MARKER");
-        options.addOption(opt);
-
-        options.addOption("q", "quiet", false, "Quiet. Nothing shall be written to the standard output," +
+        options.addOption(null, "line-buffered", null, "Flush output on every line.");
+        options.addOption("H", "with-filename", null, "Print the file name for each match.");
+        options.addOption("h", "no-filename", null, "Never print filename headers (i.e. filenames) with output lines.");
+        options.addOption(null, "label", "LABEL", "Use LABEL as the standard input file name prefix.");
+        options.addOption("o", "only-matching", null, "Print each match, but only the match, not the entire line.");
+        options.addOption("O", "output-format", "FORMAT", "Same as -o but FORMAT specifies the output format.");
+        options.addOption(null, "marker-start", "MARKER", "Marker for the beginning of matched substring.");
+        options.addOption(null, "marker-end", "MARKER", "Marker for the end of matched substring.");
+        options.addOption("q", "quiet", null, "Quiet. Nothing shall be written to the standard output," +
                 " regardless of matching lines. Exit with zero status if an input line is selected.");
-        options.addOption(null, "silent", false, "Same as --quiet.");
-
-        options.addOption("8", false, "Match the whole file content at once.");
-
-        opt = new Option(null, "directories", true, "How to handle directories; " +
+        options.addOption(null, "silent", null, "Same as --quiet.");
+        options.addOption("8", null, null, "Match the whole file content at once.");
+        options.addOption(null, "directories", "ACTION", "How to handle directories; " +
                 "ACTION is 'read', 'recurse', or 'skip'.");
-        opt.setArgName("ACTION");
-        options.addOption(opt);
-
-        options.addOption("r", "recursive", false, "Like --directories=recurse.");
-        options.addOption("R", "dereference-recursive", false, "Likewise, but follow all symlinks.");
-
-        opt = new Option(null, "include", true, "Search only files that match FILE_PATTERN pattern.");
-        opt.setArgName("FILE_PATTERN");
-        options.addOption(opt);
-
-        opt = new Option(null, "exclude", true, "Skip files matching FILE_PATTERN.");
-        opt.setArgName("FILE_PATTERN");
-        options.addOption(opt);
-
-        opt = new Option(null, "exclude-from", true, "Skip files whose base name matches any of" +
+        options.addOption("r", "recursive", null, "Like --directories=recurse.");
+        options.addOption("R", "dereference-recursive", null, "Likewise, but follow all symlinks.");
+        options.addOption(null, "include", "FILE_PATTERN", "Search only files that match FILE_PATTERN pattern.");
+        options.addOption(null, "exclude", "FILE_PATTERN", "Skip files matching FILE_PATTERN.");
+        options.addOption(null, "exclude-from", "FILE", "Skip files whose base name matches any of" +
                 " the file-name globs read from FILE (using wildcard matching as described under --exclude).");
-        opt.setArgName("FILE");
-        options.addOption(opt);
-
-        options.addOption("L", "files-without-match", false, "Only the names of files not containing selected lines " +
+        options.addOption("L", "files-without-match", null, "Only the names of files not containing selected lines " +
                 "are written to standard output. Pathnames are listed once per file searched. " +
                 "If the standard input is searched, the string “(standard input)” is written.");
-        options.addOption("l", "files-with-matches", false, "Only the names of files containing selected lines " +
+        options.addOption("l", "files-with-matches", null, "Only the names of files containing selected lines " +
                 "are written to standard output. grep will only search a file until a match has been found, " +
                 "making searches potentially less expensive. Pathnames are listed once per file searched. " +
                 "If the standard input is searched, the string “(standard input)” is written.");
-        options.addOption("c", "count", false, "Only a count of selected lines is written to standard output.");
+        options.addOption("c", "count", null, "Only a count of selected lines is written to standard output.");
 
         ///////////// group 3 /////////////
         options = optionGroups[3] = new JrepOptions();
 
-        opt = new Option("B", "before-context", true, "Print NUM lines of leading context.");
-        opt.setArgName("NUM");
-        options.addOption(opt);
-
-        opt = new Option("A", "after-context", true, "Print NUM lines of trailing context.");
-        opt.setArgName("NUM");
-        options.addOption(opt);
-
-        opt = new Option("C", "context", true, "Print NUM lines of output context.");
-        opt.setArgName("NUM");
-        options.addOption(opt);
-
-        opt = new Option(null, "color", true, "Use markers to highlight the matching strings; " +
+        options.addOption("B", "before-context", "NUM", "Print NUM lines of leading context.");
+        options.addOption("A", "after-context", "NUM", "Print NUM lines of trailing context.");
+        options.addOption("C", "context", "NUM", "Print NUM lines of output context.");
+        options.addOption(null, "color", "WHEN", "Use markers to highlight the matching strings; " +
                 "WHEN is 'always', 'never' or 'auto' (the default).");
-        opt.setArgName("WHEN");
-        options.addOption(opt);
-
-        opt = new Option(null, "colour", true, "Same as --color.");
-        opt.setArgName("WHEN");
-        options.addOption(opt);
+        options.addOption(null, "colour", "WHEN", "Same as --color.");
 
         ///////////////////////////////////
-        options = new Options();
+        options = new JrepOptions();
 
         for (int i = 0 ; i < optionGroups.length; ++i)
             for (Object obj : optionGroups[i].getOptions())
@@ -548,9 +502,9 @@ public class Jrep {
         opt_n = cmd.hasOption("n");
         opt_x = cmd.hasOption("x");
 
-        boolean optR = cmd.hasOption("R");
-        opt_directories = (optR || cmd.hasOption("r") ? Directories.RECURSE : Directories.READ);
-        if (!optR)
+        boolean optBool = cmd.hasOption("R");
+        opt_directories = (optBool || cmd.hasOption("r") ? Directories.RECURSE : Directories.READ);
+        if (!optBool)
             orExcludeFileFilter.addFileFilter(new SymLinkFileFilter());
 
         opt_s = cmd.hasOption("s");
@@ -558,120 +512,112 @@ public class Jrep {
         opt_w = cmd.hasOption("w");
         opt_line_buffered = cmd.hasOption("line-buffered");
 
-        String[] opt_e = cmd.getOptionValues("e");
-        if (opt_e != null && opt_e.length != 0) {
-            for (String regexp : opt_e)
+        String[] optArray = cmd.getOptionValues("e");
+        if (optArray != null && optArray.length != 0) {
+            for (String regexp : optArray)
                 regexps.add(regexp);
         }
 
-        {
-            String[] optinclude = cmd.getOptionValues("include");
-            if (optinclude != null && optinclude.length != 0) {
-                for (String globPattern : optinclude)
-                    orIncludeFileFilter.addFileFilter(new WildcardFileFilter(globPattern));
-            } else {
-                orIncludeFileFilter.addFileFilter(TrueFileFilter.TRUE);
+        optArray = cmd.getOptionValues("include");
+        if (optArray != null && optArray.length != 0) {
+            for (String globPattern : optArray)
+                orIncludeFileFilter.addFileFilter(new WildcardFileFilter(globPattern));
+        } else {
+            orIncludeFileFilter.addFileFilter(TrueFileFilter.TRUE);
+        }
+
+        optArray = cmd.getOptionValues("exclude");
+        if (optArray != null && optArray.length != 0) {
+            for (String globPattern : optArray) {
+                if (globPattern.startsWith(".") || globPattern.startsWith("/"))
+                    orExcludeFileFilter.addFileFilter(new PathFileFilter(globPattern));
+                else
+                    orExcludeFileFilter.addFileFilter(new WildcardFileFilter(globPattern));
             }
         }
 
-        {
-            String[] optexclude = cmd.getOptionValues("exclude");
-            if (optexclude != null && optexclude.length != 0) {
-                for (String globPattern : optexclude) {
-                    if (globPattern.startsWith(".") || globPattern.startsWith("/"))
-                        orExcludeFileFilter.addFileFilter(new PathFileFilter(globPattern));
-                    else
-                        orExcludeFileFilter.addFileFilter(new WildcardFileFilter(globPattern));
-                }
+        String optStr = cmd.getOptionValue("exclude-from");
+        if (optStr != null) {
+            Iterator<String> it = IOUtils.lineIterator(new FileInputStream(optStr), encoding);
+            while (it.hasNext()) {
+                String globPattern = it.next();
+
+                if (globPattern.startsWith(".") || globPattern.startsWith("/"))
+                    orExcludeFileFilter.addFileFilter(new PathFileFilter(globPattern));
+                else
+                    orExcludeFileFilter.addFileFilter(new WildcardFileFilter(globPattern));
             }
         }
 
-        {
-            String optexcludefrom = cmd.getOptionValue("exclude-from");
-            if (optexcludefrom != null) {
-                Iterator<String> it = IOUtils.lineIterator(new FileInputStream(optexcludefrom), encoding);
-                while (it.hasNext()) {
-                    String globPattern = it.next();
-
-                    if (globPattern.startsWith(".") || globPattern.startsWith("/"))
-                        orExcludeFileFilter.addFileFilter(new PathFileFilter(globPattern));
-                    else
-                        orExcludeFileFilter.addFileFilter(new WildcardFileFilter(globPattern));
-                }
-            }
-        }
-
-        String optf = cmd.getOptionValue("f");
-        if (optf != null) {
-            Iterator<String> it = IOUtils.lineIterator(new FileInputStream(optf), encoding);
+        optStr = cmd.getOptionValue("f");
+        if (optStr != null) {
+            Iterator<String> it = IOUtils.lineIterator(new FileInputStream(optStr), encoding);
             while (it.hasNext()) {
                 regexps.add(it.next());
             }
         }
 
-        String optm = cmd.getOptionValue("m");
-        if (optm != null)
-            opt_m = Integer.valueOf(optm);
+        optStr = cmd.getOptionValue("m");
+        if (optStr != null)
+            opt_m = Integer.valueOf(optStr);
 
-        String optLabel = cmd.getOptionValue("label");
-        if (optLabel != null)
-            label = optLabel;
+        optStr = cmd.getOptionValue("label");
+        if (optStr != null)
+            label = optStr;
 
-        String optmarkerstart = cmd.getOptionValue("marker-start");
-        if (optmarkerstart != null)
-            colorEscStart = optmarkerstart;
-        String optmarkerend = cmd.getOptionValue("marker-end");
-        if (optmarkerend != null)
-            colorEscEnd = optmarkerend;
+        optStr = cmd.getOptionValue("marker-start");
+        if (optStr != null)
+            colorEscStart = optStr;
+        optStr = cmd.getOptionValue("marker-end");
+        if (optStr != null)
+            colorEscEnd = optStr;
 
-        String optA = cmd.getOptionValue("A");
-        if (optA != null)
-            opt_A = Integer.valueOf(optA);
+        optStr = cmd.getOptionValue("A");
+        if (optStr != null)
+            opt_A = Integer.valueOf(optStr);
 
-        String optB = cmd.getOptionValue("B");
-        if (optB != null)
-            opt_B = Integer.valueOf(optB);
+        optStr = cmd.getOptionValue("B");
+        if (optStr != null)
+            opt_B = Integer.valueOf(optStr);
 
-        String optC = cmd.getOptionValue("C");
-        if (optC != null)
-            opt_A = opt_B = Integer.valueOf(optC);
+        optStr = cmd.getOptionValue("C");
+        if (optStr != null)
+            opt_A = opt_B = Integer.valueOf(optStr);
 
-        String optColor = cmd.getOptionValue("color");
-        if (optColor == null)
-            optColor = cmd.getOptionValue("colour");
+        optStr = cmd.getOptionValue("color");
+        if (optStr == null)
+            optStr = cmd.getOptionValue("colour");
 
-        if (optColor == null || optColor.equals("auto")) {
+        if (optStr == null || optStr.equals("auto")) {
             if (! isStdoutTTY)
                 colorEscStart = null;
-        } else if (optColor.equals("always")) {
-        } else if (optColor.equals("never")) {
+        } else if (optStr.equals("always")) {
+        } else if (optStr.equals("never")) {
             colorEscStart = null;
         } else {
-            throw new IllegalArgumentException("Illegal argument `" + optColor + "` for option --color");
+            throw new IllegalArgumentException("Illegal argument `" + optStr + "` for option --color");
         }
 
-        {
-            String optReEngine = cmd.getOptionValue("re-engine");
-            if (optReEngine == null) {
-            } else if (optReEngine.equals("java")) {
-                opt_re_engine = JrepPattern.RE_ENGINE_TYPE.JAVA;
-            } else if (optReEngine.equals("re2j")) {
-                opt_re_engine = JrepPattern.RE_ENGINE_TYPE.RE2J;
-            } else {
-                throw new IllegalArgumentException("Illegal argument `" + optReEngine + "` for option --re-engine");
-            }
+        optStr = cmd.getOptionValue("re-engine");
+        if (optStr == null) {
+        } else if (optStr.equals("java")) {
+            opt_re_engine = JrepPattern.RE_ENGINE_TYPE.JAVA;
+        } else if (optStr.equals("re2j")) {
+            opt_re_engine = JrepPattern.RE_ENGINE_TYPE.RE2J;
+        } else {
+            throw new IllegalArgumentException("Illegal argument `" + optStr + "` for option --re-engine");
         }
 
-        String optdirectories = cmd.getOptionValue("directories");
-        if (optdirectories == null) {
-        } else if (optdirectories.equals("skip")) {
+        optStr = cmd.getOptionValue("directories");
+        if (optStr == null) {
+        } else if (optStr.equals("skip")) {
             opt_directories = Directories.SKIP;
-        } else if (optdirectories.equals("read")) {
+        } else if (optStr.equals("read")) {
             opt_directories = Directories.READ;
-        } else if (optdirectories.equals("recurse")) {
+        } else if (optStr.equals("recurse")) {
             opt_directories = Directories.RECURSE;
         } else {
-            throw new IllegalArgumentException("Illegal argument `" + optdirectories + "` for option --directories");
+            throw new IllegalArgumentException("Illegal argument `" + optStr + "` for option --directories");
         }
 
         if (cmd.hasOption("2"))

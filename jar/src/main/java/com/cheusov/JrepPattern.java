@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 /**
  * Created by Aleksey Cheusov on 5/14/16.
  */
-public class JrepPattern {
+class JrepPattern {
     public static enum RE_ENGINE_TYPE {
         JAVA, RE2J
     }

@@ -8,7 +8,7 @@ import static com.cheusov.JrepPattern.RE_ENGINE_TYPE.*;
 /**
  * Created by Aleksey Cheusov on 5/14/16.
  */
-public class JrepMatcher implements MatchResult {
+class JrepMatcher implements MatchResult {
     Matcher matcherJava;
     com.google.re2j.Matcher matcherRe2;
 

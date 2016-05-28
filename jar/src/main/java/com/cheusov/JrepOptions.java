@@ -17,8 +17,17 @@ class JrepOptions extends Options {
         return options;
     }
 
+    @Override
     public Options addOption(Option opt) {
         options.add(opt);
         return super.addOption(opt);
+    }
+
+    public Options addOption(String opt, String longOpt, String argName, String description) {
+        Option op = new Option(opt, longOpt, argName != null, description);
+        if (argName != null)
+            op.setArgName(argName);
+        addOption(op);
+        return this;
     }
 }

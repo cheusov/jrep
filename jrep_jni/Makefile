@@ -1,12 +1,14 @@
 SRCS =		Utils.c
 
-LIB =		jrep_jni
+LIB =		libjrep_jni
 
 JAVAH ?=		javah
 MKC_REQUIRE_PROGS +=	${JAVAH}
 
 SHLIB_MAJOR =	0
 SHLIB_MINOR =	0
+
+MKDLL =		only
 
 JAVA_INCLUDE_SUBDIR ?=	linux # darwin
 

@@ -8,10 +8,13 @@ MKC_REQUIRE_PROGS +=	${MAVEN}
 JAVA_SRCS =		JrepHelpFormatter.java Jrep.java JrepMatcher.java \
 	JrepOptions.java JrepPattern.java Utils.java
 
+MAVEN_CMD =	${PROG.${MAVEN}:Umvn} -f${.CURDIR}/pom.xml \
+   -DbuildDir=${.OBJDIR}/target ${MAVEN_OPTS}
+
 ${FILES}: ${JAVA_SRCS:S|^|src/main/java/com/cheusov/|}
-	${PROG.${MAVEN}} ${MAVEN_OPTS} package install assembly:single
+	${MAVEN_CMD} package install assembly:single
 
 clean:
-	mvn clean
+	${MAVEN_CMD} clean
 
 .include <mkc.mk>

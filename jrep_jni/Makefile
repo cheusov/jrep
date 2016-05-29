@@ -12,11 +12,12 @@ MKDLL =		only
 
 JAVA_INCLUDE_SUBDIR ?=	linux # darwin
 
-JAVA_INCLUDE ?=		-I${JAVA_HOME}/include -I${JAVA_HOME}/include/${JAVA_INCLUDE_SUBDIR}
+JAVA_INCLUDE ?=		-I${JAVA_HOME}/include \
+			-I${JAVA_HOME}/include/${JAVA_INCLUDE_SUBDIR}
 
-CPPFLAGS +=		${JAVA_INCLUDE}
+CPPFLAGS +=		${JAVA_INCLUDE} -I.
 
-JNI_CLASS =		../jar/src/main/java/com/cheusov/Utils.java
+JNI_CLASS =		${SRCDIR_jar}/src/main/java/com/cheusov/Utils.java
 
 .include <mkc.configure.mk>
 
@@ -27,7 +28,8 @@ JNI_CLASS =		../jar/src/main/java/com/cheusov/Utils.java
 Utils.c: Utils.h
 
 Utils.h: ${JNI_CLASS}
-	${JAVAH} -o ${.TARGET} -cp ${JNI_CLASS:C,/com.*,,} ${JNI_CLASS:R:C,.*java/,,:S|/|.|g}
+	${JAVAH} -o ${.TARGET} -cp ${JNI_CLASS:C,/com.*,,} \
+		${JNI_CLASS:R:C,.*java/,,:S|/|.|g}
 
 CLEANFILES +=	Utils.h
 

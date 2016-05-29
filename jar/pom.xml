@@ -59,6 +59,10 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <directory>${buildDir}</directory>
     </build>
 
+    <properties>
+        <buildDir>${user.dir}</buildDir>
+    </properties>
 </project>

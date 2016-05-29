@@ -1,4 +1,18 @@
 ======================================================================
+Version 0.6.0, by Aleksey Cheusov, Sun, 29 May 2016 04:06:04 +0300
+
+  Since this release jgrep renamed to jrep because jgrep name is
+  already used by another open source project[s].
+
+  jrep_jni: only .so is build. Neither .a nor symlinks.
+
+  DOCDIR is initialized correctly (?= instead of =).
+
+  Support for out of tree build was added.
+
+  Code clean-ups and refactoring.
+
+======================================================================
 Version 0.5.2, by Aleksey Cheusov, Sat, 28 May 2016 18:04:33 +0300
 
   Fixed:

@@ -310,12 +310,12 @@ $JREP_CMD -x --line-number 'This' text1.txt text2.txt |
 
 $JREP_CMD -V |
     cmp 'jrep - #24.1' \
-'jrep-0.5.2
+'jrep-0.6.0
 '
 
 $JREP_CMD --version |
     cmp 'jrep - #24.2' \
-'jrep-0.5.2
+'jrep-0.6.0
 '
 
 $JREP_CMD --line-buffered --with-filename OpenBSD text2.txt |

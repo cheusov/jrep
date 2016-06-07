@@ -325,49 +325,39 @@ public class Jrep {
                 int pos = 0;
                 JrepMatcher m = pattern.matcher(line);
 
-                boolean nextLine = false;
-                while (m.find(pos) ^ inverseMatch) {
+//                boolean nextLine = false;
+                while (m.find(pos)) {
                     matched = true;
 
-                    if (exitStatus == 1)
-                        exitStatus = 0;
-
-                    if (outputFilename) {
-                        nextFile = true;
-                        println(filename);
-                        break;
-                    } else if (opt_c) {
-                        nextLine = true;
-                        break;
-                    } else if (opt_L) {
-                        nextFile = true;
-                        break;
-                    } else if (inverseMatch) {
-                        nextLine = true;
-                        lineToPrint = line;
+                    if (outputFilename || opt_c || opt_L || inverseMatch) {
                         break;
                     } else if (opt_o) {
                         printlnWithPrefix(filename, getOutputString(line, m), lineNumber, ':');
-                    } else if (colorEscStart == null) {
-                        nextLine = true;
-                        break;
-                    } else {
+                    } else if (colorEscStart != null) {
                         startend.add(Pair.of(m.start(), m.end()));
                     }
+
                     pos = m.end();
                 }
-
-                if (nextFile || nextLine)
-                    break;
             }
 
-            if (matched) {
-                ++matchCount;
-                if (matchCount == opt_m)
-                    nextFile = true;
+            matched ^= inverseMatch;
 
-                if (!inverseMatch && !outputFilename && !opt_o && !opt_L && !opt_c)
-                    lineToPrint = getLineToPrint(line, startend);
+            if (matched) {
+                if (exitStatus == 1)
+                    exitStatus = 0;
+
+                if (!outputFilename && !opt_o && !opt_L && !opt_c) {
+                    if (colorEscStart == null)
+                        lineToPrint = line;
+                    else
+                        lineToPrint = getLineToPrint(line, startend);
+                }
+
+                if (outputFilename) {
+                    println(filename);
+                    nextFile = true;
+                }
             }
 
             if (lineToPrint != null) {
@@ -386,6 +376,12 @@ public class Jrep {
             } else if (lastMatchedLineNumber > 0 && lastMatchedLineNumber + opt_A >= lineNumber) {
                 lines.remove(lineNumber);
                 printlnWithPrefix(filename, line, lineNumber, '-');
+            }
+
+            if (matched) {
+                ++matchCount;
+                if (matchCount == opt_m)
+                    nextFile = true;
             }
 
             if (nextFile)

@@ -884,3 +884,58 @@ echo abba | $JREP_CMD -e 'a+' --color always \
     cmp 'jrep --marker-{start,end} #47' \
 '<b>a</b>bb<b>a</b>
 '
+
+$JREP_CMD -v -e conky -e application bug_report1.txt | tr -d '\015' |
+    cmp 'jrep bug report #1.1' \
+'i  | cyrconfix                              | package     | 1.0-13.2                                | noarch | (System Packages)                             
+i  | kernel-default                         | package     | 4.1.24-5.1.gd60be49                     | x86_64 | (System Packages)                             
+i  | kernel-default-devel                   | package     | 4.1.24-5.1.gd60be49                     | x86_64 | (System Packages)                             
+i  | kernel-devel                           | package     | 4.1.24-5.1.gd60be49                     | noarch | (System Packages)                             
+i  | obs-service-source_validator           | package     | 0.6+git20160222.62c56d3-88.1            | noarch | (System Packages)                             
+i  | openSUSE-release-livecd-kde            | package     | 13.2-1.28                               | x86_64 | (System Packages)                             
+'
+
+{ printf 'lll\n' | $JREP_CMD -ea -eb -lv; echo ex=$?; } |
+    cmp 'jrep bug report #1.2' \
+'(standard input)
+ex=0
+'
+
+{ printf 'lll\n' | $JREP_CMD -ea -eb -cv; echo ex=$?; } |
+    cmp 'jrep bug report #1.3' \
+'1
+ex=0
+'
+
+{ printf 'lll\n' | $JREP_CMD -ea -eb -L; echo ex=$?; } |
+    cmp 'jrep bug report #1.4' \
+'(standard input)
+ex=1
+'
+
+{ printf 'lll\n' | $JREP_CMD -ea -eb -ov; echo ex=$?; } |
+    cmp 'jrep bug report #1.5' \
+'ex=0
+'
+
+
+{ printf 'b\n' | $JREP_CMD -ea -eb -lv; echo ex=$?; } |
+    cmp 'jrep bug report #1.12' \
+'ex=1
+'
+
+{ printf 'b\n' | $JREP_CMD -ea -eb -cv; echo ex=$?; } |
+    cmp 'jrep bug report #1.13' \
+'0
+ex=1
+'
+
+{ printf 'b\n' | $JREP_CMD -ea -eb -L; echo ex=$?; } |
+    cmp 'jrep bug report #1.14' \
+'ex=0
+'
+
+{ printf 'b\n' | $JREP_CMD -ea -eb -ov; echo ex=$?; } |
+    cmp 'jrep bug report #1.15' \
+'ex=1
+'

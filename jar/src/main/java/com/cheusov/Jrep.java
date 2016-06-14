@@ -348,7 +348,7 @@ public class Jrep {
                     exitStatus = 0;
 
                 if (!outputFilename && !opt_o && !opt_L && !opt_c) {
-                    if (colorEscStart == null)
+                    if (colorEscStart == null || startend == null)
                         lineToPrint = line;
                     else
                         lineToPrint = getLineToPrint(line, startend);

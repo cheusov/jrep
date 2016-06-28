@@ -939,3 +939,9 @@ ex=1
     cmp 'jrep bug report #1.15' \
 'ex=1
 '
+
+echo abba | $JREP_CMD --colour=always \
+		      --marker-start '<i>' --marker-end='</i>' 'a*' |
+    cmp 'jrep bug report #2' \
+'<i>a</i>bb<i>a</i>
+'

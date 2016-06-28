@@ -324,9 +324,10 @@ public class Jrep {
             for (JrepPattern pattern : patterns) {
                 int pos = 0;
                 JrepMatcher m = pattern.matcher(line);
+                int lineLength = line.length();
 
 //                boolean nextLine = false;
-                while (m.find(pos)) {
+                while (pos < lineLength && m.find(pos)) {
                     matched = true;
 
                     if (outputFilename || opt_c || opt_L || inverseMatch) {
@@ -338,6 +339,8 @@ public class Jrep {
                     }
 
                     pos = m.end();
+                    if (m.start() == m.end())
+                        ++pos;
                 }
             }
 

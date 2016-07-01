@@ -1,4 +1,12 @@
 ======================================================================
+Version 0.6.1, by Aleksey Cheusov, Fri,  1 Jul 2016 22:30:00 +0300
+
+  Option -v now works correctly with multiple -e.
+  Thanks to darkness@ for the report!
+
+  Fix infinite loop when regular expression matches an emoty string.
+
+======================================================================
 Version 0.6.0, by Aleksey Cheusov, Sun, 29 May 2016 04:06:04 +0300
 
   Since this release jgrep renamed to jrep because jgrep name is

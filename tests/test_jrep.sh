@@ -308,14 +308,18 @@ $JREP_CMD -x --line-number 'This' text1.txt text2.txt |
 'ex=2
 '
 
-$JREP_CMD -V |
+hide_version (){
+    sed -e 's/[0-9][0-9]*\([.][0-9][0-9]*\)*/NNN/' "$@"
+}
+
+$JREP_CMD -V | hide_version |
     cmp 'jrep - #24.1' \
-'jrep-0.6.0
+'jrep-NNN
 '
 
-$JREP_CMD --version |
+$JREP_CMD --version | hide_version |
     cmp 'jrep - #24.2' \
-'jrep-0.6.0
+'jrep-NNN
 '
 
 $JREP_CMD --line-buffered --with-filename OpenBSD text2.txt |

@@ -196,6 +196,10 @@ Search only files that match FILE_PATTERN pattern.
 
 Skip files matching FILE_PATTERN.
 
+=item B<--exclude-from> I<FILE>
+
+Skip files matching patterns (one per line) specified in FILE.
+
 =item B<-L>,B<--files-without-match>
 
 Only the names of files not containing

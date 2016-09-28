@@ -4,6 +4,7 @@ plan 0:
 * --include-from=FILE
 * --exclude-dir=PATTERN  directories that match PATTERN will be skipped.
 * JGREP_COLORS
+* additional option for counting all found instances instead of matched lines
 
 ========================================
 plan 1:

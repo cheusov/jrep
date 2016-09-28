@@ -226,7 +226,7 @@ public class Jrep {
         return ret;
     }
 
-    private static String getOutputString(String line, JrepMatcher match){
+    private static String getOutputString(String line, JrepMatchResult match){
         if (opt_O == null)
             return line.substring(match.start(), match.end());
 
@@ -323,7 +323,7 @@ public class Jrep {
             String lineToPrint = null;
             for (JrepPattern pattern : patterns) {
                 int pos = 0;
-                JrepMatcher m = pattern.matcher(line);
+                JrepMatchResult m = pattern.matcher(line);
                 int lineLength = line.length();
 
 //                boolean nextLine = false;

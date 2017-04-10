@@ -484,6 +484,11 @@ public class Jrep {
     }
 
     private static String[] handleOptions(String[] args) throws ParseException, IOException {
+        if(args.length == 0){
+            printHelp(options);
+            System.exit(0);
+        }
+
         CommandLineParser parser = new PosixParser();
         CommandLine cmd = parser.parse(options, args);
 

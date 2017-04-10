@@ -1,4 +1,4 @@
-INSCRIPTS =		jrep
+INSCRIPTS =		jrep jrep.cmd
 
 MAN =			jrep.1
 

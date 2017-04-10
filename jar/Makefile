@@ -1,4 +1,4 @@
-FILES =			target/jrep-0.1-jar-with-dependencies.jar
+FILES =			target/jrep-0.1.jar
 FILESDIR =		${JARDIR}
 
 MAVEN ?=		mvn
@@ -12,7 +12,7 @@ MAVEN_CMD =	${PROG.${MAVEN}:Umvn} -f${.CURDIR}/pom.xml \
    -DbuildDir=${.OBJDIR}/target ${MAVEN_OPTS}
 
 ${FILES}: ${JAVA_SRCS:S|^|src/main/java/com/cheusov/|}
-	${MAVEN_CMD} package install assembly:single
+	${MAVEN_CMD} package install
 
 clean:
 	${MAVEN_CMD} clean

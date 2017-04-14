@@ -7,12 +7,17 @@ plan 0:
 * additional option for counting all found instances instead of matched lines
 
 ========================================
+plan 0.5:
+* get rid of Apache Commons libraries. Use plain JDK-8
+
+========================================
 plan 1:
 * -v + -C + coloring
 * reusable object Jgrep. I/O streams etc.
 * -z, --null-data           a data line ends in 0 byte, not newline
 * -T, --initial-tab         make tabs line up (if needed)
 * -Z, --null                print 0 byte after FILE name
+* -O with named capturing groups?
 
 ========================================
 The following GNU grep options are not implemented and probably won't be:

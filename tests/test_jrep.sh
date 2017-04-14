@@ -771,6 +771,11 @@ Welcome to NetBSD!\n\nThis system is running a development snapshot of a stable 
 Welcome to OpenBSD: The proactively secure Unix-like operating system.\n\nPlease use the sendbug(1) utility to report bugs in the system.
 '
 
+printf '\\\nabba\n\\\n' | $JREP_CMD -8 -O '${0n}' '(?s).+' |
+    cmp 'jrep -O #41.2.1' \
+'\\\nabba\n\\\n
+'
+
 $JREP_CMD -8h -O '============ match ============
 ${1Ns}' '(?ms:(^Welcome.*?$\n.+?[.]))' text?.txt |
     cmp 'jrep -O #41.3' \

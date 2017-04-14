@@ -260,7 +260,7 @@ public class Jrep {
                         char lc = l.charAt(j);
                         switch (lc) {
                             case 'n':
-                                group = group.replaceAll("\\\\", "\\\\").replaceAll("\n", "\\\\n");
+                                group = group.replaceAll("\\\\", "\\\\\\\\").replaceAll("\n", "\\\\n");
                                 break;
                             case 'N':
                                 group = group.replaceAll("\n", " ");

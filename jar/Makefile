@@ -1,11 +1,12 @@
-FILES =			target/jrep-0.1-jar-with-dependencies.jar
+FILES =			target/jrep-0.2-jar-with-dependencies.jar
 FILESDIR =		${JARDIR}
 
 MAVEN ?=		mvn
 MAVEN_OPTS ?=		
 MKC_REQUIRE_PROGS +=	${MAVEN}
 
-JAVA_SRCS =		JrepHelpFormatter.java Jrep.java JrepJdkMatcher.java JrepRe2jMatcher.java \
+JAVA_SRCS =		JrepHelpFormatter.java Jrep.java \
+	JrepJdkMatcher.java JrepRe2jMatcher.java \
 	JrepOptions.java JrepPattern.java Utils.java
 
 MAVEN_CMD =	${PROG.${MAVEN}:Umvn} -f${.CURDIR}/pom.xml \

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 unset JREP_COLOR
-unset JREP_COLOR
 
 LC_ALL=C
 export LC_ALL

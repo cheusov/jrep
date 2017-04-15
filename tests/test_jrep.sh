@@ -10,6 +10,11 @@ JREP_CMD='jrep'
 
 ln -f -s text1.txt text1_copy.txt
 
+echo '' | $JREP_CMD | grep -i usage |
+    cmp 'jrep #0' \
+'Usage: jrep [OPTIONS]... PATTERN [FILES...]
+'
+
 $JREP_CMD OpenBSD text2.txt |
     cmp 'jrep #1' \
 'OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012

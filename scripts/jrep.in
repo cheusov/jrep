@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-: ${JREP_JAR:=@jardir@/jrep-0.1-jar-with-dependencies.jar}
+: ${JREP_JAR:=@jardir@/jrep-0.2-jar-with-dependencies.jar}
 : ${JREP_JAVA_OPTS:=}
 : ${JREP_JAVA:=java}
 : ${JREP_JNI_DIR:=@libdir@}

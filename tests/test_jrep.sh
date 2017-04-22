@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 unset JREP_COLOR
-unset JREP_COLOR
 
 LC_ALL=C
 export LC_ALL
@@ -9,6 +8,11 @@ export LC_ALL
 JREP_CMD='jrep'
 
 ln -f -s text1.txt text1_copy.txt
+
+echo '' | $JREP_CMD | grep -i usage |
+    cmp 'jrep #0' \
+'Usage: jrep [OPTIONS]... PATTERN [FILES...]
+'
 
 $JREP_CMD OpenBSD text2.txt |
     cmp 'jrep #1' \
@@ -769,6 +773,11 @@ ${1n}' '(?ms:(^Welcome.*?$\n.+?[.]))' text?.txt |
 Welcome to NetBSD!\n\nThis system is running a development snapshot of a stable branch of the NetBSD\noperating system, which will eventually lead to a new formal release.
 ============ match ============
 Welcome to OpenBSD: The proactively secure Unix-like operating system.\n\nPlease use the sendbug(1) utility to report bugs in the system.
+'
+
+printf '\\\nabba\n\\\n' | $JREP_CMD -8 -O '${0n}' '(?s).+' |
+    cmp 'jrep -O #41.2.1' \
+'\\\nabba\n\\\n
 '
 
 $JREP_CMD -8h -O '============ match ============

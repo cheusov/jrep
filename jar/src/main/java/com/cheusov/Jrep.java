@@ -226,7 +226,7 @@ public class Jrep {
         return ret;
     }
 
-    private static String getOutputString(String line, JrepMatcher match){
+    private static String getOutputString(String line, JrepMatchResult match){
         if (opt_O == null)
             return line.substring(match.start(), match.end());
 
@@ -260,7 +260,7 @@ public class Jrep {
                         char lc = l.charAt(j);
                         switch (lc) {
                             case 'n':
-                                group = group.replaceAll("\\\\", "\\\\").replaceAll("\n", "\\\\n");
+                                group = group.replaceAll("\\\\", "\\\\\\\\").replaceAll("\n", "\\\\n");
                                 break;
                             case 'N':
                                 group = group.replaceAll("\n", " ");
@@ -323,7 +323,7 @@ public class Jrep {
             String lineToPrint = null;
             for (JrepPattern pattern : patterns) {
                 int pos = 0;
-                JrepMatcher m = pattern.matcher(line);
+                JrepMatchResult m = pattern.matcher(line);
                 int lineLength = line.length();
 
 //                boolean nextLine = false;
@@ -484,9 +484,9 @@ public class Jrep {
     }
 
     private static String[] handleOptions(String[] args) throws ParseException, IOException {
-        if(args.length == 0){
+        if (args.length == 0) {
             printHelp(options);
-            System.exit(0);
+            System.exit(1);
         }
 
         CommandLineParser parser = new PosixParser();

@@ -33,11 +33,11 @@ class JrepPattern {
         return null;
     }
 
-    public JrepMatcher matcher(String text){
+    public JrepMatchResult matcher(String text){
         if (patternJava != null)
-            return new JrepMatcher(patternJava.matcher(text));
+            return new JrepJdkMatcher(patternJava.matcher(text));
         if (patternRe2 != null)
-            return new JrepMatcher(patternRe2.matcher(text));
+            return new JrepRe2jMatcher(patternRe2.matcher(text));
 
         return null;
     }

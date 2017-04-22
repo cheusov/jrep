@@ -4,6 +4,11 @@ plan 0:
 * --include-from=FILE
 * --exclude-dir=PATTERN  directories that match PATTERN will be skipped.
 * JGREP_COLORS
+* additional option for counting all found instances instead of matched lines
+
+========================================
+plan 0.5:
+* get rid of Apache Commons libraries. Use plain JDK-8
 
 ========================================
 plan 1:
@@ -12,6 +17,7 @@ plan 1:
 * -z, --null-data           a data line ends in 0 byte, not newline
 * -T, --initial-tab         make tabs line up (if needed)
 * -Z, --null                print 0 byte after FILE name
+* -O with named capturing groups?
 
 ========================================
 The following GNU grep options are not implemented and probably won't be:

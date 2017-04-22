@@ -13,7 +13,7 @@ MAVEN_CMD =	${PROG.${MAVEN}:Umvn} -f${.CURDIR}/pom.xml \
    -DbuildDir=${.OBJDIR}/target ${MAVEN_OPTS}
 
 ${FILES}: ${JAVA_SRCS:S|^|src/main/java/com/cheusov/|}
-	${MAVEN_CMD} package install assembly:single
+	${MAVEN_CMD} package install
 
 clean:
 	${MAVEN_CMD} clean

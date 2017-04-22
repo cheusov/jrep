@@ -1,4 +1,4 @@
-FILES =			target/jrep-0.2-jar-with-dependencies.jar
+FILES =			target/jrep-0.2.jar
 FILESDIR =		${JARDIR}
 
 MAVEN ?=		mvn

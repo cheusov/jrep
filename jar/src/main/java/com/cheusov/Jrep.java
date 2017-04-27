@@ -18,6 +18,7 @@ import org.apache.commons.cli.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.filefilter.*;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -277,6 +278,9 @@ public class Jrep {
                                 break;
                             case 'b':
                                 value = new File(value).getName();
+                                break;
+                            case 'c':
+                                value = StringEscapeUtils.escapeCsv(value);
                                 break;
                             default:
                                 throw new IllegalArgumentException("Unexpected modifier `" + lc + "' in -O argument");

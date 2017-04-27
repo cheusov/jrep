@@ -162,9 +162,11 @@ I<N> for replacing LF with ASCII space.
 I<s> for replacing a sequence of spaces with a single one.
 I<t> for trimming leading and trailing spaces from the group.
 I<b> for removing directory from filename.
+I<c> for CSV quoting string.
 
 Examples:
    jrep -h -O '${fb} ${0st}' '^.*BSD.*$' -r /path/to/directory
+   jrep -h -O '${fc},${1c},${2c}' '(\S+)=(\S+)' *.txt
 
 =item B<--marker-start> I<MARKER>
 

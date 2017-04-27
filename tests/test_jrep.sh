@@ -898,6 +898,13 @@ $JREP_CMD -h -O '${fZ} ${0}' '\S+BSD\S+' -r --include='*.txt' . 2>&1 |
 'java.lang.IllegalArgumentException: Unexpected modifier `Z'"'"' in -O argument
 '
 
+$JREP_CMD -h -O '${fc},${1c},${2c}' '(\S+)=(.*\S+)$' *.txt |
+    cmp 'jrep -O #44.7' \
+'text6.txt,varname1,value1
+text6.txt,varname2,"100,500.00"
+text6.txt,varname3,"String with "" inside"
+'
+
 rm text1_copy.txt
 
 echo `pwd`/text1.txt > excl_pattern2

@@ -163,6 +163,7 @@ I<s> for replacing a sequence of spaces with a single one.
 I<t> for trimming leading and trailing spaces from the group.
 I<b> for removing directory from filename.
 I<c> for CSV quoting string.
+Modifiers are applied from left to right.
 
 Examples:
    jrep -h -O '${fb} ${0st}' '^.*BSD.*$' -r /path/to/directory

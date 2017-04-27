@@ -147,19 +147,24 @@ format. Within format string the symbol $ has a special meaning.
 
 Doubled $ means the symbol $ itself.
 
-$N, where N is a single digit, means group number N.
-Number N can be surrounded by curly braces, this allows to use
-a group number more than 9. Within curly braces the following special
-characters can be used: 'I<n>' for replacing LF (line feed) and backslash characters
-with '\n' and '\\' sequences respectively,
-'I<N>' for replacing LF with space,
-'I<s>' for replacing a sequence of spaces with a single one
-and 'I<t>' for trimming leading and trailing spaces from the group.
-
-$f means a filename where match was found. Symbol `f' can also be
-surrounded by curly braces.
-
+I<$N>, where N is a single digit, means group number N.
+I<$f> means a filename where match was found.
 All other characters, not preceeded by $, are output as is.
+Number N can be surrounded by curly braces, this allows to use
+a group number more than 9.
+Symbol `f' can also be surrounded by curly braces.
+
+Within curly braces the following special
+modifiers can be used.
+I<n> for replacing LF (line feed) and backslash characters
+with '\n' and '\\' sequences respectively.
+I<N> for replacing LF with ASCII space.
+I<s> for replacing a sequence of spaces with a single one.
+I<t> for trimming leading and trailing spaces from the group.
+I<b> for removing directory from filename.
+
+Examples:
+   jrep -h -O '${fb} ${0st}' '^.*BSD.*$' -r /path/to/directory
 
 =item B<--marker-start> I<MARKER>
 

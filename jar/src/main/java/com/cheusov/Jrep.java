@@ -216,10 +216,8 @@ public class Jrep {
 
             if (c >= '0' && c <= '9') {
                 sbDigits.append(c);
-            } else if (c == 't' || c == 'n' || c == 'N' || c == 's' || c == 'f') {
-                sbLetters.append(c);
             } else {
-                throw new IllegalArgumentException("Unexpected `" + c + " in -O argument at position " + pos);
+                sbLetters.append(c);
             }
         }
 
@@ -257,8 +255,6 @@ public class Jrep {
                         value = match.group(groupNum);
                         if (value == null)
                             value = "";
-                    } else if (l.toString().contains("f")) {
-                        value = filename;
                     }
 
                     for (int j = 0; j < l.length(); ++j){
@@ -276,6 +272,14 @@ public class Jrep {
                             case 't':
                                 value = value.trim();
                                 break;
+                            case 'f':
+                                value = filename;
+                                break;
+                            case 'b':
+                                value = new File(value).getName();
+                                break;
+                            default:
+                                throw new IllegalArgumentException("Unexpected modifier `" + lc + "' in -O argument");
                         }
                     }
                     b.append(value);

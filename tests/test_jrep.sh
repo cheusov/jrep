@@ -851,6 +851,34 @@ $JREP_CMD -O '`$1` `$2`' '(BSD)|(zzzz)' text1.txt |
 `BSD` ``
 '
 
+$JREP_CMD -8h -O '$f $0' '\S+BSD\S+' -r --include='*.txt' . |
+    cmp 'jrep -O #44.3' \
+'text2.txt OpenBSD:
+subdir/text3.txt FreeBSD!
+subdir/text3.txt https://www.FreeBSD.org/releases/
+subdir/text3.txt https://www.FreeBSD.org/security/
+subdir/text3.txt https://www.FreeBSD.org/handbook/
+subdir/text3.txt https://www.FreeBSD.org/faq/
+subdir/text3.txt https://lists.FreeBSD.org/mailman/listinfo/freebsd-questions/
+subdir/text3.txt https://forums.FreeBSD.org/
+text1.txt NetBSD!
+text1.txt http://www.NetBSD.org/support/send-pr.html
+'
+
+$JREP_CMD -8h -O '${f} ${0}' '\S+BSD\S+' -r --include='*.txt' . |
+    cmp 'jrep -O #44.4' \
+'text2.txt OpenBSD:
+subdir/text3.txt FreeBSD!
+subdir/text3.txt https://www.FreeBSD.org/releases/
+subdir/text3.txt https://www.FreeBSD.org/security/
+subdir/text3.txt https://www.FreeBSD.org/handbook/
+subdir/text3.txt https://www.FreeBSD.org/faq/
+subdir/text3.txt https://lists.FreeBSD.org/mailman/listinfo/freebsd-questions/
+subdir/text3.txt https://forums.FreeBSD.org/
+text1.txt NetBSD!
+text1.txt http://www.NetBSD.org/support/send-pr.html
+'
+
 rm text1_copy.txt
 
 echo `pwd`/text1.txt > excl_pattern2

@@ -216,7 +216,7 @@ public class Jrep {
 
             if (c >= '0' && c <= '9') {
                 sbDigits.append(c);
-            } else if (c == 't' || c == 'n' || c == 'N' || c == 's') {
+            } else if (c == 't' || c == 'n' || c == 'N' || c == 's' || c == 'f') {
                 sbLetters.append(c);
             } else {
                 throw new IllegalArgumentException("Unexpected `" + c + " in -O argument at position " + pos);
@@ -226,7 +226,7 @@ public class Jrep {
         return ret;
     }
 
-    private static String getOutputString(String line, JrepMatchResult match){
+    private static String getOutputString(String line, JrepMatchResult match, String filename) {
         if (opt_O == null)
             return line.substring(match.start(), match.end());
 
@@ -250,36 +250,43 @@ public class Jrep {
                     StringBuilder d = ld[1];
                     int sumlen = d.length() + l.length();
                     i += sumlen; // +1 due to '}'
-                    int groupNum = Integer.valueOf(d.toString());
 
-                    String group = match.group(groupNum);
-                    if (group == null)
-                        group = "";
+                    String value = "";
+                    if (d.length() > 0) {
+                        int groupNum = Integer.valueOf(d.toString());
+                        value = match.group(groupNum);
+                        if (value == null)
+                            value = "";
+                    } else if (l.toString().contains("f")) {
+                        value = filename;
+                    }
 
                     for (int j = 0; j < l.length(); ++j){
                         char lc = l.charAt(j);
                         switch (lc) {
                             case 'n':
-                                group = group.replaceAll("\\\\", "\\\\\\\\").replaceAll("\n", "\\\\n");
+                                value = value.replaceAll("\\\\", "\\\\\\\\").replaceAll("\n", "\\\\n");
                                 break;
                             case 'N':
-                                group = group.replaceAll("\n", " ");
+                                value = value.replaceAll("\n", " ");
                                 break;
                             case 's':
-                                group = group.replaceAll("\\s+", " ");
+                                value = value.replaceAll("\\s+", " ");
                                 break;
                             case 't':
-                                group = group.trim();
+                                value = value.trim();
                                 break;
                         }
                     }
-                    b.append(group);
+                    b.append(value);
                 } else if (nc >= '0' && nc <= '9') {
                     String group = match.group(nc - '0');
                     if (group == null)
                         group = "";
 
                     b.append(group);
+                } else if (nc == 'f') {
+                    b.append(filename);
                 } else {
                     throw new IllegalArgumentException("Illegal `$" + nc + "` in -O argument: `" + opt_O + "`");
                 }
@@ -333,7 +340,7 @@ public class Jrep {
                     if (outputFilename || opt_c || opt_L || inverseMatch) {
                         break;
                     } else if (opt_o) {
-                        printlnWithPrefix(filename, getOutputString(line, m), lineNumber, ':');
+                        printlnWithPrefix(filename, getOutputString(line, m, filename), lineNumber, ':');
                     } else if (colorEscStart != null) {
                         startend.add(Pair.of(m.start(), m.end()));
                     }

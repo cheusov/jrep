@@ -1,4 +1,4 @@
-FILES =			target/jrep-0.2.jar
+FILES =			target/jrep-${JAR_VERSION}.jar
 FILESDIR =		${JARDIR}
 
 MAVEN ?=		mvn
@@ -11,6 +11,8 @@ JAVA_SRCS =		JrepHelpFormatter.java Jrep.java \
 
 MAVEN_CMD =	${PROG.${MAVEN}:Umvn} -f${.CURDIR}/pom.xml \
    -DbuildDir=${.OBJDIR}/target ${MAVEN_OPTS}
+
+.include <mkc.init.mk> # for assigning value to variable JAR_VERSION
 
 ${FILES}: ${JAVA_SRCS:S|^|src/main/java/com/cheusov/|}
 	${MAVEN_CMD} package install

@@ -6,7 +6,7 @@
 
     <groupId>com.cheusov</groupId>
     <artifactId>jrep</artifactId>
-    <version>0.2</version>
+    <version>0.3</version> <!-- version is here. DO NOT REMOVE THIS COMMENT!!! -->
 
     <dependencies>
         <dependency>

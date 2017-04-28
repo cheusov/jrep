@@ -905,6 +905,13 @@ text6.txt,varname2,"100,500.00"
 text6.txt,varname3,"String with "" inside"
 '
 
+$JREP_CMD -h -O '${fc},${1C},${2C}' '(\S+)=(.*\S+)$' *.txt |
+    cmp 'jrep -O #44.8' \
+'text6.txt,"varname1","value1"
+text6.txt,"varname2","100,500.00"
+text6.txt,"varname3","String with "" inside"
+'
+
 rm text1_copy.txt
 
 echo `pwd`/text1.txt > excl_pattern2

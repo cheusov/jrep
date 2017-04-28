@@ -282,6 +282,9 @@ public class Jrep {
                             case 'c':
                                 value = StringEscapeUtils.escapeCsv(value);
                                 break;
+                            case 'C':
+                                value = "\"" + value.replaceAll("\"", "\"\"") + "\"";
+                                break;
                             default:
                                 throw new IllegalArgumentException("Unexpected modifier `" + lc + "' in -O argument");
                         }

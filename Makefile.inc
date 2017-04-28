@@ -8,4 +8,4 @@ JARDIR ?=	${LIBDIR}/jrep
 DOCDIR ?=	${DATADIR}/jrep
 
 INTEXTS_REPLS +=	jar_version ${JAR_VERSION}
-EXPORT_VARNAMES +=	JAR_VERSION
+EXPORT_VARNAMES +=	JAR_VERSION # for tests/Makefile

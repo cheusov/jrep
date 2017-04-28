@@ -9,9 +9,18 @@ JREP_CMD='jrep'
 
 ln -f -s text1.txt text1_copy.txt
 
-echo '' | $JREP_CMD | grep -i usage |
-    cmp 'jrep #0' \
+{ echo '' | $JREP_CMD 2>&1; echo ex=$?; } |
+    cmp 'jrep #0.1' \
 'Usage: jrep [OPTIONS]... PATTERN [FILES...]
+Try '"'"'jrep --help'"'"' for more information.
+ex=2
+'
+
+{ echo '' | $JREP_CMD -h 2>&1; echo ex=$?; } |
+    cmp 'jrep #0.2' \
+'Usage: jrep [OPTIONS]... PATTERN [FILES...]
+Try '"'"'jrep --help'"'"' for more information.
+ex=2
 '
 
 $JREP_CMD OpenBSD text2.txt |
@@ -634,7 +643,7 @@ extension: html
     $JREP_CMD -hO 'lalala: $' '(http)://([^/]+)([^ ]*/([^ /]+)[.]([^ .]+))' text?.txt 2>&1;
     echo ex=$?
 } | cmp 'jrep -O #36.2' \
-'java.lang.IllegalArgumentException: Unexpected `$` in -O argument: `lalala: $`
+'Unexpected `$` in -O argument: `lalala: $`
 ex=2
 '
 
@@ -642,7 +651,7 @@ ex=2
     $JREP_CMD -hO 'foo $n bar' '(http)://([^/]+)([^ ]*/([^ /]+)[.]([^ .]+))' text?.txt 2>&1;
     echo ex=$?
 } | cmp 'jrep -O #36.3' \
-'java.lang.IllegalArgumentException: Illegal `$n` in -O argument: `foo $n bar`
+'Illegal `$n` in -O argument: `foo $n bar`
 ex=2
 '
 
@@ -655,7 +664,7 @@ snapshot may contain bugs or other unresolved issues and is not yet considered
 
 { $JREP_CMD --colour zzz regexp text2.txt 2>&1; echo ex=$?; } |
     cmp 'jrep --color zzz #38' \
-'java.lang.IllegalArgumentException: Illegal argument `zzz` for option --color
+'Illegal argument `zzz` for option --color
 ex=2
 '
 
@@ -671,19 +680,19 @@ echo appapp | $JREP_CMD --re-engine java '(app)\1' |
 
 { echo appapp | $JREP_CMD --re-engine re2j '(app)\1' 2>&1; echo ex=$?; } |
     cmp 'jrep --re-engine java #39.3' \
-'com.google.re2j.PatternSyntaxException: error parsing regexp: invalid escape sequence: `\1`
+'error parsing regexp: invalid escape sequence: `\1`
 ex=2
 '
 
 { echo appapp | $JREP_CMD -2 '(app)\1' 2>&1; echo ex=$?; } |
     cmp 'jrep --re-engine java #39.4' \
-'com.google.re2j.PatternSyntaxException: error parsing regexp: invalid escape sequence: `\1`
+'error parsing regexp: invalid escape sequence: `\1`
 ex=2
 '
 
 { echo appapp | $JREP_CMD --re-engine xxx '(app)\1' 2>&1; echo ex=$?; } |
     cmp 'jrep --re-engine java #39.5' \
-'java.lang.IllegalArgumentException: Illegal argument `xxx` for option --re-engine
+'Illegal argument `xxx` for option --re-engine
 ex=2
 '
 
@@ -895,7 +904,7 @@ text1.txt http://www.NetBSD.org/support/send-pr.html
 
 $JREP_CMD -h -O '${fZ} ${0}' '\S+BSD\S+' -r --include='*.txt' . 2>&1 |
     cmp 'jrep -O #44.6' \
-'java.lang.IllegalArgumentException: Unexpected modifier `Z'"'"' in -O argument
+'Unexpected modifier `Z'"'"' in -O argument
 '
 
 $JREP_CMD -h -O '${fc},${1c},${2c}' '(\S+)=(.*\S+)$' *.txt |
@@ -940,7 +949,7 @@ $JREP_CMD --directories=skip -l --exclude=`pwd`/text1.txt 'BSD' `pwd` |
 
 { echo appapp | $JREP_CMD --directories xxx '(app)\1' 2>&1; echo ex=$?; } |
     cmp 'jrep --directories xxx #46.3' \
-'java.lang.IllegalArgumentException: Illegal argument `xxx` for option --directories
+'Illegal argument `xxx` for option --directories
 ex=2
 '
 

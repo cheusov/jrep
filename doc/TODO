@@ -1,13 +1,6 @@
--O:
-  -C ame as -c but always use surrounding "
-
 ========================================
 plan -1:
 * "grep regexp ." should fail with ". Is a directory"
-* The following should be fixed
-
-  jrep -h
-  java.lang.IllegalArgumentException: 1 > 0
 
 ========================================
 plan 0:

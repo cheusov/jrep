@@ -42,6 +42,7 @@ public class Jrep {
     }
 
     private static final String USAGE_MESSAGE = "Usage: jrep [OPTIONS]... PATTERN [FILES...]";
+    private static final String HELP_REF_MESSAGE = "Try 'jrep --help' for more information.";
     private static final String HEADER_MESSAGE = "Search for PATTERN in each FILE or standard input. " +
             "PATTERN is, by default, a Java regular expression (java.lang.regex).\n" +
             "Example: jrep -i 'hello world' menu.h main.c";
@@ -502,10 +503,8 @@ public class Jrep {
     }
 
     private static String[] handleOptions(String[] args) throws ParseException, IOException {
-        if (args.length == 0) {
-            printHelp(options);
-            System.exit(1);
-        }
+        if (args.length == 0)
+            throw new RuntimeException(USAGE_MESSAGE + "\n" + HELP_REF_MESSAGE);
 
         CommandLineParser parser = new PosixParser();
         CommandLine cmd = parser.parse(options, args);
@@ -703,6 +702,8 @@ public class Jrep {
 
         if (args.length > 0)
             regexps.add(args[0]);
+        else
+            throw new RuntimeException(USAGE_MESSAGE + "\n" + HELP_REF_MESSAGE);
 
         return Arrays.copyOfRange(args, 1, args.length);
     }
@@ -789,6 +790,10 @@ public class Jrep {
             sanityCheck();
             init(args);
             grep(args);
+        } catch (RuntimeException e) {
+//            e.printStackTrace(System.err);
+            System.err.println(e.getMessage());
+            exitStatus = 2;
         } catch (Exception e) {
 //            e.printStackTrace(System.err);
             System.err.println(e.toString());

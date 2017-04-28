@@ -1,0 +1,3 @@
+varname1=value1
+varname2=100,500.00
+varname3=String with " inside

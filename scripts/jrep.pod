@@ -171,6 +171,7 @@ Examples:
    jrep -h -O '${fb} ${0st}' '^.*BSD.*$' -r /path/to/directory
    jrep -h -O '${fc},${1c},${2C}' '(\S+)=(\S+)' *.txt
    jrep -O 'Do you $<like$> $1$<${2}$>? :-)' '([^\s.]+)(BSD)' *.txt
+   jrep -8h -O '${1Nst}' '<b>(.+?)</b>' *.html
 
 =item B<--marker-start> I<MARKER>
 

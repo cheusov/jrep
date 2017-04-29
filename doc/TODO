@@ -18,11 +18,8 @@ plan 0.5:
 plan 1:
 * -v + -C + coloring
 * reusable object Jgrep. I/O streams etc.
-* -z, --null-data           a data line ends in 0 byte, not newline
-* -T, --initial-tab         make tabs line up (if needed)
-* -Z, --null                print 0 byte after FILE name
 * -O with named capturing groups?
-
+ 
 ========================================
 The following GNU grep options are not implemented and probably won't be:
 * -E, --extended-regexp     PATTERN is an extended regular expression (ERE)
@@ -36,6 +33,18 @@ The following GNU grep options are not implemented and probably won't be:
 * -D, --devices=ACTION      how to handle devices, FIFOs and sockets;
                             ACTION is 'read' or 'skip'
 * -NUM                      same as --context=NUM
+
+========================================
+Won't be supported? 
+* -z, --null-data           a data line ends in 0 byte, not newline
+* -T, --initial-tab         make tabs line up (if needed)
+* -Z, --null                print 0 byte after FILE name
+* -b option
+* -u option
+* -a,--text option
+* --binary-files
+* -D ACTION, --devices=ACTION
+* -I
 * -U, --binary              do not strip CR characters at EOL (MSDOS/Windows)
 * -u, --unix-byte-offsets   report offsets as if CRs were not there
                             (MSDOS/Windows)

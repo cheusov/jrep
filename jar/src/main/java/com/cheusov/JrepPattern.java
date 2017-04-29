@@ -1,13 +1,12 @@
 package com.cheusov;
 
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * Created by Aleksey Cheusov on 5/14/16.
  */
 class JrepPattern {
-    public static enum RE_ENGINE_TYPE {
+    public enum RE_ENGINE_TYPE {
         JAVA, RE2J
     }
 

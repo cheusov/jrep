@@ -73,7 +73,7 @@ class JrepOptionsGroups {
                 " regardless of matching lines. Exit with zero status if an input line is selected.");
         options.addOption(null, "silent", null, "Same as --quiet.");
         options.addOption("8", null, null, "Match the whole file content at once.");
-        options.addOption(null, "directories", "ACTION", "How to handle directories; " +
+        options.addOption("d", "directories", "ACTION", "How to handle directories; " +
                 "ACTION is 'read', 'recurse', or 'skip'.");
         options.addOption("r", "recursive", null, "Like --directories=recurse.");
         options.addOption("R", "dereference-recursive", null, "Likewise, but follow all symlinks.");

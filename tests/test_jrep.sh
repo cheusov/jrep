@@ -501,10 +501,28 @@ text2.txt:OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
 text2.txt:Welcome to OpenBSD: The proactively secure Unix-like operating system.
 '
 
+$JREP_CMD -drecurse -i -e OpenBSD \
+	  --marker-start '<b>' --marker-end '</b>' --include '*.txt' . |
+    sort |
+    cmp 'jrep -r --include --marker-{start,end} #33.2.3' \
+'patterns.txt:OpenBSD
+text2.txt:OpenBSD 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
+text2.txt:Welcome to OpenBSD: The proactively secure Unix-like operating system.
+'
+
 $JREP_CMD --directories=recurse -i -e OpenBSD \
 	  --marker-start '<b>' --marker-end '</b>' \
 	  --color always --include '*.txt' . | sort |
-    cmp 'jrep -r --include --marker-{start,end} #33.3' \
+    cmp 'jrep -r --include --marker-{start,end} #33.3.1' \
+'patterns.txt:<b>OpenBSD</b>
+text2.txt:<b>OpenBSD</b> 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
+text2.txt:Welcome to <b>OpenBSD</b>: The proactively secure Unix-like operating system.
+'
+
+$JREP_CMD -d recurse -i -e OpenBSD \
+	  --marker-start '<b>' --marker-end '</b>' \
+	  --color always --include '*.txt' . | sort |
+    cmp 'jrep -r --include --marker-{start,end} #33.3.2' \
 'patterns.txt:<b>OpenBSD</b>
 text2.txt:<b>OpenBSD</b> 5.2-beta (GENERIC) #62: Wed Jul 11 14:45:11 EDT 2012
 text2.txt:Welcome to <b>OpenBSD</b>: The proactively secure Unix-like operating system.
@@ -956,7 +974,7 @@ ex=2
 { $JREP_CMD -l --exclude=`pwd`/text1.txt 'BSD' `pwd` 2>&1;
   echo ex=$?; } |
     sed -e 's,/.*/,/path/to/jrep/,' |
-    cmp 'jrep --directories #46.4' \
+    cmp 'jrep #46.4' \
 'java.io.FileNotFoundException: /path/to/jrep/tests (Is a directory)
 ex=2
 '

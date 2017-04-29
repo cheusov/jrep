@@ -192,7 +192,7 @@ Same as B<--quiet>.
 
 Match the whole file content at once.
 
-=item B<--directories> I<ACTION>
+=item B<-d>,B<--directories> I<ACTION>
 
 How to handle directories; ACTION is 'read',
 'recurse', or 'skip'.

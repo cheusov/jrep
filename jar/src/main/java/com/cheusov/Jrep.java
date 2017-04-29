@@ -110,89 +110,108 @@ public class Jrep {
         return ret;
     }
 
+    private static String getGroup(JrepMatchResult match, int groupNum) {
+        String value = match.group(groupNum);
+        if (value == null)
+            return "";
+
+        return value;
+    }
+
     private static String getOutputString(String line, JrepMatchResult match, String filename) {
         if (Opts.opt_O == null)
             return line.substring(match.start(), match.end());
 
         StringBuilder b = new StringBuilder();
         int len = Opts.opt_O.length();
-        for (int i = 0; i < len; ++i){
+        for (int i = 0; i < len; ++i) {
             char c = Opts.opt_O.charAt(i);
             if (c != '$') {
                 b.append(c);
             } else {
                 if (i + 1 == len)
                     throw new IllegalArgumentException("Unexpected `$` in -O argument: `" + Opts.opt_O + "`");
+
                 char nc = Opts.opt_O.charAt(i + 1);
-                if (nc == '$')
-                    b.append('$');
-                else if (nc == '<')
-                    b.append(Opts.colorEscStart);
-                else if (nc == '>')
-                    b.append(Opts.colorEscEnd);
-                else if (nc == '{') {
+
+                String value = "";
+                CharSequence l = "";
+                if (nc == '{') {
                     StringBuilder[] ld;
                     i += 1;
                     ld = extractCurlyBraces(Opts.opt_O, i + 1);
-                    StringBuilder l = ld[0];
+                    l = ld[0];
                     StringBuilder d = ld[1];
-                    int sumlen = d.length() + l.length();
-                    i += sumlen; // +1 due to '}'
+                    i += d.length() + l.length();
 
-                    String value = "";
                     if (d.length() > 0) {
+                        nc = '\0';
                         int groupNum = Integer.valueOf(d.toString());
-                        value = match.group(groupNum);
-                        if (value == null)
-                            value = "";
+                        value = getGroup(match, groupNum);
                     }
 
-                    for (int j = 0; j < l.length(); ++j){
-                        char lc = l.charAt(j);
-                        switch (lc) {
-                            case 'n':
-                                value = value.replaceAll("\\\\", "\\\\\\\\").replaceAll("\n", "\\\\n");
-                                break;
-                            case 'N':
-                                value = value.replaceAll("\n", " ");
-                                break;
-                            case 's':
-                                value = patternSpaces.matcher(value).replaceAll(" ");
-                                break;
-                            case 't':
-                                value = patternSpacesBeg.matcher(value).replaceFirst("");
-                                value = patternSpacesEnd.matcher(value).replaceFirst("");
-                                break;
-                            case 'f':
-                                value = filename;
-                                break;
-                            case 'b':
-                                value = new File(value).getName();
-                                break;
-                            case 'c':
-                                value = StringEscapeUtils.escapeCsv(value);
-                                break;
-                            case 'C':
-                                value = "\"" + value.replaceAll("\"", "\"\"") + "\"";
-                                break;
-                            default:
-                                throw new IllegalArgumentException("Unexpected modifier `" + lc + "' in -O argument");
-                        }
+                    if (d.length() == 0 && l.length() > 0) {
+                        nc = l.charAt(0);
+                        l = l.subSequence(1, l.length());
                     }
-                    b.append(value);
-                } else if (nc >= '0' && nc <= '9') {
-                    String group = match.group(nc - '0');
-                    if (group == null)
-                        group = "";
-
-                    b.append(group);
-                } else if (nc == 'f') {
-                    b.append(filename);
-                } else {
-                    throw new IllegalArgumentException("Illegal `$" + nc + "` in -O argument: `" + Opts.opt_O + "`");
                 }
 
                 ++i;
+
+//                System.err.println("zzz: " + l);
+
+                switch (nc) {
+                    case '\0':
+                        break;
+                    case 'f':
+                        value = filename;
+                        break;
+                    case '<':
+                        value = Opts.colorEscStart;
+                        break;
+                    case '>':
+                        value = Opts.colorEscEnd;
+                        break;
+                    case '$':
+                        value = "$";
+                        break;
+                    case '0':case '1':case '2': case '3':case '4':case '5':case '6':case '7':case '8':case '9':
+                        value = getGroup(match, nc - '0');
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Illegal `$" + nc + "` in -O argument: `" + Opts.opt_O + "`");
+                }
+
+                for (int j = 0; j < l.length(); ++j) {
+                    char lc = l.charAt(j);
+                    switch (lc) {
+                        case 'n':
+                            value = value.replaceAll("\\\\", "\\\\\\\\").replaceAll("\n", "\\\\n");
+                            break;
+                        case 'N':
+                            value = value.replaceAll("\n", " ");
+                            break;
+                        case 's':
+                            value = patternSpaces.matcher(value).replaceAll(" ");
+                            break;
+                        case 't':
+                            value = patternSpacesBeg.matcher(value).replaceFirst("");
+                            value = patternSpacesEnd.matcher(value).replaceFirst("");
+                            break;
+                        case 'b':
+                            value = new File(value).getName();
+                            break;
+                        case 'c':
+                            value = StringEscapeUtils.escapeCsv(value);
+                            break;
+                        case 'C':
+                            value = "\"" + value.replaceAll("\"", "\"\"") + "\"";
+                            break;
+                        default:
+                            throw new IllegalArgumentException("Unexpected modifier `" + lc + "' in -O argument");
+                    }
+                }
+                b.append(value);
             }
         }
 

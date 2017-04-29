@@ -1145,7 +1145,7 @@ $JREP_CMD -rl --include '*.txt' --exclude-dir='*/subdir' '.' \
 
 $JREP_CMD -r --marker-start '<b>' --marker-end '</b>' \
 	  --include '*.txt' --colour=always \
-	  -O 'Do you $<like$> $1$<${2}$>?' '([^\s.]+)(BSD)' . |
+	  -O 'Do you $<like$> $1${<}${2}${>}?' '([^\s.]+)(BSD)' . |
     sort |
     cmp 'jrep -O "$<$>" #49' \
 'patterns.txt:Do you <b>like</b> Net<b>BSD</b>?

@@ -986,6 +986,163 @@ echo abba | $JREP_CMD -e 'a+' --color always \
 '<b>a</b>bb<b>a</b>
 '
 
+$JREP_CMD -rl --exclude-dir '*' '.' . |
+    sort |
+    cmp 'jrep --exclude-dir #48.1' \
+''
+
+$JREP_CMD -rl --exclude-dir '*' '.' `pwd` |
+    sort |
+    cmp 'jrep --exclude-dir #48.2' \
+''
+
+$JREP_CMD -rl --exclude-dir 't' '.' `pwd` | sed "s,`pwd`,.," |
+    sort |
+    cmp 'jrep --exclude-dir #48.3' \
+'./Makefile
+./bug_report1.txt
+./excl_patterns
+./patterns.txt
+./subdir/text3.txt
+./subdir2/text7.txt
+./test.sh
+./test_jrep.sh
+./text1.txt
+./text2.txt
+./text3.txt
+./text5.txt
+./text6.txt
+'
+
+$JREP_CMD -rl --include '*.txt' --exclude-dir '*r' '.' . |
+    sort |
+    cmp 'jrep --exclude-dir #48.4' \
+'bug_report1.txt
+patterns.txt
+subdir2/text7.txt
+text1.txt
+text2.txt
+text3.txt
+text5.txt
+text6.txt
+'
+
+$JREP_CMD -rl --include '*.txt' --exclude-dir='.' '.' . |
+    sort |
+    cmp 'jrep --exclude-dir #48.5' \
+''
+
+$JREP_CMD -rl --include '*.txt' --exclude-dir='*tests' '.' `pwd` |
+    sort |
+    cmp 'jrep --exclude-dir #48.6' \
+''
+
+$JREP_CMD -rl --include '*.txt' --exclude-dir='*tests/sub*' '.' `pwd` |
+    sed "s|^$(dirname $(pwd))|.|" |
+    sort |
+    cmp 'jrep --exclude-dir #48.7' \
+'./tests/bug_report1.txt
+./tests/patterns.txt
+./tests/subdir/text3.txt
+./tests/subdir2/text7.txt
+./tests/text1.txt
+./tests/text2.txt
+./tests/text3.txt
+./tests/text5.txt
+./tests/text6.txt
+'
+
+$JREP_CMD -rl --include '*.txt' --exclude-dir='*tests/subdir' '.' `pwd` |
+    sed "s|^$(dirname $(pwd))|.|" |
+    sort |
+    cmp 'jrep --exclude-dir #48.8' \
+'./tests/bug_report1.txt
+./tests/patterns.txt
+./tests/subdir/text3.txt
+./tests/subdir2/text7.txt
+./tests/text1.txt
+./tests/text2.txt
+./tests/text3.txt
+./tests/text5.txt
+./tests/text6.txt
+'
+
+$JREP_CMD -rl --include '*.txt' --exclude-dir='*subdir' '.' `pwd` |
+    sed "s|^$(dirname $(pwd))|.|" |
+    sort |
+    cmp 'jrep --exclude-dir #48.9' \
+'./tests/bug_report1.txt
+./tests/patterns.txt
+./tests/subdir2/text7.txt
+./tests/text1.txt
+./tests/text2.txt
+./tests/text3.txt
+./tests/text5.txt
+./tests/text6.txt
+'
+
+$JREP_CMD -rl --include '*.txt' --exclude-dir='*subdir' --exclude-dir='*subdir2' '.' `pwd` |
+    sed "s|^$(dirname $(pwd))|.|" |
+    sort |
+    cmp 'jrep --exclude-dir #48.10' \
+'./tests/bug_report1.txt
+./tests/patterns.txt
+./tests/text1.txt
+./tests/text2.txt
+./tests/text3.txt
+./tests/text5.txt
+./tests/text6.txt
+'
+
+$JREP_CMD -rl --include '*.txt' --exclude-dir='subdir' --exclude-dir='subdir2' '.' `pwd` |
+    sed "s|^$(dirname $(pwd))|.|" |
+    sort |
+    cmp 'jrep --exclude-dir #48.11' \
+'./tests/bug_report1.txt
+./tests/patterns.txt
+./tests/text1.txt
+./tests/text2.txt
+./tests/text3.txt
+./tests/text5.txt
+./tests/text6.txt
+'
+
+$JREP_CMD -rl --include '*.txt' --exclude-dir='subdir' --exclude-dir='subdir2' '.' `pwd` |
+    sed "s|^$(dirname $(pwd))|.|" |
+    sort |
+    cmp 'jrep --exclude-dir #48.11' \
+'./tests/bug_report1.txt
+./tests/patterns.txt
+./tests/text1.txt
+./tests/text2.txt
+./tests/text3.txt
+./tests/text5.txt
+./tests/text6.txt
+'
+
+$JREP_CMD -rl --include '*.txt' --exclude-dir='subdir' --exclude-dir='subdir2' '.' \
+     `pwd`/subdir `pwd`/subdir2 |
+    sed "s|^$(dirname $(pwd))|.|" |
+    sort |
+    cmp 'jrep --exclude-dir #48.12' \
+''
+
+$JREP_CMD -rl --include '*.txt' --exclude-dir='*/subdir' '.' \
+	  `pwd` |
+    sed "s|^$(dirname $(pwd))|.|" |
+    sort |
+    cmp 'jrep --exclude-dir #48.13' \
+'./tests/bug_report1.txt
+./tests/patterns.txt
+./tests/subdir/text3.txt
+./tests/subdir2/text7.txt
+./tests/text1.txt
+./tests/text2.txt
+./tests/text3.txt
+./tests/text5.txt
+./tests/text6.txt
+'
+
 $JREP_CMD -v -e conky -e application bug_report1.txt | tr -d '\015' |
     cmp 'jrep bug report #1.1' \
 'i  | cyrconfix                              | package     | 1.0-13.2                                | noarch | (System Packages)                             

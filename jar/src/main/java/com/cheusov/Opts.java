@@ -65,6 +65,8 @@ class Opts {
     public static OrFileFilter orExcludeFileFilter = new OrFileFilter();
     public static OrFileFilter orIncludeFileFilter = new OrFileFilter();
     public static AndFileFilter fileFilter = new AndFileFilter();
+    private static OrFileFilter orExcludeDirFilter = new OrFileFilter();
+    public static NotFileFilter orIncludeDirFilter = new NotFileFilter(orExcludeDirFilter);
 
     public static List<String> regexps = new ArrayList<String>();
     public static ArrayList<JrepPattern> patterns = new ArrayList<JrepPattern>();
@@ -160,6 +162,15 @@ class Opts {
                     orExcludeFileFilter.addFileFilter(new WildcardFileFilter(globPattern));
             }
         }
+
+        optArray = cmd.getOptionValues("exclude-dir");
+        if (optArray != null && optArray.length != 0) {
+            for (String globPattern : optArray) {
+                orExcludeDirFilter.addFileFilter(new WildcardFileFilter(globPattern));
+            }
+        }
+        if (orExcludeDirFilter.getFileFilters().isEmpty())
+            orExcludeDirFilter.addFileFilter(FalseFileFilter.FALSE);
 
         String optStr = cmd.getOptionValue("exclude-from");
         if (optStr != null) {

@@ -1,6 +1,8 @@
+
 ========================================
 plan -1:
 * "grep regexp ." should fail with ". Is a directory"
+* --exclude-dir
 
 ========================================
 plan 0:

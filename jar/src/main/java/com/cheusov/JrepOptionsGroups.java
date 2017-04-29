@@ -79,6 +79,8 @@ class JrepOptionsGroups {
         options.addOption("R", "dereference-recursive", null, "Likewise, but follow all symlinks.");
         options.addOption(null, "include", "FILE_PATTERN", "Search only files that match FILE_PATTERN pattern.");
         options.addOption(null, "exclude", "FILE_PATTERN", "Skip files matching FILE_PATTERN.");
+        options.addOption(null, "exclude-dir", "DIR_PATTERN",
+                "Exclude directories matching the pattern DIR_PATTERN from recursive searches.");
         options.addOption(null, "exclude-from", "FILE", "Skip files whose base name matches any of" +
                 " the file-name globs read from FILE (using wildcard matching as described under --exclude).");
         options.addOption("L", "files-without-match", null, "Only the names of files not containing selected lines " +

@@ -213,6 +213,11 @@ Search only files that match FILE_PATTERN pattern.
 
 Skip files matching FILE_PATTERN.
 
+=item B<--exclude-dir> I<DIR_PATTERN>
+
+Exclude directories matching the pattern DIR_PATTERN from recursive searches.
+This option can be applied multiple times.
+
 =item B<--exclude-from> I<FILE>
 
 Skip files matching patterns (one per line) specified in FILE.

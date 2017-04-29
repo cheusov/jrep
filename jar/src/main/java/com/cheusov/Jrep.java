@@ -319,7 +319,9 @@ public class Jrep {
                     continue;
 
                 if (isDir && Opts.opt_directories == Directories.RECURSE) {
-                    fileIterator = FileUtils.iterateFiles(file, Opts.fileFilter, DirectoryFileFilter.DIRECTORY);
+                    if (!Opts.orIncludeDirFilter.accept(file))
+                        continue;
+                    fileIterator = FileUtils.iterateFiles(file, Opts.fileFilter, Opts.orIncludeDirFilter);
                 } else {
                     fileIterator = Arrays.asList(fileOrDir).iterator();
                 }

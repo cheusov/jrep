@@ -126,6 +126,10 @@ public class Jrep {
                 char nc = Opts.opt_O.charAt(i + 1);
                 if (nc == '$')
                     b.append('$');
+                else if (nc == '<')
+                    b.append(Opts.colorEscStart);
+                else if (nc == '>')
+                    b.append(Opts.colorEscEnd);
                 else if (nc == '{') {
                     StringBuilder[] ld;
                     i += 1;

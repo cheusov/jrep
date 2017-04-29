@@ -1143,6 +1143,34 @@ $JREP_CMD -rl --include '*.txt' --exclude-dir='*/subdir' '.' \
 ./tests/text6.txt
 '
 
+$JREP_CMD -r --marker-start '<b>' --marker-end '</b>' \
+	  --include '*.txt' --colour=always \
+	  -O 'Do you $<like$> $1$<${2}$>?' '([^\s.]+)(BSD)' . |
+    sort |
+    cmp 'jrep -O "$<$>" #49' \
+'patterns.txt:Do you <b>like</b> Net<b>BSD</b>?
+patterns.txt:Do you <b>like</b> Open<b>BSD</b>?
+subdir/text3.txt:Do you <b>like</b> Free<b>BSD</b>?
+subdir/text3.txt:Do you <b>like</b> Free<b>BSD</b>?
+subdir/text3.txt:Do you <b>like</b> Free<b>BSD</b>?
+subdir/text3.txt:Do you <b>like</b> Free<b>BSD</b>?
+subdir/text3.txt:Do you <b>like</b> Free<b>BSD</b>?
+subdir/text3.txt:Do you <b>like</b> Free<b>BSD</b>?
+subdir/text3.txt:Do you <b>like</b> Free<b>BSD</b>?
+subdir/text3.txt:Do you <b>like</b> Free<b>BSD</b>?
+subdir/text3.txt:Do you <b>like</b> Free<b>BSD</b>?
+subdir/text3.txt:Do you <b>like</b> Free<b>BSD</b>?
+subdir/text3.txt:Do you <b>like</b> Free<b>BSD</b>?
+subdir/text3.txt:Do you <b>like</b> Free<b>BSD</b>?
+text1.txt:Do you <b>like</b> Net<b>BSD</b>?
+text1.txt:Do you <b>like</b> Net<b>BSD</b>?
+text1.txt:Do you <b>like</b> Net<b>BSD</b>?
+text1.txt:Do you <b>like</b> Net<b>BSD</b>?
+text1.txt:Do you <b>like</b> Net<b>BSD</b>?
+text2.txt:Do you <b>like</b> Open<b>BSD</b>?
+text2.txt:Do you <b>like</b> Open<b>BSD</b>?
+'
+
 $JREP_CMD -v -e conky -e application bug_report1.txt | tr -d '\015' |
     cmp 'jrep bug report #1.1' \
 'i  | cyrconfix                              | package     | 1.0-13.2                                | noarch | (System Packages)                             

@@ -21,7 +21,7 @@ plan 1:
 * -v + -C + coloring
 * reusable object Jgrep. I/O streams etc.
 * -O with named capturing groups?
- 
+
 ========================================
 The following GNU grep options are not implemented and probably won't be:
 * -E, --extended-regexp     PATTERN is an extended regular expression (ERE)

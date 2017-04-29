@@ -147,12 +147,13 @@ format. Within format string the symbol $ has a special meaning.
 
 Doubled $ means the symbol $ itself.
 
-I<$N>, where N is a single digit, means group number N.
-I<$f> means a filename where match was found.
-All other characters, not preceeded by $, are output as is.
-Number N can be surrounded by curly braces, this allows to use
-a group number more than 9.
-Symbol `f' can also be surrounded by curly braces.
+Sequence I<$N>, where N is a single digit, means group number N.
+Sequence I<$f> means a filename where match was found.  All other
+characters, not preceeded by $, are output as is.  Number N can be
+surrounded by curly braces, this allows to use a group number more
+than 9.  Symbol `f' can also be surrounded by curly braces.  Sequences
+I<$\<> and I<$\>> mean start and end markers respectively (See options
+I<--marker-start>, I<--marker-end> and I<JREP_COLOR> environment variable).
 
 Within curly braces the following special
 modifiers can be used.
@@ -169,6 +170,7 @@ Modifiers are applied from left to right.
 Examples:
    jrep -h -O '${fb} ${0st}' '^.*BSD.*$' -r /path/to/directory
    jrep -h -O '${fc},${1c},${2C}' '(\S+)=(\S+)' *.txt
+   jrep -O 'Do you $<like$> $1$<${2}$>? :-)' '([^\s.]+)(BSD)' *.txt
 
 =item B<--marker-start> I<MARKER>
 

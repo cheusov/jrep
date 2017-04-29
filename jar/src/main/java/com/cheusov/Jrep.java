@@ -201,6 +201,9 @@ public class Jrep {
                         case 'b':
                             value = new File(value).getName();
                             break;
+                        case 'e':
+                            value = value.replaceFirst("[.][^.]+$", "");
+                            break;
                         case 'c':
                             value = StringEscapeUtils.escapeCsv(value);
                             break;

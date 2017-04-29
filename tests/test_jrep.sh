@@ -939,6 +939,20 @@ text6.txt,"varname2","100,500.00"
 text6.txt,"varname3","String with "" inside"
 '
 
+$JREP_CMD -h -O '${fbe} ${0}' '\S+BSD\S+' -r --include='*.txt' . |
+    cmp 'jrep -O #44.9' \
+'text2 OpenBSD:
+text3 FreeBSD!
+text3 https://www.FreeBSD.org/releases/
+text3 https://www.FreeBSD.org/security/
+text3 https://www.FreeBSD.org/handbook/
+text3 https://www.FreeBSD.org/faq/
+text3 https://lists.FreeBSD.org/mailman/listinfo/freebsd-questions/
+text3 https://forums.FreeBSD.org/
+text1 NetBSD!
+text1 http://www.NetBSD.org/support/send-pr.html
+'
+
 rm text1_copy.txt
 
 echo `pwd`/text1.txt > excl_pattern2

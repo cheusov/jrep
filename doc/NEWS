@@ -1,4 +1,29 @@
 ======================================================================
+Version 1.1.0, by Aleksey Cheusov, Sat, 29 Apr 2017 23:00:24 +0300
+
+  jrep:
+    - New option "-d"  (synonym for "--directories") was added.
+    - New option "--exclude-dir" (idea cames from GNU grep) was added.
+
+  jrep man page: fixes and additions.
+
+  Option "-O" extensions:
+    - New mode $f for printing filename with match was added.
+    - New modes $< and $> modes were added for coloring the formatted
+      output.
+    - New modifier "b" was added for baseline(3)-ing found group or
+      filename.
+    - New modifier "e" was added for removing file extension.
+    - New modifiers "c" and "C" were added for CSV-quoting found group or
+      filename.
+    - Modifiers "s" and "t" handle Unicode spaces.
+
+  New maven plugin for building uber jar. Also, jar sets the default
+  main class. Kudos to Aliaksei Kushunin!
+
+  "bat" file was added for Windows systems. Kudos to Aliaksei Kushunin!
+
+======================================================================
 Version 1.0.1, by Aleksey Cheusov, Sun, 16 Apr 2017 13:24:57 +0300
 
   Documentation for option --exclude-from was added to man page.

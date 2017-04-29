@@ -1,4 +1,4 @@
-VERSION =	1.0.1
+VERSION =	1.1.0
 
 .ifdef SRCTOP
 JAR_VERSION !=	${SRCTOP}/helpers/get_jar_version ${SRCTOP}/jar/pom.xml

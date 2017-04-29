@@ -167,6 +167,7 @@ I<t> for trimming leading and trailing unicode spaces from the group.
 I<b> for removing directory from filename.
 I<c> for CSV quoting string.
 I<C> same as I<-c> but always surround entry with double quotes.
+I<e> for removing extension from filename.
 Modifiers are applied from left to right.
 
 Examples:

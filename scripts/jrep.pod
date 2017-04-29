@@ -159,8 +159,8 @@ modifiers can be used.
 I<n> for replacing LF (line feed) and backslash characters
 with '\n' and '\\' sequences respectively.
 I<N> for replacing LF with ASCII space.
-I<s> for replacing a sequence of spaces with a single one.
-I<t> for trimming leading and trailing spaces from the group.
+I<s> for replacing a sequence of unicode spaces with a single one.
+I<t> for trimming leading and trailing unicode spaces from the group.
 I<b> for removing directory from filename.
 I<c> for CSV quoting string.
 I<C> same as I<-c> but always surround entry with double quotes.

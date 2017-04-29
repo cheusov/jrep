@@ -22,6 +22,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Created by Aleksey Cheusov on 4/24/16.
@@ -31,6 +32,9 @@ public class Jrep {
     private static final JrepOptionsGroups optionsGroups = new JrepOptionsGroups();
     private static int exitStatus = 1;
     private static final String[] stdinFilenames = {"-"};
+    private static final Pattern patternSpaces = Pattern.compile("\\p{IsWhiteSpace}+");
+    private static final Pattern patternSpacesBeg = Pattern.compile("^\\p{IsWhiteSpace}+");
+    private static final Pattern patternSpacesEnd = Pattern.compile("\\p{IsWhiteSpace}+$");
 
     private static void println(String line) {
         if (!Opts.opt_q) {
@@ -149,10 +153,11 @@ public class Jrep {
                                 value = value.replaceAll("\n", " ");
                                 break;
                             case 's':
-                                value = value.replaceAll("\\s+", " ");
+                                value = patternSpaces.matcher(value).replaceAll(" ");
                                 break;
                             case 't':
-                                value = value.trim();
+                                value = patternSpacesBeg.matcher(value).replaceFirst("");
+                                value = patternSpacesEnd.matcher(value).replaceFirst("");
                                 break;
                             case 'f':
                                 value = filename;

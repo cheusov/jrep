@@ -22,4 +22,4 @@
 export JREP_VERSION=@version@
 
 ${JREP_JAVA} -Djava.library.path="$JREP_JNI_DIR" \
-	      -cp "$JREP_JAR" $JREP_JAVA_OPTS com.cheusov.Jrep "$@"
+	      -jar "$JREP_JAR" $JREP_JAVA_OPTS "$@"

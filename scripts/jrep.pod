@@ -152,7 +152,7 @@ Sequence I<$f> means a filename where match was found.  All other
 characters, not preceeded by $, are output as is.  Number N can be
 surrounded by curly braces, this allows to use a group number more
 than 9.
-Sequences I<$\<> and I<$\>> mean start and end markers respectively
+Sequences I<$<> and I<$E<gt>> mean start and end markers respectively
 (See options I<--marker-start>, I<--marker-end> and I<JREP_COLOR>
 environment variable).
 Symbols `f', `<' and '>' can also be surrounded by curly braces.

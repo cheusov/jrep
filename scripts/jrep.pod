@@ -310,13 +310,13 @@ Directory with jrep_jni library.
 =item I<JREP_NO_JNI>
 
 If set, I<jrep_jni> library is not loaded.
-This implies I<--color=always>.
+This implies I<--color=never>.
 
 =back
 
 =head1 COPYRIGHT
 
-Copyright 2016 Aleksey Cheusov <vle@gmx.net>
+Copyright 2016-2017 Aleksey Cheusov <vle@gmx.net>
 
 =head1 HOME
 

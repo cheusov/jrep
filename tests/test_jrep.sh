@@ -878,46 +878,46 @@ $JREP_CMD -O '`$1` `$2`' '(BSD)|(zzzz)' text1.txt |
 `BSD` ``
 '
 
-$JREP_CMD -h -O '$f $0' '\S+BSD\S+' -r --include='*.txt' . |
+$JREP_CMD -h -O '$f $0' '\S+BSD\S+' -r --include='*.txt' . | sort |
     cmp 'jrep -O #44.3' \
-'text2.txt OpenBSD:
-subdir/text3.txt FreeBSD!
+'subdir/text3.txt FreeBSD!
+subdir/text3.txt https://forums.FreeBSD.org/
+subdir/text3.txt https://lists.FreeBSD.org/mailman/listinfo/freebsd-questions/
+subdir/text3.txt https://www.FreeBSD.org/faq/
+subdir/text3.txt https://www.FreeBSD.org/handbook/
 subdir/text3.txt https://www.FreeBSD.org/releases/
 subdir/text3.txt https://www.FreeBSD.org/security/
-subdir/text3.txt https://www.FreeBSD.org/handbook/
-subdir/text3.txt https://www.FreeBSD.org/faq/
-subdir/text3.txt https://lists.FreeBSD.org/mailman/listinfo/freebsd-questions/
-subdir/text3.txt https://forums.FreeBSD.org/
 text1.txt NetBSD!
 text1.txt http://www.NetBSD.org/support/send-pr.html
+text2.txt OpenBSD:
 '
 
-$JREP_CMD -h -O '${f} ${0}' '\S+BSD\S+' -r --include='*.txt' . |
+$JREP_CMD -h -O '${f} ${0}' '\S+BSD\S+' -r --include='*.txt' . | sort |
     cmp 'jrep -O #44.4' \
-'text2.txt OpenBSD:
-subdir/text3.txt FreeBSD!
+'subdir/text3.txt FreeBSD!
+subdir/text3.txt https://forums.FreeBSD.org/
+subdir/text3.txt https://lists.FreeBSD.org/mailman/listinfo/freebsd-questions/
+subdir/text3.txt https://www.FreeBSD.org/faq/
+subdir/text3.txt https://www.FreeBSD.org/handbook/
 subdir/text3.txt https://www.FreeBSD.org/releases/
 subdir/text3.txt https://www.FreeBSD.org/security/
-subdir/text3.txt https://www.FreeBSD.org/handbook/
-subdir/text3.txt https://www.FreeBSD.org/faq/
-subdir/text3.txt https://lists.FreeBSD.org/mailman/listinfo/freebsd-questions/
-subdir/text3.txt https://forums.FreeBSD.org/
 text1.txt NetBSD!
 text1.txt http://www.NetBSD.org/support/send-pr.html
+text2.txt OpenBSD:
 '
 
-$JREP_CMD -h -O '${fb} ${0}' '\S+BSD\S+' -r --include='*.txt' . |
+$JREP_CMD -h -O '${fb} ${0}' '\S+BSD\S+' -r --include='*.txt' . | sort |
     cmp 'jrep -O #44.5' \
-'text2.txt OpenBSD:
+'text1.txt NetBSD!
+text1.txt http://www.NetBSD.org/support/send-pr.html
+text2.txt OpenBSD:
 text3.txt FreeBSD!
+text3.txt https://forums.FreeBSD.org/
+text3.txt https://lists.FreeBSD.org/mailman/listinfo/freebsd-questions/
+text3.txt https://www.FreeBSD.org/faq/
+text3.txt https://www.FreeBSD.org/handbook/
 text3.txt https://www.FreeBSD.org/releases/
 text3.txt https://www.FreeBSD.org/security/
-text3.txt https://www.FreeBSD.org/handbook/
-text3.txt https://www.FreeBSD.org/faq/
-text3.txt https://lists.FreeBSD.org/mailman/listinfo/freebsd-questions/
-text3.txt https://forums.FreeBSD.org/
-text1.txt NetBSD!
-text1.txt http://www.NetBSD.org/support/send-pr.html
 '
 
 $JREP_CMD -h -O '${fZ} ${0}' '\S+BSD\S+' -r --include='*.txt' . 2>&1 |
@@ -939,18 +939,18 @@ text6.txt,"varname2","100,500.00"
 text6.txt,"varname3","String with "" inside"
 '
 
-$JREP_CMD -h -O '${fbe} ${0}' '\S+BSD\S+' -r --include='*.txt' . |
+$JREP_CMD -h -O '${fbe} ${0}' '\S+BSD\S+' -r --include='*.txt' . | sort |
     cmp 'jrep -O #44.9' \
-'text2 OpenBSD:
+'text1 NetBSD!
+text1 http://www.NetBSD.org/support/send-pr.html
+text2 OpenBSD:
 text3 FreeBSD!
+text3 https://forums.FreeBSD.org/
+text3 https://lists.FreeBSD.org/mailman/listinfo/freebsd-questions/
+text3 https://www.FreeBSD.org/faq/
+text3 https://www.FreeBSD.org/handbook/
 text3 https://www.FreeBSD.org/releases/
 text3 https://www.FreeBSD.org/security/
-text3 https://www.FreeBSD.org/handbook/
-text3 https://www.FreeBSD.org/faq/
-text3 https://lists.FreeBSD.org/mailman/listinfo/freebsd-questions/
-text3 https://forums.FreeBSD.org/
-text1 NetBSD!
-text1 http://www.NetBSD.org/support/send-pr.html
 '
 
 rm text1_copy.txt

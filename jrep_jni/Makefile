@@ -8,9 +8,8 @@ MKC_REQUIRE_PROGS +=	${JAVAH}
 SHLIB_MAJOR =	0
 SHLIB_MINOR =	0
 
-MKDLL =		only
-
-JAVA_INCLUDE_SUBDIR ?=	linux # darwin
+arch !=			uname -s
+JAVA_INCLUDE_SUBDIR ?=	${arch:tl}
 
 JAVA_INCLUDE ?=		-I${JAVA_HOME}/include \
 			-I${JAVA_HOME}/include/${JAVA_INCLUDE_SUBDIR}

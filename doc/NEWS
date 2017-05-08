@@ -1,3 +1,7 @@
+Version 1.1.1, by Aleksey Cheusov, Mon, 8 May 2017 15:03:48 +0300
+
+  jrep JNI library was fixed on Darwin
+
 ======================================================================
 Version 1.1.0, by Aleksey Cheusov, Sat, 29 Apr 2017 23:00:24 +0300
 
